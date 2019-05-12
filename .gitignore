@@ -204,3 +204,4 @@ FakesAssemblies/
 
 packages/
 .vs/config/applicationhost.config
+Cat.Web/ConnectionStrings.config
