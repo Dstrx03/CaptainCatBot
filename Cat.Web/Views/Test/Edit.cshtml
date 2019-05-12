@@ -1,0 +1,17 @@
+﻿@model Cat.Domain.Entities.TestEntity
+@{
+    ViewBag.Title = "Edit";
+}
+
+<h2>Edit</h2>
+@using (Html.BeginForm("Edit", "Test", FormMethod.Post))
+{
+    <div class="item">
+        <label>Name</label>
+        @Html.TextBoxFor(m => m.Name)
+    </div>
+    <input type="submit" value="Confirm" />
+}
+<hr />
+
+<div>@Html.ActionLink("Back", "Index", "Test")</div>

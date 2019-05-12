@@ -1,4 +1,5 @@
-﻿using Microsoft.Owin;
+﻿using Cat.Web.App_Start;
+using Microsoft.Owin;
 using Owin;
 
 [assembly: OwinStartupAttribute(typeof(Cat.Web.Startup))]
