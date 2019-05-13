@@ -16,7 +16,7 @@
 // --------------------------------------------------------------------------------------------------------------------
 
 using Cat.Web.App_Start;
-
+using StructureMap.Web.Pipeline;
 using WebActivatorEx;
 
 [assembly: PreApplicationStartMethod(typeof(StructuremapMvc), "Start")]
@@ -48,8 +48,18 @@ namespace Cat.Web.App_Start {
             IContainer container = IoC.Initialize();
             StructureMapDependencyScope = new StructureMapDependencyScope(container);
             DependencyResolver.SetResolver(StructureMapDependencyScope);
-            DynamicModuleUtility.RegisterModule(typeof(StructureMapScopeModule));
         }
+
+	    public static void CreateNestedContainer()
+	    {
+            StructureMapDependencyScope.CreateNestedContainer();
+	    }
+
+	    public static void DisposeNestedContainer()
+	    {
+            HttpContextLifecycle.DisposeAndClearAll();
+            StructureMapDependencyScope.DisposeNestedContainer();
+	    }
 
         #endregion
     }

@@ -1,24 +1,51 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+using System.Data.Entity;
+using System.Data.Entity.Validation;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
+using Cat.Domain;
 using Cat.Web.App_Start;
 
 namespace Cat.Web
 {
     public class MvcApplication : System.Web.HttpApplication
     {
+        /**
+         * <summary>
+         * Each HTTP request should use it's own context (Unit Of Work).
+         * </summary>
+         */
+        public static DbContext DbContextPerHttpRequest
+        {
+            get
+            {
+                if (HttpContext.Current == null)
+                    return new AppDbContext();
+
+                if (CurrentDbContext == null)
+                    CurrentDbContext = new AppDbContext();
+
+                return CurrentDbContext;
+            }
+        }
+
+        public static DbContext CurrentDbContext
+        {
+            get { return HttpContext.Current.Items["current.dbContext"] as DbContext; }
+            set { HttpContext.Current.Items["current.dbContext"] = value; }
+        }
+
+
+        #region Framework native methods
+
         protected void Application_Start()
         {
             AreaRegistration.RegisterAllAreas();
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
-
-            StructuremapMvc.StructureMapDependencyScope.CreateNestedContainer(); //TODO: !!!
         }
 
         protected void Application_End(object sender, EventArgs e)
@@ -27,10 +54,44 @@ namespace Cat.Web
 
         protected void Application_BeginRequest(Object sender, EventArgs e)
         {
+            StructuremapMvc.CreateNestedContainer();
         }
 
         protected void Application_EndRequest(object sender, EventArgs e)
         {
+            CloseContext();
+            StructuremapMvc.DisposeNestedContainer();
+        }
+
+        #endregion
+
+
+        /**
+         *<summary>
+         * Saves changes in current context and disposes it (Unit Of Work mechanics).
+         *</summary>
+         */
+        private void CloseContext()
+        {
+            if (CurrentDbContext == null) return;
+
+            try
+            {
+                CurrentDbContext.SaveChanges();
+            }
+            catch (DbEntityValidationException ex)
+            {
+                throw;
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+            finally
+            {
+                CurrentDbContext.Dispose();
+                CurrentDbContext = null;
+            }
         }
 
     }

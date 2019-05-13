@@ -35,7 +35,8 @@ namespace Cat.Web.DependencyResolution {
                     scan.AssembliesFromApplicationBaseDirectory();
                 });
 
-            For<DbContext>().Use(() => new AppDbContext()); //TODO: !!!
+            // Each HTTP request should use it's own context (Unit Of Work).
+            For<DbContext>().Use(() => MvcApplication.DbContextPerHttpRequest);
         }
 
         #endregion
