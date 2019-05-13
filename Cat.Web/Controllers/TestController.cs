@@ -9,6 +9,7 @@ using Cat.Domain.Repositories;
 
 namespace Cat.Web.Controllers
 {
+    [Authorize]
     public class TestController : Controller
     {
         private readonly ITestEntitiesRespository _testRepository;

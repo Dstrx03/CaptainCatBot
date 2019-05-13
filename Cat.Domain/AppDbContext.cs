@@ -1,11 +1,13 @@
 ﻿using System.Data.Entity;
 using Cat.Domain.Entities;
+using Cat.Domain.Entities.Identity;
+using Microsoft.AspNet.Identity.EntityFramework;
 
 namespace Cat.Domain
 {
-    public class AppDbContext : DbContext
+    public class AppDbContext : IdentityDbContext<ApplicationUser>
     {
-        public AppDbContext() : base("DefaultConnection")
+        public AppDbContext() : base("DefaultConnection", throwIfV1Schema: false)
         {
         }
 
@@ -13,6 +15,7 @@ namespace Cat.Domain
         {
             base.OnModelCreating(modelBuilder);
 
+            modelBuilder.Entity<ApplicationUser>();
             modelBuilder.Entity<TestEntity>();
         }
     }
