@@ -7,11 +7,14 @@ using System.Web.Optimization;
 using System.Web.Routing;
 using Cat.Domain;
 using Cat.Web.App_Start;
+using log4net;
 
 namespace Cat.Web
 {
     public class MvcApplication : System.Web.HttpApplication
     {
+        private static readonly ILog _log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
         /**
          * <summary>
          * Each HTTP request should use it's own context (Unit Of Work).
@@ -42,6 +45,8 @@ namespace Cat.Web
 
         protected void Application_Start()
         {
+            _log.Debug("Application started...");
+
             AreaRegistration.RegisterAllAreas();
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
