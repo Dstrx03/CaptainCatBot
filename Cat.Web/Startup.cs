@@ -1,5 +1,4 @@
-﻿using Cat.Web.App_Start;
-using Microsoft.Owin;
+﻿using Microsoft.Owin;
 using Owin;
 
 [assembly: OwinStartupAttribute(typeof(Cat.Web.Startup))]
@@ -10,6 +9,7 @@ namespace Cat.Web
         public void Configuration(IAppBuilder app)
         {
             ConfigureAuth(app);
+            HangfireConfig.RegisterHangfire(app);
         }
     }
 }

@@ -23,7 +23,7 @@ namespace Cat.Web.Controllers
 
         public ActionResult Index()
         {
-            return View(_testRepository.GetAll());
+            return View(_testRepository.GetAll().OrderBy(x => x.Name));
         }
 
         public ActionResult Details(string id)
