@@ -207,3 +207,4 @@ packages/
 Cat.Web/ConnectionStrings.config
 Cat.Web/log4net.config
 Cat.Web/Logs/*
+Cat.Web/Bundles/*

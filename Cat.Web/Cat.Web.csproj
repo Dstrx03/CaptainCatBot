@@ -209,6 +209,7 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\Api\TestController.cs" />
+    <Compile Include="Controllers\AppController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\TestController.cs" />
@@ -292,6 +293,7 @@
     <Content Include="Views\Test\Add.cshtml" />
     <Content Include="Views\Test\Details.cshtml" />
     <Content Include="Views\Test\Edit.cshtml" />
+    <Content Include="Views\App\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
