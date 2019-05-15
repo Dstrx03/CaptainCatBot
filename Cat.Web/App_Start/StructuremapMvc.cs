@@ -15,6 +15,8 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
+using System.Web.Http;
+using System.Web.Http.Dispatcher;
 using Cat.Web.App_Start;
 using StructureMap.Web.Pipeline;
 using WebActivatorEx;
@@ -48,6 +50,7 @@ namespace Cat.Web.App_Start {
             IContainer container = IoC.Initialize();
             StructureMapDependencyScope = new StructureMapDependencyScope(container);
             DependencyResolver.SetResolver(StructureMapDependencyScope);
+            GlobalConfiguration.Configuration.Services.Replace(typeof(IHttpControllerActivator), new ServiceActivator());
         }
 
 	    public static void CreateNestedContainer()
