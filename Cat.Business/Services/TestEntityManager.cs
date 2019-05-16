@@ -1,4 +1,4 @@
-﻿
+﻿using System.Threading.Tasks;
 using Cat.Domain.Entities;
 using Cat.Domain.Repositories;
 
@@ -8,7 +8,7 @@ namespace Cat.Business.Services
     {
         TestEntity CreateTest(string name);
 
-        void RemoveTest(string id);
+        Task RemoveTest(string id);
 
         TestEntity EditTest(TestEntity entity);
     }
@@ -29,9 +29,9 @@ namespace Cat.Business.Services
             return entity;
         }
 
-        public void RemoveTest(string id)
+        public async Task RemoveTest(string id)
         {
-            _testRespository.Remove(id);
+            await _testRespository.RemoveAsync(id);
         }
 
         public TestEntity EditTest(TestEntity entity)

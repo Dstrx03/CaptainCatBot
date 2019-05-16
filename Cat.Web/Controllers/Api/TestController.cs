@@ -1,11 +1,12 @@
-﻿using System.Web.Http;
+﻿using System.Threading.Tasks;
+using System.Web.Http;
 using Cat.Business.Services;
 using Cat.Domain.Entities;
 using Cat.Domain.Repositories;
 
 namespace Cat.Web.Controllers.Api
 {
-    [Authorize]
+    //[Authorize]
     public class TestController : ApiController
     {
         private readonly ITestEntitiesRespository _testRespository;
@@ -24,9 +25,15 @@ namespace Cat.Web.Controllers.Api
         }
 
         [HttpGet]
-        public TestEntity GetEntity(string id)
+        public async Task<TestEntity> GetEntity(string id)
         {
-            return _testRespository.GetById(id);
+            return await _testRespository.GetByIdAsync(id);
+        }
+
+        [HttpDelete]
+        public async Task RemoveEntity(string id)
+        {
+            await _testManager.RemoveTest(id);
         }
     }
 }

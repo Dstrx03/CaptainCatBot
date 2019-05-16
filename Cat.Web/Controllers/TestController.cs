@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using Cat.Business.Services;
@@ -21,14 +23,14 @@ namespace Cat.Web.Controllers
             _testManager = testManager;
         }
 
-        public ActionResult Index()
+        public async Task<ActionResult> Index()
         {
-            return View(_testRepository.GetAll().OrderBy(x => x.Name));
+            return View(await _testRepository.GetAll().OrderBy(x => x.Name).ToListAsync());
         }
 
-        public ActionResult Details(string id)
+        public async Task<ActionResult> Details(string id)
         {
-            return View(_testRepository.GetById(id));
+            return View(await _testRepository.GetByIdAsync(id));
         }
 
         public ActionResult Add()
@@ -43,9 +45,9 @@ namespace Cat.Web.Controllers
             return RedirectToAction("Index");
         }
 
-        public ActionResult Edit(string id)
+        public async Task<ActionResult> Edit(string id)
         {
-            return View(_testRepository.GetById(id));
+            return View(await _testRepository.GetByIdAsync(id));
         }
 
         [HttpPost]
@@ -56,9 +58,9 @@ namespace Cat.Web.Controllers
         }
 
         [HttpPost]
-        public ActionResult Remove(string id)
+        public async Task<ActionResult> Remove(string id)
         {
-            _testManager.RemoveTest(id);
+            await _testManager.RemoveTest(id);
             return RedirectToAction("Index");
         }
     }
