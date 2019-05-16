@@ -8,6 +8,7 @@ using System.Web.Optimization;
 using System.Web.Routing;
 using Cat.Domain;
 using Cat.Web.App_Start;
+using Cat.Web.Infrastructure.Platform;
 using log4net;
 
 namespace Cat.Web
@@ -53,6 +54,7 @@ namespace Cat.Web
             GlobalConfiguration.Configure(WebApiConfig.Register);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
+
         }
 
         protected void Application_End(object sender, EventArgs e)
