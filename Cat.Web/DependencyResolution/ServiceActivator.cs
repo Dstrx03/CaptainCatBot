@@ -10,8 +10,7 @@ namespace Cat.Web.DependencyResolution
     {
         public IHttpController Create(HttpRequestMessage request, HttpControllerDescriptor controllerDescriptor, Type controllerType)
         {
-            var controller = StructuremapMvc.StructureMapDependencyScope.Container.GetInstance(controllerType) as IHttpController;
-            return controller;
+            return StructuremapMvc.StructureMapDependencyScope.Container.GetInstance(controllerType) as IHttpController;
         }
     }
 }

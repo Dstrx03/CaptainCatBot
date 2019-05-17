@@ -6,7 +6,6 @@ using Cat.Domain.Repositories;
 
 namespace Cat.Web.Controllers.Api
 {
-    //[Authorize]
     public class TestController : ApiController
     {
         private readonly ITestEntitiesRespository _testRespository;
