@@ -3,7 +3,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
 using Cat.Web.Models;
-using Microsoft.AspNet.Identity;
+using Cat.Web.Models.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 
@@ -51,42 +51,40 @@ namespace Cat.Web.Controllers.Api
             }
         }
 
-        // TODO: refactor all methods design!
-
         [HttpGet]
         [AllowAnonymous]
-        public bool IsAuthenticated()
+        public AuthInfo GetAuthInfo()
         {
-            return Request.GetOwinContext().Authentication.User.Identity.IsAuthenticated;
+            var context = Request.GetOwinContext();
+            return new AuthInfo
+            {
+                IsAuthenticated = context.Authentication.User.Identity.IsAuthenticated, 
+                AuthUserInfo = new AuthUserInfo { Name = context.Authentication.User.Identity.Name }
+            };
         }
 
         [HttpPost]
         [AllowAnonymous]
-        public async Task<String> Login([FromBody] LoginViewModel model)
+        public async Task<LoginResult> Login([FromBody] LoginViewModel model)
         {
-            var result = await SignInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, shouldLockout: false);
-            switch (result)
+            var signInStatus = await SignInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, shouldLockout: false);
+            switch (signInStatus)
             {
                 case SignInStatus.Success:
-                    return "Login Success! Username: '" + Request.GetOwinContext().Authentication.User.Identity.GetUserName() + "' IsAuthenticated=" + Request.GetOwinContext().Authentication.User.Identity.IsAuthenticated;
                 case SignInStatus.LockedOut:
-                    return "Login LockedOut!";
                 case SignInStatus.RequiresVerification:
-                    return "Login RequiresVerification!";
+                    return new LoginResult { SignInStatus = signInStatus };
                 case SignInStatus.Failure:
                 default:
-                    return "Login Failure!";
+                    return new LoginResult { SignInStatus = signInStatus, Errors = new[] { "login faulire!" } }; // TODO: errors
             }
         }
 
         [HttpPost]
-        public string LogOff()
+        public bool LogOff()
         {
-            var name = Request.GetOwinContext().Authentication.User.Identity.GetUserName();
-            var id = Request.GetOwinContext().Authentication.User.Identity.GetUserId();
-            var isLogged = Request.GetOwinContext().Authentication.User.Identity.IsAuthenticated;
             AuthenticationManager.SignOut();
-            return string.Format("'{0}'({1}-{2}) logged off", name, id, isLogged);
+            return true;
         }
     }
 }

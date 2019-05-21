@@ -1,0 +1,15 @@
+<div>
+  <input matInput placeholder="Email" [(ngModel)]="loginViewModel.Email">
+</div>
+<div>
+  <input matInput placeholder="Password" [(ngModel)]="loginViewModel.Password">
+</div>
+<div>
+  <mat-checkbox [(ngModel)]="loginViewModel.RememberMe">RememberMe</mat-checkbox>
+</div>
+<div>
+  <button mat-button (click)="login()">Login</button>
+</div>
+<div>
+  loginViewModel={{loginViewModel | json}}
+</div>

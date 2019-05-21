@@ -243,6 +243,8 @@
     <Compile Include="Infrastructure\Schedule\Tasks\ScheduledTask.cs" />
     <Compile Include="Infrastructure\Schedule\ScheduledTasksRegistry.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
+    <Compile Include="Models\Identity\AuthInfo.cs" />
+    <Compile Include="Models\Identity\LoginResult.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />

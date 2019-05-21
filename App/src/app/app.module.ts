@@ -2,33 +2,38 @@ import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgModule } from '@angular/core';
 import { HttpClientModule } from '@angular/common/http';
+import { FormsModule } from '@angular/forms'; // <-- NgModel lives here
 
 import { MatButtonModule, MatCheckboxModule } from '@angular/material';
 import { MatToolbarModule } from '@angular/material/toolbar';
 
+import { AppRoutingModule } from './infrastructure/navigation/app-routing.module';
+import { AppLoadModule } from './infrastructure/app-load/app-load.module';
+
 import { AppComponent } from './app.component';
-import { LoginbuttonComponent } from './identity/loginbutton/loginbutton.component';
-import { AppRoutingModule } from './navigation/app-routing.module';
-import { DashboardComponent } from './dashboard/dashboard.component';
-import { LoginComponent } from './login/login.component';
-import { HomeComponent } from './home/home.component';
+import { DashboardComponent } from './views/dashboard/dashboard.component';
+import { LoginComponent } from './views/login/login.component';
+import { HomeComponent } from './views/home/home.component';
+import { AuthToolbarComponent } from './controls/auth-toolbar/auth-toolbar.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    LoginbuttonComponent,
     DashboardComponent,
     LoginComponent,
-    HomeComponent
+    HomeComponent,
+    AuthToolbarComponent
   ],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
-    AppRoutingModule,
+    FormsModule,
     HttpClientModule,
     MatButtonModule,
     MatCheckboxModule,
-    MatToolbarModule
+    MatToolbarModule,
+    AppRoutingModule,
+    AppLoadModule
   ],
   providers: [],
   bootstrap: [AppComponent]

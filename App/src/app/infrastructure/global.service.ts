@@ -10,7 +10,6 @@ export class GlobalService {
 
   constructor(private meta: Meta) {
     this.baseUrl = this.meta.getTag('name=baseUrl').content;
-    console.log('baseUrl=' + this.baseUrl);
   }
 
 }
