@@ -1,15 +1,13 @@
-<mat-toolbar>
-  <mat-toolbar-row>
-    <span>Custom Toolbar</span>
-    <span>
-      <button mat-raised-button routerLink="" >HOME</button>
-      <button mat-raised-button routerLink="Login" >LOGIN</button>
-      <button mat-raised-button routerLink="Dashboard" >DASHBOARD</button>
-    </span>
-    <span>
-      <app-auth-toolbar></app-auth-toolbar>
-    </span>
-  </mat-toolbar-row>
-</mat-toolbar>
-
-<router-outlet></router-outlet>
+<section class="mat-typography">
+  <mat-sidenav-container>
+    <mat-sidenav role="navigation" #sidenav>
+      <app-sidenav-list (sidenavClose)="sidenav.close()"></app-sidenav-list>
+    </mat-sidenav>
+    <mat-sidenav-content>
+      <app-header title="{{title}}" (sidenavToggle)="sidenav.toggle()"></app-header>
+      <main>
+        <router-outlet></router-outlet>
+      </main>
+    </mat-sidenav-content>
+  </mat-sidenav-container>
+</section>

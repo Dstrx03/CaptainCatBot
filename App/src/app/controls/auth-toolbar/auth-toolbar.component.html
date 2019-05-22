@@ -1,9 +1,20 @@
-<span>
-  Auth Info: {{authInfo | json}}
-</span>
-<span>
-  <button mat-button routerLink="Login">Login</button>
-</span>
-<span>
-  <button mat-button (click)='logOff()'>Logout</button>
-</span>
+<button mat-stroked-button color="primary" routerLink="Login" *ngIf="!authInfo.IsAuthenticated">
+  <mat-icon fontSet="fas" fontIcon="fa-user-circle"></mat-icon>
+  <span>Login</span>
+</button>
+<button mat-icon-button [matMenuTriggerFor]="menu" *ngIf="authInfo.IsAuthenticated">
+  <mat-icon fontSet="fas" fontIcon="fa-user-circle"></mat-icon>
+</button>
+<mat-menu #menu="matMenu">
+  <button mat-menu-item>{{authInfo.AuthUserInfo.Name}}</button>
+  <div class="container" *ngIf="authInfo.IsAuthenticated">
+    <div class="row">
+      <div class="col buttons-full-width">
+        <button mat-stroked-button color="warn" (click)='logOff()'>
+          <mat-icon fontSet="fas" fontIcon="fa-sign-out-alt"></mat-icon>
+          <span>Logout</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</mat-menu>

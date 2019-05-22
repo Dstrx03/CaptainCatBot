@@ -1,5 +1,17 @@
 /* You can add global styles to this file, and also import other style files */
 @import "~bootstrap/dist/css/bootstrap.css";
-@import "~font-awesome/css/font-awesome.css";
+@import "https://fonts.googleapis.com/css?family=Roboto:300,400,500";
+@import "https://use.fontawesome.com/releases/v5.8.1/css/all.css";
 @import "~@angular/material/prebuilt-themes/indigo-pink.css";
+@import "angularMatVsBootstrap.css";
 
+.form-fields-full-width mat-form-field,
+.buttons-full-width .mat-button, 
+.buttons-full-width .mat-fab, 
+.buttons-full-width .mat-flat-button, 
+.buttons-full-width .mat-icon-button, 
+.buttons-full-width .mat-mini-fab, 
+.buttons-full-width .mat-raised-button, 
+.buttons-full-width .mat-stroked-button {
+    width: 100%;
+}
