@@ -12,6 +12,8 @@
       "element",
       "app",
       "kebab-case"
-    ]
+    ],
+    "curly": false,
+    "one-line": [false, "check-catch", "check-finally", "check-else"]
   }
 }

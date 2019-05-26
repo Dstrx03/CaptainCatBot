@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
@@ -68,16 +69,25 @@ namespace Cat.Web.Controllers.Api
         public async Task<LoginResult> Login([FromBody] LoginViewModel model)
         {
             var signInStatus = await SignInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, shouldLockout: false);
+            var errors = new List<string>();
             switch (signInStatus)
             {
                 case SignInStatus.Success:
+                    break;
                 case SignInStatus.LockedOut:
+                    errors.Add("User is locked out.");
+                    break;
                 case SignInStatus.RequiresVerification:
-                    return new LoginResult { SignInStatus = signInStatus };
+                    errors.Add("Sign in requires additional verification.");
+                    break;
                 case SignInStatus.Failure:
+                    errors.Add("Invalid email or password.");
+                    break;
                 default:
-                    return new LoginResult { SignInStatus = signInStatus, Errors = new[] { "login faulire!" } }; // TODO: errors
+                    break;
+
             }
+            return new LoginResult { SignInStatus = signInStatus, Errors = errors.ToArray() }; 
         }
 
         [HttpPost]

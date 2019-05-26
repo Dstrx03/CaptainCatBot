@@ -1,5 +1,5 @@
 <section class="mat-typography">
-  <mat-sidenav-container>
+  <mat-sidenav-container class="app-container">
     <mat-sidenav role="navigation" #sidenav>
       <app-sidenav-list (sidenavClose)="sidenav.close()"></app-sidenav-list>
     </mat-sidenav>
@@ -8,6 +8,7 @@
       <main>
         <router-outlet></router-outlet>
       </main>
+      <app-footer></app-footer>
     </mat-sidenav-content>
   </mat-sidenav-container>
 </section>
