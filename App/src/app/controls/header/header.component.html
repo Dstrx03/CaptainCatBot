@@ -7,8 +7,7 @@
   </div>
   <div class="d-none d-md-block">
       <button mat-button routerLink="">
-        <mat-icon fontSet="fas" fontIcon="fa-paw"></mat-icon>
-        <span><strong>{{title}}</strong></span>
+        <strong>{{title}}</strong>
       </button>
       <button mat-button routerLink="Dashboard" *ngIf="authInfo.IsAuthenticated">Dashboard</button>
   </div>

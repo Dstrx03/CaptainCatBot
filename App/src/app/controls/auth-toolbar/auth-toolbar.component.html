@@ -1,6 +1,6 @@
 <button mat-stroked-button color="primary" routerLink="Login" *ngIf="!authInfo.IsAuthenticated">
   <mat-icon fontSet="fas" fontIcon="fa-user-circle"></mat-icon>
-  <span>Login</span>
+  <span>Log in</span>
 </button>
 <button mat-icon-button [matMenuTriggerFor]="menu" *ngIf="authInfo.IsAuthenticated">
   <mat-icon fontSet="fas" fontIcon="fa-user-circle"></mat-icon>
@@ -12,7 +12,7 @@
       <div class="col buttons-full-width">
         <button mat-stroked-button color="warn" (click)='logOff()'>
           <mat-icon fontSet="fas" fontIcon="fa-sign-out-alt"></mat-icon>
-          <span>Logout</span>
+          <span>Log out</span>
         </button>
       </div>
     </div>

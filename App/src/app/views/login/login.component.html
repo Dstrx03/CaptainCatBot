@@ -4,14 +4,11 @@
       <div class="col-lg-3 col-md-1"></div>
       <div class="col">
           <mat-card>
+            <img mat-card-image src="https://source.unsplash.com/580x260/?pattern" 
+              (load)="imgLoaded = true" [ngClass]="{'login-image': true, 'hide': !imgLoaded, 'fade-in': imgLoaded}">
             <mat-card-content>
               <form novalidate autocomplete="off">
                 <div class="container form-fields-full-width">
-                  <div class="row">
-                    <div class="col text-center">
-                        <h1>Login</h1>
-                    </div>
-                  </div>
                   <div class="row">
                     <div class="col">
                       <mat-form-field appearance="outline">
@@ -47,7 +44,7 @@
             </form>
           </mat-card-content>
           <mat-card-actions class="text-right">
-            <mat-spinner-button #loginBtn (btnClick)="login()" [options]="{ active: false, text: 'LOGIN', spinnerSize: 19, flat: true,
+            <mat-spinner-button #loginBtn (btnClick)="login()" [options]="{ active: false, text: 'Log in', spinnerSize: 19, flat: true,
               buttonColor: 'primary', spinnerColor: 'accent', disabled: formControlHelper.isError(), mode: 'indeterminate'}" 
               matTooltip="Please provide email and password to continue." [matTooltipDisabled]="!formControlHelper.isError()"></mat-spinner-button>
           </mat-card-actions>

@@ -15,13 +15,15 @@ export class LoginComponent implements OnInit {
 
   @ViewChild('loginBtn') loginBtn;
 
+  imgLoaded = false;
+  passwordHide = true;
+
   emailFormControl = new FormControl('', [
     Validators.required
   ]);
   passwordFormControl = new FormControl('', [
     Validators.required
   ]);
-  passwordHide = true;
   formControlHelper = new FormControlHelper([this.emailFormControl, this.passwordFormControl]);
 
   loginViewModel: LoginViewModel = new LoginViewModel();
@@ -46,6 +48,10 @@ export class LoginComponent implements OnInit {
             break;
         }
       });
+  }
+
+  test(){
+    console.log('img loaded');
   }
 
   constructor(
