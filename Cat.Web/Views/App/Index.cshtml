@@ -1,4 +1,5 @@
-﻿@using Cat.Web.Infrastructure.Platform
+﻿@using Cat.Web.Infrastructure.Grids
+@using Cat.Web.Infrastructure.Platform
 
 @{
     Layout = null;
@@ -8,7 +9,9 @@
 <html>
     <head>
         <meta name="viewport" content="width=device-width" />
+        <meta name="appTitle" content="@AppSettings.Instance.AppTitle" />
         <meta name="baseUrl" content="@BaseUrlProvider.HttpBaseUrl" />
+        <meta name="gridSchemesJson" content="@Grids.GetSchemesJson()" />
         <title>App</title>
         @Styles.Render("~/Content/Styles")
     </head>

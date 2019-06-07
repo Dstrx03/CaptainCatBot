@@ -6,11 +6,13 @@ import { CanActivateAuthGuard } from './guards/can-activate-auth-guard';
 import { HomeComponent } from '../../views/home/home.component';
 import { LoginComponent } from '../../views/login/login.component';
 import { DashboardComponent } from '../../views/dashboard/dashboard.component';
+import { UsersComponent } from '../../views/users/users.component';
 
 const routes: Routes = [
   { path: '', component: HomeComponent },
   { path: 'Login', component: LoginComponent },
-  { path: 'Dashboard', component: DashboardComponent, canActivate: [CanActivateAuthGuard] }
+  { path: 'Dashboard', component: DashboardComponent, canActivate: [CanActivateAuthGuard] },
+  { path: 'Users', component: UsersComponent, canActivate: [CanActivateAuthGuard] }
 ];
 
 @NgModule({

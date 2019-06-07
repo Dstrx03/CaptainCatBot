@@ -4,11 +4,16 @@
       <div class="col-lg-3 col-md-1"></div>
       <div class="col">
           <mat-card>
-            <img mat-card-image src="https://source.unsplash.com/580x260/?pattern" 
+            <img mat-card-image src="https://source.unsplash.com/580x260/?pattern,white" 
               (load)="imgLoaded = true" [ngClass]="{'login-image': true, 'hide': !imgLoaded, 'fade-in': imgLoaded}">
             <mat-card-content>
               <form novalidate autocomplete="off">
                 <div class="container form-fields-full-width">
+                  <div class="row">
+                    <div class="col text-right">
+                      <small>Log in to <span class="primary-color">Cat.App</span></small>
+                    </div>
+                  </div>
                   <div class="row">
                     <div class="col">
                       <mat-form-field appearance="outline">

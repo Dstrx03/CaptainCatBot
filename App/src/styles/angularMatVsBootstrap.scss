@@ -40,3 +40,14 @@ button:focus {
     padding-top: 3px;
     padding-bottom: 3px;
 }
+
+.mat-dialog-actions .mat-button, 
+.mat-dialog-actions .mat-fab, 
+.mat-dialog-actions .mat-flat-button, 
+.mat-dialog-actions .mat-icon-button, 
+.mat-dialog-actions .mat-mini-fab, 
+.mat-dialog-actions .mat-raised-button, 
+.mat-dialog-actions .mat-stroked-button {
+    margin-left: 3px;
+    margin-right: 3px;
+}

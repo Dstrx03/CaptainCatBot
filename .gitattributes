@@ -4,6 +4,16 @@
 # Custom for Visual Studio
 *.cs     diff=csharp
 
+# JS and TS files must always use LF for tools to work
+*.js eol=lf
+*.ts eol=lf
+*.scss eol=lf
+
+*.html            text diff=html
+
+# API guardian patch must always use LF for tests to work
+*.patch eol=lf
+
 # Standard to msysgit
 *.doc	 diff=astextplain
 *.DOC	 diff=astextplain

@@ -15,6 +15,10 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatCardModule } from '@angular/material/card';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatTableModule } from '@angular/material/table';
+import { MatSortModule } from '@angular/material/sort';
+import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatDialogModule } from '@angular/material/dialog';
 
 import { AppRoutingModule } from './infrastructure/navigation/app-routing.module';
 import { AppLoadModule } from './infrastructure/app-load/app-load.module';
@@ -30,6 +34,10 @@ import { HeaderComponent } from './controls/header/header.component';
 import { SidenavListComponent } from './controls/sidenav-list/sidenav-list.component';
 import { SpacerComponent } from './controls/spacer/spacer.component';
 import { FooterComponent } from './controls/footer/footer.component';
+import { UsersComponent } from './views/users/users.component';
+import { AppGridComponent } from './controls/app-grid/app-grid.component';
+import { ConfirmDialogComponent } from './controls/dialogs/confirm-dialog/confirm-dialog.component';
+import { EditUserDialogComponent } from './controls/dialogs/edit-user-dialog/edit-user-dialog.component';
 
 @NgModule({
   declarations: [
@@ -41,7 +49,14 @@ import { FooterComponent } from './controls/footer/footer.component';
     HeaderComponent,
     SidenavListComponent,
     SpacerComponent,
-    FooterComponent
+    FooterComponent,
+    UsersComponent,
+    AppGridComponent,
+    ConfirmDialogComponent,
+    EditUserDialogComponent
+  ],
+  entryComponents: [
+    ConfirmDialogComponent
   ],
   imports: [
     BrowserModule,
@@ -61,6 +76,10 @@ import { FooterComponent } from './controls/footer/footer.component';
     MatCardModule,
     MatSnackBarModule,
     MatTooltipModule,
+    MatTableModule,
+    MatSortModule,
+    MatPaginatorModule,
+    MatDialogModule,
     AppRoutingModule,
     AppLoadModule,
     MatProgressButtonsModule.forRoot()

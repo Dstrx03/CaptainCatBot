@@ -1,0 +1,11 @@
+<h1 mat-dialog-title>{{data.header}}</h1>
+<div mat-dialog-content>
+  <p>{{data.content}}</p>
+</div>
+<div mat-dialog-actions>
+  <button mat-flat-button [mat-dialog-close]="true" color="primary" *ngIf="!data.useAgent">Ok</button>
+  <mat-spinner-button #okSpinnerBtn *ngIf="data.useAgent" (btnClick)="applyAgent()" [options]="{ active: false, text: 'Ok', spinnerSize: 19, flat: true,
+    buttonColor: 'primary', spinnerColor: 'accent', disabled: false, mode: 'indeterminate'}">
+  </mat-spinner-button>
+  <button mat-button (click)="dialogRef.close()" [disabled]="dialogRef.disableClose">Cancel</button>
+</div>
