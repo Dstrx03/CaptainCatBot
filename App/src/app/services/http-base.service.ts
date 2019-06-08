@@ -15,7 +15,7 @@ export abstract class HttpBaseService {
   protected apiUrl: string;
   protected abstract controllerName(): string;
 
-  constructor(protected global: GlobalService, protected http: HttpClient/*, private controllerName: string*/) {
+  constructor(protected global: GlobalService, protected http: HttpClient) {
     this.apiUrl = `${global.baseUrl}api/v1/${this.controllerName()}`;
   }
 
