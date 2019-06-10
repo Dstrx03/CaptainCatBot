@@ -244,6 +244,7 @@
     <Compile Include="Infrastructure\Platform\AppSettings.cs" />
     <Compile Include="Infrastructure\Platform\BaseUrlProvider.cs" />
     <Compile Include="Infrastructure\Platform\IAppSettings.cs" />
+    <Compile Include="Infrastructure\Platform\WebApi\CatProcedureResult.cs" />
     <Compile Include="Infrastructure\Schedule\Hangfire\HangfireAuthorizationFilter.cs" />
     <Compile Include="Infrastructure\Schedule\Tasks\ScheduledTask.cs" />
     <Compile Include="Infrastructure\Schedule\ScheduledTasksRegistry.cs" />

@@ -29,7 +29,7 @@ export class ConfirmDialogComponent implements OnInit {
 
 export class ConfirmDialogData {
   header: string;
-  content: string;
+  contentHtml: string;
   useAgent: boolean;
   agent: Observable<any>;
 }

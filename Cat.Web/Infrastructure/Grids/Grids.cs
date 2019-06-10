@@ -22,20 +22,16 @@ namespace Cat.Web.Infrastructure.Grids
 
             scheme.Columns.Add(new GridSchemeColumn
             {
-                ColumnId = "Id",
-                Visible = false
-            });
-            scheme.Columns.Add(new GridSchemeColumn
-            {
-                ColumnId = "Name", 
+                ColumnId = "UserName", 
                 Caption = "User Name",
                 Sortable = true,
                 Searchable = true
             });
             scheme.Columns.Add(new GridSchemeColumn
             {
-                ColumnId = "Roles",
-                Caption = "Roles",
+                ColumnId = "Email",
+                Caption = "Email",
+                Sortable = true,
                 Searchable = true
             });
             scheme.Columns.Add(new GridSchemeColumn

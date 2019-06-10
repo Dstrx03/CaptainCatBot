@@ -1,15 +1,23 @@
 import { FormControl } from '@angular/forms';
-import { Observable, of, BehaviorSubject } from 'rxjs';
 
 export class FormControlHelper {
 
     private formCollection: FormControl[];
     private errorMsgsCollection: {error: string, msg: string}[];
 
-    constructor(forms?: FormControl[]) {
+    constructor(forms?: FormControl[], addErrorMsgs?: {error: string, msg: string}[]) {
         if (forms !== undefined) this.formCollection = forms;
         else this.formCollection = [];
         this.errorMsgsCollection = this.defaultErrorMessages();
+        if (addErrorMsgs != undefined) this.addErrorMessages(addErrorMsgs);
+    }
+
+    disable() {
+        this.formCollection.forEach(x => x.disable());
+    }
+
+    enable() {
+        this.formCollection.forEach(x => x.enable());
     }
 
     isError(): boolean {
@@ -23,8 +31,12 @@ export class FormControlHelper {
             this.errorMsgsCollection.find(err => err.error === 'default').msg;
     }
 
-    setErrorMessages(errors: {error: string, msg: string}[]){
+    setErrorMessages(errors: {error: string, msg: string}[]) {
         this.errorMsgsCollection = errors;
+    }
+
+    addErrorMessages(errors: {error: string, msg: string}[]) {
+        errors.forEach(x => this.setErrorMessage(x.error, x.msg));
     }
 
     setErrorMessage(error: string, msg: string) {
@@ -36,8 +48,8 @@ export class FormControlHelper {
     private defaultErrorMessages() {
         return [
             {error: 'default', msg: 'This field is invalid.'},
-            {error: 'required', msg: 'This field is required.'},
-            {error: 'email', msg: 'Email is in wrong format.'}
+            {error: 'required', msg: 'This field is <strong>required</strong>.'},
+            {error: 'email', msg: 'Email format is incorrect.'}
         ];
     }
 

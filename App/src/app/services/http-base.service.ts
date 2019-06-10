@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { GlobalService } from '../infrastructure/global.service';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
+import { CatProcedureResult } from '../infrastructure/webApi/catProcedureResult';
 
 @Injectable({
   providedIn: 'root'
@@ -37,5 +38,17 @@ export abstract class HttpBaseService {
       // Let the app keep running by returning an empty result.
       return of(result as T);
     };
+  }
+
+  /**
+   * Handle CatProcedureResult operation that failed.
+   * Initialize CatProcedureResult object.
+   * Let the app continue.
+   * @param operation - name of the operation that failed
+   * @param result - optional value to return as the observable result
+   */
+  protected handleErrorProcedureResult(errorMsgs: string[] = ['System error occured!'], operation = 'operation', result?: CatProcedureResult) {
+    if (result === undefined || result === null) result = {IsSuccess: false, ErrorMsgs: errorMsgs} as CatProcedureResult;
+    return this.handleError(operation, result);
   }
 }

@@ -1,3 +1,64 @@
-<p>
-  edit-user-dialog works!
-</p>
+<mat-progress-bar mode="indeterminate" [style.visibility]="loadingUser ? 'visible' : 'hidden'"></mat-progress-bar>
+<h1 mat-dialog-title>{{data.addMode ? 'Add User' : 'Edit User'}}</h1>
+<div mat-dialog-content>
+  <div class="container form-fields-full-width">
+    <div class="row">
+      <div class="col">
+        <mat-form-field>
+          <mat-label>User Name</mat-label>
+          <input matInput [(ngModel)]="user.UserName" [formControl]="usernameFormControl" required>
+          <mat-error *ngIf="usernameFormControl.invalid">
+            <span [innerHTML]="formControlHelper.errorMessage(usernameFormControl)"></span>
+          </mat-error>
+        </mat-form-field>
+      </div>
+      <div class="col">
+        <mat-form-field>
+          <mat-label>Email</mat-label>
+          <input matInput [(ngModel)]="user.Email" [formControl]="emailFormControl" required>
+          <mat-error *ngIf="emailFormControl.invalid">
+            <span [innerHTML]="formControlHelper.errorMessage(emailFormControl)"></span>
+          </mat-error>
+        </mat-form-field>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col">
+        <mat-form-field>
+          <mat-label>Password</mat-label>
+          <input matInput [(ngModel)]="user.Password" [formControl]="passwordFormControl" [required]="data.addMode" 
+            [type]="passwordHide ? 'password' : 'text'" (ngModelChange)="confirmPassword = undefined">
+          <mat-icon matSuffix fontSet="far" [fontIcon]="passwordHide ? 'fa-eye-slash' : 'fa-eye'" 
+            class="text-center" (mousedown)="passwordHide = false" (mouseup)="passwordHide = true" 
+            (mouseleave)="passwordHide = true">
+          </mat-icon>
+          <mat-error *ngIf="passwordFormControl.invalid">
+            <span [innerHTML]="formControlHelper.errorMessage(passwordFormControl)"></span>
+          </mat-error>
+        </mat-form-field>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col">
+        <mat-form-field>
+          <mat-label>Confirm Password</mat-label>
+          <input matInput [(ngModel)]="confirmPassword" [formControl]="confirmPasswordFormControl" 
+            [required]="confirmPasswordRequired()" [type]="passwordHide ? 'password' : 'text'">
+          <mat-icon matSuffix fontSet="far" [fontIcon]="passwordHide ? 'fa-eye-slash' : 'fa-eye'" 
+            class="text-center" (mousedown)="passwordHide = false" (mouseup)="passwordHide = true" 
+            (mouseleave)="passwordHide = true">
+          </mat-icon>
+          <mat-error *ngIf="confirmPasswordFormControl.invalid">
+            <span [innerHTML]="formControlHelper.errorMessage(confirmPasswordFormControl)"></span>
+          </mat-error>
+        </mat-form-field>
+      </div>
+    </div>
+  </div>
+</div>
+<div mat-dialog-actions>
+  <mat-spinner-button #applySpinnerBtn (btnClick)="apply()" [options]="{ active: false, text: 'Apply', spinnerSize: 19, flat: true,
+    buttonColor: 'primary', spinnerColor: 'accent', disabled: formControlHelper.isError() || loadingUser, mode: 'indeterminate'}">
+  </mat-spinner-button>
+  <button mat-button (click)="dialogRef.close()" [disabled]="dialogRef.disableClose">Cancel</button>
+</div>

@@ -1,5 +1,6 @@
 export interface AppUserModel {
     Id: string;
-    Name: string;
-    Roles: string;
+    UserName: string;
+    Email: string;
+    Password: string;
 }

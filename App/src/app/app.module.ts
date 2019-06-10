@@ -19,6 +19,7 @@ import { MatTableModule } from '@angular/material/table';
 import { MatSortModule } from '@angular/material/sort';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatDialogModule } from '@angular/material/dialog';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 
 import { AppRoutingModule } from './infrastructure/navigation/app-routing.module';
 import { AppLoadModule } from './infrastructure/app-load/app-load.module';
@@ -56,7 +57,8 @@ import { EditUserDialogComponent } from './controls/dialogs/edit-user-dialog/edi
     EditUserDialogComponent
   ],
   entryComponents: [
-    ConfirmDialogComponent
+    ConfirmDialogComponent,
+    EditUserDialogComponent
   ],
   imports: [
     BrowserModule,
@@ -80,6 +82,7 @@ import { EditUserDialogComponent } from './controls/dialogs/edit-user-dialog/edi
     MatSortModule,
     MatPaginatorModule,
     MatDialogModule,
+    MatProgressBarModule,
     AppRoutingModule,
     AppLoadModule,
     MatProgressButtonsModule.forRoot()
