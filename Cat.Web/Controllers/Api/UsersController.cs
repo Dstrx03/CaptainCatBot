@@ -1,73 +1,96 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
+using System.Net.Http;
+using System.Threading.Tasks;
 using System.Web.Http;
+using Cat.Domain.Entities.Identity;
+using Cat.Web.Infrastructure.Platform;
 using Cat.Web.Infrastructure.Platform.WebApi;
 using Cat.Web.Models.Users;
+using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.EntityFramework;
+using Microsoft.AspNet.Identity.Owin;
+using Microsoft.Owin.Security;
 
 namespace Cat.Web.Controllers.Api
 {
     [Authorize]
     public class UsersController : ApiController
     {
-
-        private static List<AppUserViewModel> _usersFake = new List<AppUserViewModel>
-        {
-            new AppUserViewModel{Id = "1", UserName = "admin", Email = "qqqqq1@mail.com"},
-            new AppUserViewModel{Id = "2", UserName = "user1", Email = "qqqqq2@mail.com"},
-        };
+        private ApplicationUserManager _userManager;
 
         public UsersController()
         {
         }
 
-        [HttpGet]
-        public List<AppUserViewModel> GetUsersList()
+        public ApplicationUserManager UserManager
         {
-            return _usersFake;
+            get
+            {
+                return _userManager ?? Request.GetOwinContext().GetUserManager<ApplicationUserManager>();
+            }
+            private set
+            {
+                _userManager = value;
+            }
+        }
+
+        private IAuthenticationManager AuthenticationManager
+        {
+            get
+            {
+                return Request.GetOwinContext().Authentication;
+            }
         }
 
         [HttpGet]
-        public AppUserViewModel GetUser(string id)
+        public async Task<List<AppUserViewModel>> GetUsersList()
         {
-            return _usersFake.FirstOrDefault(x => x.Id == id);
+            return (from user in await UserManager.Users.ToListAsync() select new AppUserViewModel(user)).ToList();
+        }
+
+        [HttpGet]
+        public async Task<AppUserViewModel> GetUser(string id)
+        {
+            return new AppUserViewModel(await UserManager.FindByIdAsync(id));
         }
 
         [HttpPost]
-        public CatProcedureResult AddUser([FromBody] AppUserViewModel userModel)
+        public async Task<CatProcedureResult> CreateUser([FromBody] AppUserViewModel userModel)
         {
-            //todo: rename to RegisterUser?
-            if (_usersFake.Select(x => x.UserName).Contains(userModel.UserName))
-                return CatProcedureResult.Error(new[] {"User Name " + userModel.UserName + " is alredy taken by another user..."});
-            if (_usersFake.Select(x => x.Email).Contains(userModel.Email)) 
-                return CatProcedureResult.Error(new[] {"Email " + userModel.Email + " is alredy taken by another user..."});
-            userModel.Id = (_usersFake.Select(x => Convert.ToInt32(x.Id)).Max() + 1).ToString();
-            userModel.Password = null;
-            _usersFake.Add(userModel);
-            return CatProcedureResult.Success();
+            var user = new ApplicationUser { UserName = userModel.UserName, Email = userModel.Email };
+            var result = await UserManager.CreateAsync(user, userModel.Password);
+            return !result.Succeeded ? CatProcedureResult.Error(result.Errors.ToArray()) : CatProcedureResult.Success();
         }
 
         [HttpPut]
-        public CatProcedureResult UpdateUser([FromBody] AppUserViewModel userModel)
+        public async Task<CatProcedureResult> UpdateUser([FromBody] AppUserViewModel userModel)
         {
-            //TODO: messages!
-            var targetUser = _usersFake.FirstOrDefault(x => x.Id == userModel.Id);
-            if (_usersFake.Where(x => x.Id != userModel.Id).Select(x => x.UserName).Contains(userModel.UserName))
-                return CatProcedureResult.Error(new[] {"User Name " + userModel.UserName + " is alredy taken by another user..."});
-            if (_usersFake.Where(x => x.Id != userModel.Id).Select(x => x.Email).Contains(userModel.Email))
-                return CatProcedureResult.Error(new[] {"Email " + userModel.Email + " is alredy taken by another user..."}); 
-            _usersFake.Remove(targetUser);
-            userModel.Password = null;
-            _usersFake.Add(userModel);
-            return CatProcedureResult.Success();
+            var currentUser = await CurrentUserProvider.CurrentUserAsync(Request);
+            var updateAuthInfo = currentUser.Id == userModel.Id;
+
+            var user = await UserManager.FindByIdAsync(userModel.Id);
+
+            user.UserName = userModel.UserName;
+            user.Email = userModel.Email;
+            
+            var updateUserRes = await UserManager.UpdateAsync(user);
+            if (!updateUserRes.Succeeded) return CatProcedureResult.Error(updateUserRes.Errors.ToArray());
+
+            if (String.IsNullOrEmpty(userModel.Password)) return CatProcedureResult.Success(updateAuthInfo);
+            var changePasswordRes = await UserManager.ChangePasswordAsync(userModel.Id, userModel.OldPassword, userModel.Password);
+            return !changePasswordRes.Succeeded ? CatProcedureResult.Error(changePasswordRes.Errors.ToArray(), updateAuthInfo) : CatProcedureResult.Success(updateAuthInfo);
         }
 
         [HttpDelete]
-        public CatProcedureResult RemoveUser(string id)
+        public async Task<CatProcedureResult> RemoveUser(string id)
         {
-            if (_usersFake.Count <= 1) return CatProcedureResult.Error(new[] { "Cannot remove the last user!" });
-            _usersFake.Remove(_usersFake.SingleOrDefault(x => x.Id == id));
-            return CatProcedureResult.Success();
+            var usersLeft = await UserManager.Users.ToListAsync();
+            if (usersLeft.Count <= 1) return CatProcedureResult.Error(new []{"Cannot remove the last user!"});
+            var result = await UserManager.DeleteAsync(await UserManager.FindByIdAsync(id));
+            return !result.Succeeded ? CatProcedureResult.Error(result.Errors.ToArray()) : CatProcedureResult.Success();
         }
     }
 }

@@ -17,10 +17,10 @@
                   <div class="row">
                     <div class="col">
                       <mat-form-field appearance="outline">
-                        <mat-label>Email</mat-label>
-                        <input matInput [(ngModel)]="loginViewModel.Email" [formControl]="emailFormControl">
-                        <mat-error *ngIf="emailFormControl.invalid">
-                          <span [innerHTML]="formControlHelper.errorMessage(emailFormControl)"></span>
+                        <mat-label>User Name</mat-label>
+                        <input matInput [(ngModel)]="loginViewModel.UserName" [formControl]="usernameFormControl">
+                        <mat-error *ngIf="usernameFormControl.invalid">
+                          <span [innerHTML]="formControlHelper.errorMessage(usernameFormControl)"></span>
                         </mat-error>
                       </mat-form-field>
                     </div>

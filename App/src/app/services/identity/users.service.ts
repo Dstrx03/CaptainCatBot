@@ -31,10 +31,10 @@ export class UsersService extends HttpBaseService {
     );
   }
 
-  addUser(user: AppUserModel, errorMsgs?: string[]): Observable<any> {
-    return this.http.post<any>(this.apiUrl + 'AddUser', user, this.httpOptions).pipe(
+  createUser(user: AppUserModel, errorMsgs?: string[]): Observable<any> {
+    return this.http.post<any>(this.apiUrl + 'CreateUser', user, this.httpOptions).pipe(
       tap(_ => {}),
-      catchError(this.handleErrorProcedureResult(errorMsgs, 'addUser'))
+      catchError(this.handleErrorProcedureResult(errorMsgs, 'createUser'))
     );
   }
 

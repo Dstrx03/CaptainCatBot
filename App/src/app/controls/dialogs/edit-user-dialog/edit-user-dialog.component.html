@@ -22,6 +22,13 @@
         </mat-form-field>
       </div>
     </div>
+    <div class="row" *ngIf="!data.addMode">
+      <div class="col">
+        <p>
+          <small>To change the password enter new password in <span class="accent-color">'Password'</span>, <span class="accent-color">'Confirm Password'</span> fields and enter the old password in <span class="accent-color">'Old Password'</span> field. Otherwise leave these fields blank.</small>
+        </p>
+      </div>
+    </div>
     <div class="row">
       <div class="col">
         <mat-form-field>
@@ -50,6 +57,22 @@
           </mat-icon>
           <mat-error *ngIf="confirmPasswordFormControl.invalid">
             <span [innerHTML]="formControlHelper.errorMessage(confirmPasswordFormControl)"></span>
+          </mat-error>
+        </mat-form-field>
+      </div>
+    </div>
+    <div class="row" *ngIf="!data.addMode">
+      <div class="col">
+        <mat-form-field>
+          <mat-label>Old Password</mat-label>
+          <input matInput [(ngModel)]="user.OldPassword" [formControl]="oldPasswordFormControl"
+            [required]="confirmPasswordRequired()" [type]="oldPasswordHide ? 'password' : 'text'"> 
+          <mat-icon matSuffix fontSet="far" [fontIcon]="oldPasswordHide ? 'fa-eye-slash' : 'fa-eye'" 
+            class="text-center" (mousedown)="oldPasswordHide = false" (mouseup)="oldPasswordHide = true" 
+            (mouseleave)="oldPasswordHide = true">
+          </mat-icon>
+          <mat-error *ngIf="oldPasswordFormControl.invalid">
+            <span [innerHTML]="formControlHelper.errorMessage(oldPasswordFormControl)"></span>
           </mat-error>
         </mat-form-field>
       </div>

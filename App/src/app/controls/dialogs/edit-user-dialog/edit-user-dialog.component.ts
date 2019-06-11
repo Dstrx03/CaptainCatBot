@@ -19,6 +19,7 @@ export class EditUserDialogComponent implements OnInit {
   loadingUser = false;
 
   passwordHide = true;
+  oldPasswordHide = true;
   confirmPassword = undefined;
 
   confirmPasswordRequired(): boolean {
@@ -46,11 +47,13 @@ export class EditUserDialogComponent implements OnInit {
       return (control.value !== undefined && this.user !== undefined && control.value != this.user.Password) ? { confirmPassword: true } : null;
     }
   ]);
+  oldPasswordFormControl = new FormControl('');
   formControlHelper = new FormControlHelper([
     this.usernameFormControl, 
     this.emailFormControl,
     this.passwordFormControl,
-    this.confirmPasswordFormControl
+    this.confirmPasswordFormControl,
+    this.oldPasswordFormControl
   ], 
   [
     {
@@ -63,7 +66,7 @@ export class EditUserDialogComponent implements OnInit {
     },
     {
       error: 'confirmPassword',
-      msg: 'Please ensure that you typed right password, the confirmation value differ from Password value.'
+      msg: 'The confirmation value differ from Password value!'
     }
   ]);
 

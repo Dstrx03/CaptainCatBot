@@ -243,6 +243,7 @@
     <Compile Include="Infrastructure\Grids\GridScheme.cs" />
     <Compile Include="Infrastructure\Platform\AppSettings.cs" />
     <Compile Include="Infrastructure\Platform\BaseUrlProvider.cs" />
+    <Compile Include="Infrastructure\Platform\CurrentUserProvider.cs" />
     <Compile Include="Infrastructure\Platform\IAppSettings.cs" />
     <Compile Include="Infrastructure\Platform\WebApi\CatProcedureResult.cs" />
     <Compile Include="Infrastructure\Schedule\Hangfire\HangfireAuthorizationFilter.cs" />

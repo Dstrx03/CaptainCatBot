@@ -18,13 +18,13 @@ export class LoginComponent implements OnInit {
   imgLoaded = false;
   passwordHide = true;
 
-  emailFormControl = new FormControl('', [
+  usernameFormControl = new FormControl('', [
     Validators.required
   ]);
   passwordFormControl = new FormControl('', [
     Validators.required
   ]);
-  formControlHelper = new FormControlHelper([this.emailFormControl, this.passwordFormControl]);
+  formControlHelper = new FormControlHelper([this.usernameFormControl, this.passwordFormControl]);
 
   loginViewModel: LoginViewModel = new LoginViewModel();
   loginFailSnackbar: any;

@@ -5,10 +5,12 @@ import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
 import { AppUserModel } from '../../models/appUserModel';
 import { CatProcedureResult } from '../../infrastructure/webApi/catProcedureResult';
 import { UsersService } from '../../services/identity/users.service';
+import { IdentityService } from '../../services/identity/identity.service';
 import { MatSnackBar } from '@angular/material';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmDialogComponent } from 'src/app/controls/dialogs/confirm-dialog/confirm-dialog.component';
 import { EditUserDialogComponent } from '../../controls/dialogs/edit-user-dialog/edit-user-dialog.component';
+import { AuthInfo } from 'src/app/models/authInfo';
 
 @Component({
   selector: 'app-users',
@@ -25,7 +27,12 @@ export class UsersComponent implements OnInit {
   private userTerms = new Subject<AppUserModel[]>();
   private searchTerms = new Subject<string>();
 
-  constructor(private usersSvc: UsersService, private snackBar: MatSnackBar, public dialog: MatDialog) { }
+  constructor(
+    private usersSvc: UsersService, 
+    private snackBar: MatSnackBar,
+    private identitySvc: IdentityService, 
+    public dialog: MatDialog
+    ) { }
 
   ngOnInit() {
     this.users$ = this.userTerms.pipe(
@@ -39,15 +46,20 @@ export class UsersComponent implements OnInit {
     this.updateGrid().subscribe();
   }
 
-  private updateGrid(callHttp: boolean = true, resetControls: boolean = true): Observable<any> {
+  private updateGrid(callHttp: boolean = true, resetControls: boolean = true, updateAuthInfo: boolean = false): Observable<any> {
     const resetControlsFn = () => {
       this.searchBox.nativeElement.value = '';
       this.searchTerms.next('');
     };
+    let gridUsers: AppUserModel[];
     return callHttp ?
       this.usersSvc.getUsersList().pipe(
-        tap((users: AppUserModel[]) => {
-          this.userTerms.next(users);
+        mergeMap((users: AppUserModel[]) => {
+          gridUsers = users;
+          return updateAuthInfo ? this.identitySvc.getAuthInfo() : of(new AuthInfo());
+        }),
+        tap(_ => {
+          this.userTerms.next(gridUsers);
           if (resetControls) resetControlsFn();
         })
       ) :
@@ -63,20 +75,20 @@ export class UsersComponent implements OnInit {
   }
 
   addUser() {
-    let addRes: CatProcedureResult;
+    let createRes: CatProcedureResult;
     this.dialog.open(EditUserDialogComponent, {
       autoFocus: false,
       minWidth: '63vw',
       data: {
         addMode: true,
         agentFn: (user: AppUserModel) => {
-          return this.usersSvc.addUser(user, [`System error occured, could not add user ${user.UserName} to the system!`]).pipe(
+          return this.usersSvc.createUser(user, [`System error occured, could not add user ${user.UserName} to the system!`]).pipe(
             mergeMap((result) => {
-              addRes = result;
-              return this.updateGrid(addRes.IsSuccess, addRes.IsSuccess);
+              createRes = result;
+              return this.updateGrid(createRes.IsSuccess, createRes.IsSuccess);
             }),
             tap(_ => {
-              const snackMsg = addRes.IsSuccess ? `User ${user.UserName} added to the system successfully.` : addRes.ErrorMsgs.join(' ');
+              const snackMsg = createRes.IsSuccess ? `User ${user.UserName} added to the system successfully.` : createRes.ErrorMsgs.join(' ');
               this.snackBar.open(snackMsg, 'Ok', { duration: 5000 });
             })
           );
@@ -97,7 +109,7 @@ export class UsersComponent implements OnInit {
           return this.usersSvc.updateUser(user, [`System error occured, could not update user!`]).pipe(
             mergeMap((result) => {
               editRes = result;
-              return this.updateGrid(editRes.IsSuccess, editRes.IsSuccess);
+              return this.updateGrid(editRes.IsSuccess, editRes.IsSuccess, editRes.Data);
             }),
             tap(_ => {
               const snackMsg = editRes.IsSuccess ? `User ${user.UserName} updated successfully.` : editRes.ErrorMsgs.join(' ');

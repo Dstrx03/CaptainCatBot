@@ -1,10 +1,10 @@
 export class LoginViewModel {
-    Email: string;
+    UserName: string;
     Password: string;
     RememberMe: boolean;
 
     constructor() {
-        this.Email = '';
+        this.UserName = '';
         this.Password = '';
         this.RememberMe = false;
     }

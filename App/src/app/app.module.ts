@@ -20,6 +20,7 @@ import { MatSortModule } from '@angular/material/sort';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatDividerModule } from '@angular/material/divider';
 
 import { AppRoutingModule } from './infrastructure/navigation/app-routing.module';
 import { AppLoadModule } from './infrastructure/app-load/app-load.module';
@@ -83,6 +84,7 @@ import { EditUserDialogComponent } from './controls/dialogs/edit-user-dialog/edi
     MatPaginatorModule,
     MatDialogModule,
     MatProgressBarModule,
+    MatDividerModule,
     AppRoutingModule,
     AppLoadModule,
     MatProgressButtonsModule.forRoot()

@@ -3,4 +3,5 @@ export interface AppUserModel {
     UserName: string;
     Email: string;
     Password: string;
+    OldPassword: string;
 }
