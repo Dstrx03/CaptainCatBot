@@ -1,0 +1,14 @@
+<mat-sidenav-container>
+  <mat-sidenav mode="side" opened class="d-none d-md-block mat-sidenav-view-submenu">
+    <div class="container buttons-full-width">
+      <div class="row" *ngFor="let item of menuItems">           
+        <div class="col">
+          <button mat-button [routerLink]="item.Path" class="text-right">{{item.Caption}}</button>
+        </div>
+      </div>
+    </div>
+  </mat-sidenav>
+  <mat-sidenav-content>
+    <router-outlet></router-outlet>
+  </mat-sidenav-content>
+</mat-sidenav-container>

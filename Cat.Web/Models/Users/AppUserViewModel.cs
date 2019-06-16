@@ -1,4 +1,7 @@
 ﻿
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using Cat.Domain.Entities.Identity;
 
 namespace Cat.Web.Models.Users
@@ -7,13 +10,16 @@ namespace Cat.Web.Models.Users
     {
         public AppUserViewModel()
         {
+            Roles = new List<string>();
         }
 
-        public AppUserViewModel(ApplicationUser user)
+        public AppUserViewModel(ApplicationUser user, List<string> roles, List<string> rolesView) : this()
         {
             Id = user.Id;
             UserName = user.UserName;
             Email = user.Email;
+            Roles = roles;
+            RolesView = String.Join(", ", rolesView);
         }
 
         public string Id { get; set; }
@@ -25,5 +31,9 @@ namespace Cat.Web.Models.Users
         public string Password { get; set; }
 
         public string OldPassword { get; set; }
+
+        public List<string> Roles { get; set; }
+
+        public string RolesView { get; set; }
     }
 }

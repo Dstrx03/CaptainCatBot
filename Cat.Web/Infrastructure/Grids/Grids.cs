@@ -36,6 +36,11 @@ namespace Cat.Web.Infrastructure.Grids
             });
             scheme.Columns.Add(new GridSchemeColumn
             {
+                ColumnId = "RolesView",
+                Caption = "Roles",
+            });
+            scheme.Columns.Add(new GridSchemeColumn
+            {
                 ColumnId = "Actions", 
                 Caption = "", 
                 Type = CellType.Actions, 

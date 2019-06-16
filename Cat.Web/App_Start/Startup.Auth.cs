@@ -1,7 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using Cat.Domain;
 using Cat.Domain.Entities.Identity;
+using Cat.Web.Infrastructure.Platform;
+using Cat.Web.Infrastructure.Roles;
+using log4net;
 using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin;
 using Microsoft.Owin.Security.Cookies;
@@ -11,6 +17,8 @@ namespace Cat.Web
 {
     public partial class Startup
     {
+        private static readonly ILog _log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
         // For more information on configuring authentication, please visit http://go.microsoft.com/fwlink/?LinkId=301864
         public void ConfigureAuth(IAppBuilder app)
         {
@@ -18,6 +26,7 @@ namespace Cat.Web
             app.CreatePerOwinContext(() => new AppDbContext());
             app.CreatePerOwinContext<ApplicationUserManager>(ApplicationUserManager.Create);
             app.CreatePerOwinContext<ApplicationSignInManager>(ApplicationSignInManager.Create);
+            app.CreatePerOwinContext<ApplicationRolesManager>(ApplicationRolesManager.Create);
 
             // Enable the application to use a cookie to store information for the signed in user
             // and to use a cookie to temporarily store information about a user logging in with a third party login provider
@@ -33,7 +42,10 @@ namespace Cat.Web
                     // This is a security feature which is used when you change a password or add an external login to your account.  
                     OnValidateIdentity = SecurityStampValidator.OnValidateIdentity<ApplicationUserManager, ApplicationUser>(
                         validateInterval: TimeSpan.FromMinutes(30),
-                        regenerateIdentity: (manager, user) => user.GenerateUserIdentityAsync(manager))
+                        regenerateIdentity: (manager, user) => user.GenerateUserIdentityAsync(manager)),
+                    OnApplyRedirect = ctx => {
+                        // since all auth mechanics is being managed in Angular and ASP NET app used more like Web API app - no redirects to Login page from endpoint
+                    }
                 }
             });            
             app.UseExternalSignInCookie(DefaultAuthenticationTypes.ExternalCookie);
@@ -64,7 +76,36 @@ namespace Cat.Web
             //    ClientId = "",
             //    ClientSecret = ""
             //});
+
+            AppRolesRegistry.Register();
+            SeedAdminUser();
         }
 
+        private void SeedAdminUser()
+        {
+            using (var dbContext = new AppDbContext())
+            {
+                using (var userManager = new ApplicationUserManager(new UserStore<ApplicationUser>(dbContext)))
+                {
+                    var admins = new List<ApplicationUser>();
+                    foreach (var user in userManager.Users.ToList())
+                    {
+                        if (userManager.IsInRole(user.Id, AppRolesHelper.RoleSystemName(AppRole.Admin)))
+                            admins.Add(user);
+                    }
+                    if (admins.Count > 0) return;
+                    _log.Debug("Creating obligatory admin user...");
+                    var result = userManager.Create(new ApplicationUser { UserName = AppSettings.Instance.ObligatoryAdminName }, AppSettings.Instance.ObligatoryAdminPassword);
+                    if (!result.Succeeded)
+                    {
+                        _log.ErrorFormat("Error(s) occured while creating obligatory admin user: {0}", string.Join(", ", result.Errors));
+                        return;
+                    }
+                    var admin = userManager.FindByName(AppSettings.Instance.ObligatoryAdminName);
+                    userManager.AddToRole(admin.Id, AppRolesHelper.RoleSystemName(AppRole.Admin));
+                    _log.Debug("Obligatory admin user created successfully");
+                }
+            }
+        }
     }
 }

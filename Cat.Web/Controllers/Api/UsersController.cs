@@ -6,17 +6,19 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
 using Cat.Domain.Entities.Identity;
+using Cat.Web;
 using Cat.Web.Infrastructure.Platform;
 using Cat.Web.Infrastructure.Platform.WebApi;
+using Cat.Web.Infrastructure.Roles;
+using Cat.Web.Infrastructure.Roles.Attributes;
 using Cat.Web.Models.Users;
 using Microsoft.AspNet.Identity;
-using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.AspNet.Identity.Owin;
-using Microsoft.Owin.Security;
 
 namespace Cat.Web.Controllers.Api
 {
-    [Authorize]
+
+    [AppAuthorize(AppRole.Admin)]
     public class UsersController : ApiController
     {
         private ApplicationUserManager _userManager;
@@ -37,32 +39,39 @@ namespace Cat.Web.Controllers.Api
             }
         }
 
-        private IAuthenticationManager AuthenticationManager
-        {
-            get
-            {
-                return Request.GetOwinContext().Authentication;
-            }
-        }
-
         [HttpGet]
         public async Task<List<AppUserViewModel>> GetUsersList()
         {
-            return (from user in await UserManager.Users.ToListAsync() select new AppUserViewModel(user)).ToList();
+            var usersList = new List<AppUserViewModel>();
+            foreach(var user in await UserManager.Users.ToListAsync())
+            {
+                var roles = await AppRolesHelper.SelectUserRolesAsync(user.Id, Request);
+                var rolesView = AppRolesHelper.SelectUserRolesView(roles);
+                usersList.Add(new AppUserViewModel(user, roles, rolesView));
+            }
+            return usersList.OrderBy(x => x.UserName).ToList();
         }
 
         [HttpGet]
         public async Task<AppUserViewModel> GetUser(string id)
         {
-            return new AppUserViewModel(await UserManager.FindByIdAsync(id));
+            var user = await UserManager.FindByIdAsync(id);
+            var roles = await AppRolesHelper.SelectUserRolesAsync(id, Request);
+            var rolesView = AppRolesHelper.SelectUserRolesView(roles);
+            return new AppUserViewModel(user, roles, rolesView);
         }
 
         [HttpPost]
         public async Task<CatProcedureResult> CreateUser([FromBody] AppUserViewModel userModel)
         {
             var user = new ApplicationUser { UserName = userModel.UserName, Email = userModel.Email };
-            var result = await UserManager.CreateAsync(user, userModel.Password);
-            return !result.Succeeded ? CatProcedureResult.Error(result.Errors.ToArray()) : CatProcedureResult.Success();
+            var createRes = await UserManager.CreateAsync(user, userModel.Password);
+            if (!createRes.Succeeded) return CatProcedureResult.Error(createRes.Errors.ToArray());
+
+            var createdUser = await UserManager.FindByNameAsync(userModel.UserName);
+            userModel.Id = createdUser.Id;
+            var updateUserRes = await UpdateRolesAsync(userModel);
+            return !updateUserRes.Succeeded ? CatProcedureResult.Error(updateUserRes.Errors.ToArray()) : CatProcedureResult.Success();
         }
 
         [HttpPut]
@@ -76,9 +85,15 @@ namespace Cat.Web.Controllers.Api
             user.UserName = userModel.UserName;
             user.Email = userModel.Email;
             
+            // Details update
             var updateUserRes = await UserManager.UpdateAsync(user);
-            if (!updateUserRes.Succeeded) return CatProcedureResult.Error(updateUserRes.Errors.ToArray());
+            if (!updateUserRes.Succeeded) return CatProcedureResult.Error(updateUserRes.Errors.ToArray(), updateAuthInfo);
 
+            // Roles update
+            var updateRolesRes = await UpdateRolesAsync(userModel);
+            if (!updateRolesRes.Succeeded) return CatProcedureResult.Error(updateRolesRes.Errors.ToArray(), updateAuthInfo);
+
+            // Password update
             if (String.IsNullOrEmpty(userModel.Password)) return CatProcedureResult.Success(updateAuthInfo);
             var changePasswordRes = await UserManager.ChangePasswordAsync(userModel.Id, userModel.OldPassword, userModel.Password);
             return !changePasswordRes.Succeeded ? CatProcedureResult.Error(changePasswordRes.Errors.ToArray(), updateAuthInfo) : CatProcedureResult.Success(updateAuthInfo);
@@ -87,10 +102,56 @@ namespace Cat.Web.Controllers.Api
         [HttpDelete]
         public async Task<CatProcedureResult> RemoveUser(string id)
         {
-            var usersLeft = await UserManager.Users.ToListAsync();
-            if (usersLeft.Count <= 1) return CatProcedureResult.Error(new []{"Cannot remove the last user!"});
+            var currentUser = await CurrentUserProvider.CurrentUserAsync(Request);
+            if(currentUser.Id == id)
+                return CatProcedureResult.Error(new[] {"Cannot remove user that is currently logged on this session!"});
+            if (await IsLastAdmin(id)) 
+                return CatProcedureResult.Error(new[] {String.Format("Cannot remove the last user with role {0}!", AppRolesHelper.RoleViewName(AppRole.Admin))});
+
             var result = await UserManager.DeleteAsync(await UserManager.FindByIdAsync(id));
             return !result.Succeeded ? CatProcedureResult.Error(result.Errors.ToArray()) : CatProcedureResult.Success();
+        }
+
+
+
+        private async Task<IdentityResult> UpdateRolesAsync(AppUserViewModel userModel)
+        {
+            var currentRoles = await AppRolesHelper.SelectUserRolesAsync(userModel.Id, Request);
+            var addedList = new List<IdentityResult>();
+            foreach (var role in userModel.Roles)
+            {
+                if (currentRoles.Contains(role)) continue;
+                addedList.Add(await UserManager.AddToRoleAsync(userModel.Id, role));
+                currentRoles.Add(role);
+            }
+
+            var removedList = new List<IdentityResult>();
+            foreach (var role in currentRoles)
+            {
+                if (userModel.Roles.Contains(role)) continue;
+                else if (await IsLastAdmin(userModel.Id) && role == AppRolesHelper.RoleSystemName(AppRole.Admin))
+                {
+                    removedList.Add(IdentityResult.Failed(String.Format("Cannot remove {0} role from the last admin user!", AppRolesHelper.RoleViewName(AppRole.Admin))));
+                    continue;
+                }
+                removedList.Add(await UserManager.RemoveFromRoleAsync(userModel.Id, role));
+            }
+
+            var success = addedList.Select(x => x.Succeeded).All(x => x == true) && removedList.Select(x => x.Succeeded).All(x => x == true);
+            var errors = addedList.SelectMany(x => x.Errors).ToArray().Union(removedList.SelectMany(x => x.Errors)).ToArray();
+
+            return success ? IdentityResult.Success : IdentityResult.Failed(errors);
+        }
+
+        private async Task<bool> IsLastAdmin(string id)
+        {
+            var admins = new List<ApplicationUser>();
+            foreach (var user in await UserManager.Users.ToListAsync())
+            {
+                if (await UserManager.IsInRoleAsync(user.Id, AppRolesHelper.RoleSystemName(AppRole.Admin))) 
+                    admins.Add(user);
+            }
+            return admins.Count == 1 && admins.Single().Id == id;
         }
     }
 }

@@ -1,4 +1,4 @@
-<mat-progress-bar mode="indeterminate" [style.visibility]="loadingUser ? 'visible' : 'hidden'"></mat-progress-bar>
+<mat-progress-bar mode="indeterminate" [style.visibility]="loadingData ? 'visible' : 'hidden'"></mat-progress-bar>
 <h1 mat-dialog-title>{{data.addMode ? 'Add User' : 'Edit User'}}</h1>
 <div mat-dialog-content>
   <div class="container form-fields-full-width">
@@ -22,15 +22,8 @@
         </mat-form-field>
       </div>
     </div>
-    <div class="row" *ngIf="!data.addMode">
-      <div class="col">
-        <p>
-          <small>To change the password enter new password in <span class="accent-color">'Password'</span>, <span class="accent-color">'Confirm Password'</span> fields and enter the old password in <span class="accent-color">'Old Password'</span> field. Otherwise leave these fields blank.</small>
-        </p>
-      </div>
-    </div>
     <div class="row">
-      <div class="col">
+      <div class="col-12 col-lg-6">
         <mat-form-field>
           <mat-label>Password</mat-label>
           <input matInput [(ngModel)]="user.Password" [formControl]="passwordFormControl" [required]="data.addMode" 
@@ -44,9 +37,7 @@
           </mat-error>
         </mat-form-field>
       </div>
-    </div>
-    <div class="row">
-      <div class="col">
+      <div class="col-12 col-lg-6">
         <mat-form-field>
           <mat-label>Confirm Password</mat-label>
           <input matInput [(ngModel)]="confirmPassword" [formControl]="confirmPasswordFormControl" 
@@ -62,7 +53,7 @@
       </div>
     </div>
     <div class="row" *ngIf="!data.addMode">
-      <div class="col">
+      <div class="col-12 col-lg-4">
         <mat-form-field>
           <mat-label>Old Password</mat-label>
           <input matInput [(ngModel)]="user.OldPassword" [formControl]="oldPasswordFormControl"
@@ -76,12 +67,30 @@
           </mat-error>
         </mat-form-field>
       </div>
+      <div class="col-12 col-lg">
+      </div>
+      <div class="col-12 col-lg-6">
+        <p>
+          <span class="accent-color">*</span>
+          <small>To change the user's password enter the new password in the <span class="primary-color">'Password'</span> and <span class="primary-color">'Confirm Password'</span> fields then enter the old password in the <span class="primary-color">'Old Password'</span> field. Otherwise leave these fields blank.</small>
+        </p>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col">
+        <p class="primary-color">User Roles</p>
+      </div>
+    </div>
+    <div class="row">
+      <div [class]="i % 2 == 0 ? 'col-6 col-lg-3' : 'col-6 col-lg-9'" *ngFor="let role of registeredRoles; let i = index">
+        <mat-checkbox [(ngModel)]="selectedRoles[role.SystemName]">{{role.ViewName}}</mat-checkbox>
+      </div>
     </div>
   </div>
 </div>
 <div mat-dialog-actions>
   <mat-spinner-button #applySpinnerBtn (btnClick)="apply()" [options]="{ active: false, text: 'Apply', spinnerSize: 19, flat: true,
-    buttonColor: 'primary', spinnerColor: 'accent', disabled: formControlHelper.isError() || loadingUser, mode: 'indeterminate'}">
+    buttonColor: 'primary', spinnerColor: 'accent', disabled: formControlHelper.isError() || loadingData, mode: 'indeterminate'}">
   </mat-spinner-button>
   <button mat-button (click)="dialogRef.close()" [disabled]="dialogRef.disableClose">Cancel</button>
 </div>

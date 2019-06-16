@@ -46,28 +46,25 @@ export class UsersComponent implements OnInit {
     this.updateGrid().subscribe();
   }
 
-  private updateGrid(callHttp: boolean = true, resetControls: boolean = true, updateAuthInfo: boolean = false): Observable<any> {
+  private updateGrid(resetControls: boolean = true, updateAuthInfo: boolean = false): Observable<any> {
+
     const resetControlsFn = () => {
       this.searchBox.nativeElement.value = '';
       this.searchTerms.next('');
     };
+
     let gridUsers: AppUserModel[];
-    return callHttp ?
-      this.usersSvc.getUsersList().pipe(
-        mergeMap((users: AppUserModel[]) => {
-          gridUsers = users;
-          return updateAuthInfo ? this.identitySvc.getAuthInfo() : of(new AuthInfo());
-        }),
-        tap(_ => {
-          this.userTerms.next(gridUsers);
-          if (resetControls) resetControlsFn();
-        })
-      ) :
-      of(this.users$).pipe(
-        tap(_ => {
-          if (resetControls) resetControlsFn();
-        })
-      );
+    return this.usersSvc.getUsersList().pipe(
+      mergeMap((users: AppUserModel[]) => {
+        gridUsers = users;
+        if (updateAuthInfo) return this.identitySvc.getAuthInfo();
+        return of(new AuthInfo());
+      }),
+      tap(_ => {
+        this.userTerms.next(gridUsers);
+        if (resetControls) resetControlsFn();
+      })
+    );
   }
 
   search(term: string): void {
@@ -85,7 +82,7 @@ export class UsersComponent implements OnInit {
           return this.usersSvc.createUser(user, [`System error occured, could not add user ${user.UserName} to the system!`]).pipe(
             mergeMap((result) => {
               createRes = result;
-              return this.updateGrid(createRes.IsSuccess, createRes.IsSuccess);
+              return this.updateGrid(createRes.IsSuccess);
             }),
             tap(_ => {
               const snackMsg = createRes.IsSuccess ? `User ${user.UserName} added to the system successfully.` : createRes.ErrorMsgs.join(' ');
@@ -109,7 +106,7 @@ export class UsersComponent implements OnInit {
           return this.usersSvc.updateUser(user, [`System error occured, could not update user!`]).pipe(
             mergeMap((result) => {
               editRes = result;
-              return this.updateGrid(editRes.IsSuccess, editRes.IsSuccess, editRes.Data);
+              return this.updateGrid(editRes.IsSuccess, editRes.Data);
             }),
             tap(_ => {
               const snackMsg = editRes.IsSuccess ? `User ${user.UserName} updated successfully.` : editRes.ErrorMsgs.join(' ');
@@ -132,7 +129,7 @@ export class UsersComponent implements OnInit {
         agent: this.usersSvc.removeUser(user.Id, [`System error occured, could not remove user ${user.UserName} from the system!`]).pipe(
           mergeMap((result) => {
             removeRes = result;
-            return this.updateGrid(removeRes.IsSuccess, removeRes.IsSuccess);
+            return this.updateGrid(removeRes.IsSuccess);
           }),
           tap(_ => {
             const snackMsg = removeRes.IsSuccess ? `User ${user.UserName} removed from the system successfully.` : removeRes.ErrorMsgs.join(' ');

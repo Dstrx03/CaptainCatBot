@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Web;
 using Cat.Domain;
 using Cat.Domain.Entities.Identity;
+using Cat.Web.Infrastructure.Roles;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.AspNet.Identity.Owin;
@@ -106,6 +107,19 @@ namespace Cat.Web
         public static ApplicationSignInManager Create(IdentityFactoryOptions<ApplicationSignInManager> options, IOwinContext context)
         {
             return new ApplicationSignInManager(context.GetUserManager<ApplicationUserManager>(), context.Authentication);
+        }
+    }
+
+    public class ApplicationRolesManager : RoleManager<IdentityRole>
+    {
+        public ApplicationRolesManager(IRoleStore<IdentityRole, string> store)
+            : base(store)
+        {
+        }
+
+        public static ApplicationRolesManager Create(IdentityFactoryOptions<ApplicationRolesManager> options, IOwinContext context)
+        {
+            return new ApplicationRolesManager(new RoleStore<IdentityRole>(context.Get<AppDbContext>()));
         }
     }
 }

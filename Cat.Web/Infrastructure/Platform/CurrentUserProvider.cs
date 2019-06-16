@@ -3,14 +3,14 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web;
 using Cat.Domain.Entities.Identity;
+using Cat.Web.Infrastructure.Platform.Identity;
 using log4net;
 using Microsoft.AspNet.Identity;
-using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin;
 
 namespace Cat.Web.Infrastructure.Platform
 {
-    public class CurrentUserProvider
+    public class CurrentUserProvider : IdentityUtilsProvider
     {
         private static readonly ILog _log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
@@ -52,16 +52,6 @@ namespace Cat.Web.Infrastructure.Platform
             return await userManager.FindByIdAsync(context.Authentication.User.Identity.GetUserId());
         }
 
-        private static ApplicationUserManager GetUserManager(IOwinContext context)
-        {
-            return context.GetUserManager<ApplicationUserManager>();
-        }
-
-        private static IOwinContext GetCurrentContext(HttpRequestMessage request = null)
-        {
-            if (request == null) 
-                request = HttpContext.Current.Items["MS_HttpRequestMessage"] as HttpRequestMessage;
-            return request.GetOwinContext();
-        }
+        
     }
 }

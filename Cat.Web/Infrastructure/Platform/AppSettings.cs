@@ -20,5 +20,21 @@ namespace Cat.Web.Infrastructure.Platform
                 return WebConfigurationManager.AppSettings["AppTitle"];
             }
         }
+
+        public string ObligatoryAdminName
+        {
+            get
+            {
+                return WebConfigurationManager.AppSettings["ObligatoryAdminName"];
+            }
+        }
+
+        public string ObligatoryAdminPassword
+        {
+            get
+            {
+                return WebConfigurationManager.AppSettings["ObligatoryAdminPassword"];
+            }
+        }
     }
 }

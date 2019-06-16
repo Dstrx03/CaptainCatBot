@@ -3,8 +3,11 @@ import { FormControl, Validators, AbstractControl } from '@angular/forms';
 import { FormControlHelper } from '../../../infrastructure/helpers/formControlHelper';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { AppUserModel } from '../../../models/appUserModel';
-import { Observable } from 'rxjs';
+import { ParsedAppRole, AuthInfo } from '../../../models/authInfo';
+import { Observable, of, Subscription } from 'rxjs';
+import { tap, mergeMap } from 'rxjs/operators';
 import { UsersService } from '../../../services/identity/users.service';
+import { IdentityService } from '../../../services/identity/identity.service';
 
 @Component({
   selector: 'app-edit-user-dialog',
@@ -15,8 +18,12 @@ export class EditUserDialogComponent implements OnInit {
 
   @ViewChild('applySpinnerBtn') applySpinnerBtn;
 
+  private dSubscription: Subscription;
+
   user: AppUserModel;
-  loadingUser = false;
+  registeredRoles: ParsedAppRole[];
+  selectedRoles: any;
+  loadingData = false;
 
   passwordHide = true;
   oldPasswordHide = true;
@@ -73,27 +80,59 @@ export class EditUserDialogComponent implements OnInit {
   constructor(
     public dialogRef: MatDialogRef<EditUserDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: EditUserDialogData,
+    private identitySvc: IdentityService,
     private usersSvc: UsersService
   ) { 
     this.user = {} as AppUserModel;
+    this.selectedRoles = {};
+  }
+
+  private initSelectedRoles(roles: string[] = undefined){
+    this.selectedRoles = {};
+    this.registeredRoles.forEach(role => {
+      const checked = roles === undefined || roles === null ? 
+        false : 
+        roles.indexOf(role.SystemName) !== -1;
+      this.selectedRoles[role.SystemName] = checked;
+    })
+  }
+
+  private initUserRoles(user: AppUserModel) {
+    user.Roles = [];
+    this.registeredRoles.forEach(role => {
+      if (this.selectedRoles[role.SystemName] === true) 
+        user.Roles.push(role.SystemName);
+    });
   }
 
   apply() {
     this.applySpinnerBtn.options.active = true;
     this.dialogRef.disableClose = true;
+    this.initUserRoles(this.user);
     this.data.agentFn(this.user).subscribe(_ => this.dialogRef.close());
   }
 
   ngOnInit() {
-    if (!this.data.addMode) {
-      this.loadingUser = true;
-      this.formControlHelper.disable();
-      this.usersSvc.getUser(this.data.userId).subscribe((user) => {
-        this.user = user;
-        this.formControlHelper.enable();
-        this.loadingUser = false;
-      });
-    }
+    this.loadingData = true;
+    this.formControlHelper.disable();
+    this.dSubscription = this.identitySvc.currentAuthInfo().pipe(
+      mergeMap((currentAuthInfo: AuthInfo) => {
+        this.registeredRoles = currentAuthInfo.RegisteredRoles
+        return !this.data.addMode ? this.usersSvc.getUser(this.data.userId) : of({} as AppUserModel);
+      }),
+      tap((user: AppUserModel) => {
+        if (user !== undefined) 
+          this.initSelectedRoles(user.Roles);
+        this.user = user
+      })
+    ).subscribe(_ => {
+      this.formControlHelper.enable();
+      this.loadingData = false;
+    });
+  }
+
+  ngOnDestroy() {
+    this.dSubscription.unsubscribe();
   }
 
 }

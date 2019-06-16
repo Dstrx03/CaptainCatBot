@@ -4,6 +4,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
 using Cat.Web.Infrastructure.Platform;
+using Cat.Web.Infrastructure.Roles;
 using Cat.Web.Models;
 using Cat.Web.Models.Identity;
 using Microsoft.AspNet.Identity.Owin;
@@ -57,15 +58,21 @@ namespace Cat.Web.Controllers.Api
         [AllowAnonymous]
         public AuthInfo GetAuthInfo()
         {
-            var context = Request.GetOwinContext();
             var currentUser = CurrentUserProvider.CurrentUser(Request);
+
             var authUserInfo = new AuthUserInfo();
             if (currentUser != null) 
-                authUserInfo = new AuthUserInfo {Name = currentUser.UserName}; 
+                authUserInfo = new AuthUserInfo
+                {
+                    Name = currentUser.UserName, 
+                    Roles = AppRolesHelper.SelectUserRoles(currentUser.Id, Request)
+                }; 
+
             return new AuthInfo
             {
-                IsAuthenticated = context.Authentication.User.Identity.IsAuthenticated,
-                AuthUserInfo = authUserInfo
+                IsAuthenticated = Request.GetOwinContext().Authentication.User.Identity.IsAuthenticated,
+                AuthUserInfo = authUserInfo,
+                RegisteredRoles = AppRolesRegistry.RegisteredRolesParsed
             };
         }
 

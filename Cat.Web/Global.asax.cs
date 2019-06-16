@@ -54,7 +54,6 @@ namespace Cat.Web
             GlobalConfiguration.Configure(WebApiConfig.Register);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
-
         }
 
         protected void Application_End(object sender, EventArgs e)

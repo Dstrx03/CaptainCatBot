@@ -7,6 +7,8 @@ import { catchError, map, tap, mergeMap } from 'rxjs/operators';
 import { LoginViewModel } from '../../models/loginViewModel';
 import { LoginResult } from '../../models/loginResult';
 import { AuthInfo } from '../../models/authInfo';
+import { AppMenuItem } from 'src/app/infrastructure/navigation/menu/models/appMenuItems';
+import { MenuItemsService } from 'src/app/infrastructure/navigation/menu/menu-items.service';
 
 @Injectable({
   providedIn: 'root'
@@ -14,6 +16,7 @@ import { AuthInfo } from '../../models/authInfo';
 export class IdentityService extends HttpBaseService {
 
   private authInfo: BehaviorSubject<AuthInfo>;
+  private menuItems: BehaviorSubject<AppMenuItem[]>;
 
   protected controllerName(): string {
     return 'Identity/';
@@ -21,6 +24,10 @@ export class IdentityService extends HttpBaseService {
 
   currentAuthInfo(): Observable<AuthInfo> {
     return this.authInfo.asObservable();
+  }
+
+  currentMenuItems(): Observable<AppMenuItem[]> {
+    return this.menuItems.asObservable();
   }
 
   login(loginViewModel: LoginViewModel): Observable<LoginResult> {
@@ -51,13 +58,20 @@ export class IdentityService extends HttpBaseService {
 
   getAuthInfo(): Observable<AuthInfo> {
     return this.http.get<AuthInfo>(this.apiUrl + 'GetAuthInfo').pipe(
-      tap((res: AuthInfo) => this.authInfo.next(res)),
+      tap((res: AuthInfo) => {
+        this.authInfo.next(res)
+        this.menuItems.next(this.menuItemsSvc.generateMenuItemsForAuthInfo(res));
+      }),
       catchError(this.handleError<AuthInfo>('getAuthInfo'))
     );
   }
 
-  constructor(@Inject(GlobalService) global: GlobalService, @Inject(HttpClient) http: HttpClient) {
+  constructor(
+      @Inject(GlobalService) global: GlobalService, 
+      @Inject(HttpClient) http: HttpClient,
+      private menuItemsSvc: MenuItemsService) {
     super(global, http);
     this.authInfo = new BehaviorSubject<AuthInfo>(new AuthInfo());
+    this.menuItems = new BehaviorSubject<AppMenuItem[]>([]);
   }
 }

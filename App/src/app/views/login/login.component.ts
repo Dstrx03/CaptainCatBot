@@ -5,6 +5,7 @@ import { IdentityService } from '../../services/identity/identity.service';
 import { Router } from '@angular/router';
 import { FormControlHelper } from 'src/app/infrastructure/helpers/formControlHelper';
 import { MatSnackBar } from '@angular/material';
+import { GlobalService } from 'src/app/infrastructure/global.service';
 
 @Component({
   selector: 'app-login',
@@ -50,14 +51,11 @@ export class LoginComponent implements OnInit {
       });
   }
 
-  test(){
-    console.log('img loaded');
-  }
-
   constructor(
     private identitySvc: IdentityService,
     private router: Router,
-    private snackBar: MatSnackBar) { }
+    private snackBar: MatSnackBar,
+    public globalSvc: GlobalService) { }
 
   ngOnInit() {
   }

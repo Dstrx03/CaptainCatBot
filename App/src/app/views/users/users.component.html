@@ -2,10 +2,10 @@
 <div class="container">
   <div class="row form-fields-full-width">
     <div class="col-3">
-        <mat-form-field>
-            <input matInput placeholder="Search..." #searchBox (input)="search(searchBox.value)" autocomplete="off">
-            <mat-icon matSuffix fontSet="fas" fontIcon="fa-search" class="text-center"></mat-icon>
-          </mat-form-field>
+      <mat-form-field>
+        <input matInput placeholder="Search..." #searchBox (input)="search(searchBox.value)" autocomplete="off">
+        <mat-icon matSuffix fontSet="fas" fontIcon="fa-search" class="text-center"></mat-icon>
+      </mat-form-field>
     </div>
     <div class="col text-right">
       <button mat-stroked-button color="accent" (click)="addUser()">Add User</button>

@@ -40,6 +40,7 @@ import { UsersComponent } from './views/users/users.component';
 import { AppGridComponent } from './controls/app-grid/app-grid.component';
 import { ConfirmDialogComponent } from './controls/dialogs/confirm-dialog/confirm-dialog.component';
 import { EditUserDialogComponent } from './controls/dialogs/edit-user-dialog/edit-user-dialog.component';
+import { SystemComponent } from './views/system/system.component';
 
 @NgModule({
   declarations: [
@@ -55,7 +56,8 @@ import { EditUserDialogComponent } from './controls/dialogs/edit-user-dialog/edi
     UsersComponent,
     AppGridComponent,
     ConfirmDialogComponent,
-    EditUserDialogComponent
+    EditUserDialogComponent,
+    SystemComponent
   ],
   entryComponents: [
     ConfirmDialogComponent,

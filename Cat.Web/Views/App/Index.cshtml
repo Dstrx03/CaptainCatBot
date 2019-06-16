@@ -12,7 +12,7 @@
         <meta name="appTitle" content="@AppSettings.Instance.AppTitle" />
         <meta name="baseUrl" content="@BaseUrlProvider.HttpBaseUrl" />
         <meta name="gridSchemesJson" content="@Grids.GetSchemesJson()" />
-        <title>App</title>
+        <title>@AppSettings.Instance.AppTitle</title>
         @Styles.Render("~/Content/Styles")
     </head>
     <body>

@@ -1,6 +1,8 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { IdentityService } from '../../services/identity/identity.service';
 import { AuthInfo } from 'src/app/models/authInfo';
+import { AppMenuItem } from 'src/app/infrastructure/navigation/menu/models/appMenuItems';
+import { GlobalService } from 'src/app/infrastructure/global.service';
 
 @Component({
   selector: 'app-header',
@@ -9,13 +11,12 @@ import { AuthInfo } from 'src/app/models/authInfo';
 })
 export class HeaderComponent implements OnInit {
 
-  @Input() title: string;
-
   @Output() public sidenavToggle = new EventEmitter();
 
   authInfo: AuthInfo;
+  menuItems: AppMenuItem[];
 
-  constructor(private identitySvc: IdentityService) { }
+  constructor(private identitySvc: IdentityService, public globalSvc: GlobalService) { }
 
   public onToggleSidenav = () => {
     this.sidenavToggle.emit();
@@ -28,6 +29,8 @@ export class HeaderComponent implements OnInit {
   ngOnInit() {
     this.identitySvc.currentAuthInfo()
       .subscribe(currentAuthInfo => this.authInfo = currentAuthInfo);
+    this.identitySvc.currentMenuItems()
+      .subscribe(currentMenuItems => this.menuItems = currentMenuItems);
   }
 
 }
