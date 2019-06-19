@@ -36,5 +36,21 @@ namespace Cat.Web.Infrastructure.Platform
                 return WebConfigurationManager.AppSettings["ObligatoryAdminPassword"];
             }
         }
+
+        public string ATriggerApiKey
+        {
+            get
+            {
+                return WebConfigurationManager.AppSettings["ATriggerApiKey"];
+            }
+        }
+
+        public string ATriggerApiSecret
+        {
+            get
+            {
+                return WebConfigurationManager.AppSettings["ATriggerApiSecret"];
+            }
+        }
     }
 }

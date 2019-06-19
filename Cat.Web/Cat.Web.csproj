@@ -219,12 +219,16 @@
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\HangfireConfig.cs" />
     <Compile Include="App_Start\IdentityConfig.cs" />
+    <Compile Include="App_Start\RefresherConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="App_Start\StructuremapMvc.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\Api\IdentityController.cs" />
+    <Compile Include="Controllers\Api\ReverberationController.cs" />
+    <Compile Include="Controllers\Api\SystemLoggingController.cs" />
+    <Compile Include="Controllers\Api\InternalServicesController.cs" />
     <Compile Include="Controllers\Api\UsersController.cs" />
     <Compile Include="Controllers\Api\TestController.cs" />
     <Compile Include="Controllers\AppController.cs" />
@@ -263,6 +267,7 @@
     <Compile Include="Startup.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="ATriggerVerify.txt" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="favicon.ico" />

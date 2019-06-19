@@ -1,12 +1,16 @@
 <mat-nav-list>
   <ng-container *ngFor="let item of menuItems">
     <ng-container *ngIf="item.Children === undefined">
-      <a mat-list-item [routerLink]="item.Path" (click)="onSidenavClose()">{{item.Caption}}</a>
+      <a mat-list-item *ngIf="!item.IsHref" [routerLink]="item.Path" (click)="onSidenavClose()">{{item.Caption}}</a>
+      <a mat-list-item *ngIf="item.IsHref" [href]="item.Path" (click)="onSidenavClose()">{{item.Caption}}</a>
     </ng-container>
     <ng-container *ngIf="item.Children !== undefined">
       <a mat-list-item [matMenuTriggerFor]="menu">{{item.Caption}}</a>
       <mat-menu #menu="matMenu" xPosition="after">
-        <button mat-menu-item (click)="onSidenavClose()" [routerLink]="item.Path + '/' + itemChild.Path" *ngFor="let itemChild of item.Children">{{itemChild.Caption}}</button>
+        <ng-container *ngFor="let itemChild of item.Children">
+          <button mat-menu-item *ngIf="!itemChild.IsHref" (click)="onSidenavClose()" [routerLink]="item.Path + '/' + itemChild.Path">{{itemChild.Caption}}</button>
+          <a mat-menu-item *ngIf="itemChild.IsHref" (click)="onSidenavClose()" [href]="itemChild.Path">{{itemChild.Caption}}</a>
+        </ng-container>
       </mat-menu>
     </ng-container>
   </ng-container>

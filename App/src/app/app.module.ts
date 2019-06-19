@@ -21,6 +21,7 @@ import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatDividerModule } from '@angular/material/divider';
+import { MatSelectModule } from '@angular/material/select';
 
 import { AppRoutingModule } from './infrastructure/navigation/app-routing.module';
 import { AppLoadModule } from './infrastructure/app-load/app-load.module';
@@ -40,7 +41,10 @@ import { UsersComponent } from './views/users/users.component';
 import { AppGridComponent } from './controls/app-grid/app-grid.component';
 import { ConfirmDialogComponent } from './controls/dialogs/confirm-dialog/confirm-dialog.component';
 import { EditUserDialogComponent } from './controls/dialogs/edit-user-dialog/edit-user-dialog.component';
+import { ViewSystemLogDialogComponent } from './controls/dialogs/view-system-log-dialog/view-system-log-dialog.component';
 import { SystemComponent } from './views/system/system.component';
+import { InternalServicesComponent } from './views/internal-services/internal-services.component';
+import { IntegersOnlyDirective } from './directives/integers-only/integers-only.directive';
 
 @NgModule({
   declarations: [
@@ -57,11 +61,15 @@ import { SystemComponent } from './views/system/system.component';
     AppGridComponent,
     ConfirmDialogComponent,
     EditUserDialogComponent,
-    SystemComponent
+    ViewSystemLogDialogComponent,
+    SystemComponent,
+    InternalServicesComponent,
+    IntegersOnlyDirective
   ],
   entryComponents: [
     ConfirmDialogComponent,
-    EditUserDialogComponent
+    EditUserDialogComponent,
+    ViewSystemLogDialogComponent
   ],
   imports: [
     BrowserModule,
@@ -87,6 +95,7 @@ import { SystemComponent } from './views/system/system.component';
     MatDialogModule,
     MatProgressBarModule,
     MatDividerModule,
+    MatSelectModule,
     AppRoutingModule,
     AppLoadModule,
     MatProgressButtonsModule.forRoot()

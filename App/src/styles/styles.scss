@@ -23,3 +23,15 @@
     border-right: inherit;
     min-width: 12vw;
 }
+
+input.form-field-number::-webkit-outer-spin-button,
+input.form-field-number::-webkit-inner-spin-button {
+    display: none;
+}
+input.form-field-number {
+    -moz-appearance: textfield;
+}
+
+.flex-space {
+    flex: 1 1 auto;
+}

@@ -1,0 +1,35 @@
+<mat-progress-bar mode="indeterminate" [style.visibility]="loadingEntries ? 'visible' : 'hidden'"></mat-progress-bar>
+<h1 mat-dialog-title>{{data.name}} log</h1>
+<div class="container">
+  <div class="row">
+      <div class="col text-right"><small>Total: {{logEntries.length}} item(s)</small></div>
+  </div>
+</div>
+<div mat-dialog-content>
+  <div class="container">
+    <div class="row" *ngFor="let item of logEntries" >
+      <div class="col">
+        <p><small class="primary-color">{{item.EntryDate | date:'medium'}}</small><br>{{item.Entry}}</p>
+        <mat-divider></mat-divider>
+      </div>
+    </div>
+    <div class="row" *ngIf="logEntries.length === 0 && !loadingEntries">
+      <div class="col text-center">
+        <h4>No entries found...</h4>
+      </div>
+    </div>
+  </div>
+</div>
+<div mat-dialog-actions>
+  <button mat-button (click)="dialogRef.close()">Ok</button>
+  <span class="flex-space">
+  </span>
+  <mat-form-field>
+      <mat-label>Delete entries older than</mat-label>
+      <mat-select [(value)]="cleanThreshold" [disabled]="loadingEntries">
+        <mat-option [value]="i" *ngFor="let i of cleanThresholdOptions">{{i.c}}</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-spinner-button #cleanLogBtn (btnClick)="clean()" [options]="{ active: false, text: 'Delete entries', spinnerSize: 19, flat: false,
+      buttonColor: 'primary', spinnerColor: 'primary', disabled: loadingEntries, mode: 'indeterminate' }"></mat-spinner-button>
+</div>

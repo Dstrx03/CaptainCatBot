@@ -9,6 +9,7 @@ import { LoginComponent } from '../../views/login/login.component';
 import { DashboardComponent } from '../../views/dashboard/dashboard.component';
 import { UsersComponent } from '../../views/users/users.component';
 import { SystemComponent } from 'src/app/views/system/system.component';
+import { InternalServicesComponent } from 'src/app/views/internal-services/internal-services.component';
 
 
 
@@ -18,7 +19,8 @@ export class AppRoutes {
     { path: 'Login', component: LoginComponent },
     { path: 'Dashboard', component: DashboardComponent, canActivate: [CanActivateAuthGuard] },
     { path: 'System', component: SystemComponent, canActivate: [CanActivateAuthGuard], data: {roles: [AppRoles.Admin]}, children: [
-      { path: 'Users', component: UsersComponent, canActivate: [CanActivateAuthGuard], data: {roles: [AppRoles.Admin]} }
+      { path: 'Users', component: UsersComponent, canActivate: [CanActivateAuthGuard], data: {roles: [AppRoles.Admin]} },
+      { path: 'InternalServices', component: InternalServicesComponent, canActivate: [CanActivateAuthGuard], data: {roles: [AppRoles.Admin]} }
     ]}
   ];
 }

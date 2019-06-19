@@ -8,7 +8,8 @@ namespace Cat.Web.Infrastructure.Schedule
     {
         public static void Register()
         {
-            AddRecurring<TestTask>(Cron.Hourly());
+            //AddRecurring<TestTask>(Cron.Hourly());
+            AddRecurring<CleanUpSystemLog>("0 */6 * * *");
         }
 
         private static void AddRecurring<T>(string cronExpression) where T : IScheduledTask

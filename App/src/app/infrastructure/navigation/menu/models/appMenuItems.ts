@@ -8,13 +8,16 @@ export class AppMenuItem {
     RequiredAuth: boolean;
     RequiredRoles: string[];
     Children: AppMenuItem[];
+    IsHref: boolean;
 }
 
 export class AppMenu {
     static Items: AppMenuItem[] = [
-        { Id: 'dashb', Caption: 'Dashboard', Position: 100, Path: 'Dashboard', RequiredAuth: true, RequiredRoles: [], Children: undefined },
-        { Id: 'sys', Caption: 'System', Position: 200, Path: 'System', RequiredAuth: true, RequiredRoles: [AppRoles.Admin], Children: [
-            { Id: 'sys.usrs', Caption: 'Users', Position: 100, Path: 'Users', RequiredAuth: true, RequiredRoles: [AppRoles.Admin], Children: undefined }
+        { Id: 'dashb', Caption: 'Dashboard', Position: 100, Path: 'Dashboard', IsHref: false, RequiredAuth: true, RequiredRoles: [], Children: undefined },
+        { Id: 'sys', Caption: 'System', Position: 200, Path: 'System', IsHref: false, RequiredAuth: true, RequiredRoles: [AppRoles.Admin], Children: [
+            { Id: 'sys.usrs', Caption: 'Users', Position: 100, Path: 'Users', IsHref: false, RequiredAuth: true, RequiredRoles: [AppRoles.Admin], Children: undefined },
+            { Id: 'sys.intsvcs', Caption: 'Internal Services', Position: 200, Path: 'InternalServices', IsHref: false, RequiredAuth: true, RequiredRoles: [AppRoles.Admin], Children: undefined },
+            { Id: 'sys.hangfire', Caption: 'Hangfire Dashboard', Position: 300, Path: '../../hangfire', IsHref: true, RequiredAuth: true, RequiredRoles: [AppRoles.Admin], Children: undefined },
         ]},
     ];
 }

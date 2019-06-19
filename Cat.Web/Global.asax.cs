@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Configuration;
 using System.Data.Entity;
 using System.Data.Entity.Validation;
 using System.Web;
@@ -6,6 +7,7 @@ using System.Web.Http;
 using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
+using Cat.Business.Services.InternalServices;
 using Cat.Domain;
 using Cat.Web.App_Start;
 using Cat.Web.Infrastructure.Platform;
@@ -54,10 +56,21 @@ namespace Cat.Web
             GlobalConfiguration.Configure(WebApiConfig.Register);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
+            RefresherConfig.RegisterRefresher();
         }
 
         protected void Application_End(object sender, EventArgs e)
         {
+            _log.Debug("Application is forced to stop...");
+
+            ATriggerService.CallATrigger(
+                StructuremapMvc.StructureMapDependencyScope.Container.GetNestedContainer(), 
+                BaseUrlProvider.HttpBaseUrl, 
+                AppSettings.Instance.ATriggerApiKey, 
+                AppSettings.Instance.ATriggerApiSecret,
+                string.Format("{0} start", AppSettings.Instance.AppTitle));
+
+            _log.Debug("Application stopped.");
         }
 
         protected void Application_BeginRequest(Object sender, EventArgs e)
@@ -89,10 +102,12 @@ namespace Cat.Web
             }
             catch (DbEntityValidationException ex)
             {
+                _log.ErrorFormat("Error occured while saving changes in CurrentDbContext: {0}", ex);
                 throw;
             }
             catch (Exception ex)
             {
+                _log.ErrorFormat("Error occured while saving changes in CurrentDbContext: {0}", ex);
                 throw;
             }
             finally

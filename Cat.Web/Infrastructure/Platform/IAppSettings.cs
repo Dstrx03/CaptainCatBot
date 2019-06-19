@@ -8,5 +8,9 @@ namespace Cat.Web.Infrastructure.Platform
         string ObligatoryAdminName { get; }
 
         string ObligatoryAdminPassword { get; }
+
+        string ATriggerApiKey { get; }
+
+        string ATriggerApiSecret { get; }
     }
 }

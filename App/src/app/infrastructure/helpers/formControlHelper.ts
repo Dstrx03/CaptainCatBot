@@ -5,6 +5,8 @@ export class FormControlHelper {
     private formCollection: FormControl[];
     private errorMsgsCollection: {error: string, msg: string}[];
 
+    private enabled: boolean = true;
+
     constructor(forms?: FormControl[], addErrorMsgs?: {error: string, msg: string}[]) {
         if (forms !== undefined) this.formCollection = forms;
         else this.formCollection = [];
@@ -14,10 +16,16 @@ export class FormControlHelper {
 
     disable() {
         this.formCollection.forEach(x => x.disable());
+        this.enabled = false;
     }
 
     enable() {
         this.formCollection.forEach(x => x.enable());
+        this.enabled = true;
+    }
+
+    isEnabled(): boolean {
+        return this.enabled;
     }
 
     isError(): boolean {
@@ -49,7 +57,9 @@ export class FormControlHelper {
         return [
             {error: 'default', msg: 'This field is invalid.'},
             {error: 'required', msg: 'This field is <strong>required</strong>.'},
-            {error: 'email', msg: 'Email format is incorrect.'}
+            {error: 'email', msg: 'Email format is incorrect.'},
+            {error: 'max', msg: 'Value is too large.'},
+            {error: 'min', msg: 'Value is too small.'}
         ];
     }
 

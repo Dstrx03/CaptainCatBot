@@ -1,6 +1,8 @@
 ﻿using System.Data.Entity;
 using Cat.Domain.Entities;
 using Cat.Domain.Entities.Identity;
+using Cat.Domain.Entities.SystemLog;
+using Cat.Domain.Entities.SystemValues;
 using Microsoft.AspNet.Identity.EntityFramework;
 
 namespace Cat.Domain
@@ -17,6 +19,8 @@ namespace Cat.Domain
 
             modelBuilder.Entity<ApplicationUser>();
             modelBuilder.Entity<TestEntity>();
+            modelBuilder.Entity<SystemValue>();
+            modelBuilder.Entity<SystemLogEntry>();
         }
     }
 }

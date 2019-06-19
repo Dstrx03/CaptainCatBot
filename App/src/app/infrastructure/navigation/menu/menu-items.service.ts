@@ -24,7 +24,7 @@ export class MenuItemsService {
         if (authInfo.AuthUserInfo.Roles.indexOf(r) === -1) isRolesAuth = false;
       })
       if (!isRolesAuth) return;
-      const resultItem: AppMenuItem = {Id: i.Id, Caption: i.Caption, Position: i.Position, Path: i.Path, RequiredAuth: i.RequiredAuth, RequiredRoles: i.RequiredRoles, Children: undefined};
+      const resultItem: AppMenuItem = {Id: i.Id, Caption: i.Caption, Position: i.Position, Path: i.Path, RequiredAuth: i.RequiredAuth, RequiredRoles: i.RequiredRoles, Children: undefined, IsHref: i.IsHref};
       if (i.Children !== undefined) resultItem.Children = this.generateLevel(i.Children, authInfo);
       result.push(resultItem);
     });

@@ -23,7 +23,7 @@ namespace Cat.Web.Infrastructure.Platform
             }
             catch (Exception e)
             {
-                _log.ErrorFormat("Cannot determine current user! Stack trace: " + e.StackTrace);
+                _log.ErrorFormat("Cannot determine current user! Exception: " + e);
                 return null;
             }
         }
@@ -37,7 +37,7 @@ namespace Cat.Web.Infrastructure.Platform
             }
             catch (Exception e)
             {
-                _log.ErrorFormat("Cannot determine current user! Stack trace: " + e.StackTrace);
+                _log.ErrorFormat("Cannot determine current user! Exception: " + e);
                 return null;
             }
         }

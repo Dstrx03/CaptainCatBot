@@ -4,6 +4,7 @@ using System.Data.Entity;
 using Cat.Business.Schedule.Tasks;
 using Cat.Domain;
 using Cat.Web.App_Start;
+using log4net;
 using StructureMap;
 
 namespace Cat.Web.Infrastructure.Schedule.Tasks
@@ -17,6 +18,8 @@ namespace Cat.Web.Infrastructure.Schedule.Tasks
     {
         private readonly AppDbContext _dbContext;
         private readonly IContainer _container;
+
+        private static readonly ILog _log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
         public ScheduledTask()
         {
@@ -44,6 +47,7 @@ namespace Cat.Web.Infrastructure.Schedule.Tasks
                     }
                     catch (Exception e)
                     {
+                        _log.ErrorFormat("Error while executing scheduled task {0}: {1}", typeof(T).ToString(), e);
                         throw;
                     }
                 }

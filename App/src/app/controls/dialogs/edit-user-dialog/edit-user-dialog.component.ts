@@ -87,7 +87,7 @@ export class EditUserDialogComponent implements OnInit {
     this.selectedRoles = {};
   }
 
-  private initSelectedRoles(roles: string[] = undefined){
+  private initSelectedRoles(roles: string[] = undefined) {
     this.selectedRoles = {};
     this.registeredRoles.forEach(role => {
       const checked = roles === undefined || roles === null ? 
@@ -132,7 +132,7 @@ export class EditUserDialogComponent implements OnInit {
   }
 
   ngOnDestroy() {
-    this.dSubscription.unsubscribe();
+    if (this.dSubscription !== undefined) this.dSubscription.unsubscribe();
   }
 
 }

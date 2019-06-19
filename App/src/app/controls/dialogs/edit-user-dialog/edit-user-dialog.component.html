@@ -83,7 +83,7 @@
     </div>
     <div class="row">
       <div [class]="i % 2 == 0 ? 'col-6 col-lg-3' : 'col-6 col-lg-9'" *ngFor="let role of registeredRoles; let i = index">
-        <mat-checkbox [(ngModel)]="selectedRoles[role.SystemName]">{{role.ViewName}}</mat-checkbox>
+        <mat-checkbox [(ngModel)]="selectedRoles[role.SystemName]" [disabled]="!formControlHelper.isEnabled()">{{role.ViewName}}</mat-checkbox>
       </div>
     </div>
   </div>

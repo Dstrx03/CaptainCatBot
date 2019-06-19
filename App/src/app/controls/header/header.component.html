@@ -10,10 +10,13 @@
         <strong>{{globalSvc.appTitle}}</strong>
       </button>
   </div>
-  <span class="toolbar-space">
+  <span class="flex-space">
   </span>
   <div class="d-none d-md-block">
-    <button mat-button *ngFor="let item of menuItems" [routerLink]="(item.Children === undefined) ? item.Path : item.Path + '/' + item.Children[0].Path">{{item.Caption}}</button>
+    <ng-container *ngFor="let item of menuItems">
+        <button mat-button *ngIf="!item.IsHref" [routerLink]="(item.Children === undefined) ? item.Path : item.Path + '/' + item.Children[0].Path">{{item.Caption}}</button>
+        <a mat-button *ngIf="item.IsHref" [href]="item.Path">{{item.Caption}}</a>
+    </ng-container>
   </div>
   <div>
     <app-auth-toolbar></app-auth-toolbar>

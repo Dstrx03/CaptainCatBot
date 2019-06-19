@@ -206,5 +206,6 @@ packages/
 .vs/config/applicationhost.config
 Cat.Web/ConnectionStrings.config
 Cat.Web/log4net.config
+Cat.Web/ATriggerVerify.txt
 Cat.Web/Logs/*
 Cat.Web/Bundles/*

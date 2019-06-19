@@ -1,4 +1,10 @@
-﻿using Hangfire.Dashboard;
+﻿using System.Collections.Generic;
+using System.Linq;
+using Cat.Web.Infrastructure.Platform;
+using Cat.Web.Infrastructure.Roles;
+using Hangfire.Dashboard;
+using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin;
 
 namespace Cat.Web.Infrastructure.Schedule.Hangfire
@@ -7,14 +13,18 @@ namespace Cat.Web.Infrastructure.Schedule.Hangfire
     {
         public bool Authorize(DashboardContext context)
         {
-            return true; // TODO: auth with roles?
-
-            // In case you need an OWIN context, use the next line, `OwinContext` class
-            // is the part of the `Microsoft.Owin` package.
             var owinContext = new OwinContext(context.GetOwinEnvironment());
 
-            // Allow all authenticated users to see the Dashboard (potentially dangerous).
-            return owinContext.Authentication.User.Identity.IsAuthenticated;
+            var baseResult = owinContext.Authentication.User.Identity.IsAuthenticated;
+            if (!baseResult) return false;
+
+            var userManager = owinContext.GetUserManager<ApplicationUserManager>();
+            var curentUser = CurrentUserProvider.CurrentUser();
+            if (userManager == null || curentUser == null) return false;
+
+            var requredRoles = new List<string> { AppRolesHelper.RoleSystemName(AppRole.Admin) };
+
+            return requredRoles.All(role => userManager.IsInRole(curentUser.Id, role));
         }
     }
 }
