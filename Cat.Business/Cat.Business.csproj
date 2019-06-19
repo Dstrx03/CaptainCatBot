@@ -87,7 +87,6 @@
     <Compile Include="Services\SystemLogging\SystemLoggingServiceBase.cs" />
     <Compile Include="Services\SystemLogging\SystemLoggingServiceFactory.cs" />
     <Compile Include="Services\SystemValuesManager.cs" />
-    <Compile Include="Services\TestEntityManager.cs" />
     <Compile Include="Schedule\Tasks\IScheduledTask.cs" />
   </ItemGroup>
   <ItemGroup>

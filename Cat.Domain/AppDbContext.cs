@@ -18,7 +18,6 @@ namespace Cat.Domain
             base.OnModelCreating(modelBuilder);
 
             modelBuilder.Entity<ApplicationUser>();
-            modelBuilder.Entity<TestEntity>();
             modelBuilder.Entity<SystemValue>();
             modelBuilder.Entity<SystemLogEntry>();
         }

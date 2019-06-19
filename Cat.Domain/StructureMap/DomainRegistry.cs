@@ -7,7 +7,7 @@ namespace Cat.Domain.StructureMap
     {
         public DomainRegistry()
         {
-            For<ITestEntitiesRespository>().Use<TestRespository>();
+            //For<ITestEntitiesRespository>().Use<TestRespository>();
         }
     }
 }

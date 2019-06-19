@@ -19,7 +19,7 @@ namespace Cat.Web.Controllers.Api
         [HttpGet]
         public void ATrigger(string message)
         {
-            var reverbMsg = string.Format("Received request on ATrigger Service endpoint: '{0}'", message);
+            var reverbMsg = string.Format("Received request on ATrigger Service endpoint, message: '{0}'", message);
 
             var loggingService = SystemLoggingServiceFactory.CreateService("ATriggerService", _container);
             loggingService.AddEntry(reverbMsg);
