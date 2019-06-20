@@ -65,7 +65,7 @@ namespace Cat.Web
 
             ATriggerService.CallATrigger(
                 StructuremapMvc.StructureMapDependencyScope.Container.GetNestedContainer(), 
-                BaseUrlProvider.HttpBaseUrl, 
+                AppSettings.Instance.BaseUrl, 
                 AppSettings.Instance.ATriggerApiKey, 
                 AppSettings.Instance.ATriggerApiSecret,
                 string.Format("{0} start", AppSettings.Instance.AppTitle));

@@ -5,6 +5,10 @@ namespace Cat.Web.Infrastructure.Platform
     {
         string AppTitle { get; }
 
+        string BaseUrl { get; }
+
+        bool UseHttps { get; }
+
         string ObligatoryAdminName { get; }
 
         string ObligatoryAdminPassword { get; }

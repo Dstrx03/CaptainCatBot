@@ -35,7 +35,7 @@ namespace Cat.Web.App_Start
             _client = new HttpClient();
             _client.DefaultRequestHeaders.Accept.Clear();
             _client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-            _callUrl = BaseUrlProvider.HttpBaseUrl;
+            _callUrl = AppSettings.Instance.BaseUrl;
 
         }
 

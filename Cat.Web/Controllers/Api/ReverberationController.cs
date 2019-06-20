@@ -1,5 +1,6 @@
 ﻿using System.Web.Http;
 using Cat.Business.Services.SystemLogging;
+using Cat.Web.Infrastructure.Platform.WebApi.Attributes;
 using log4net;
 using StructureMap;
 

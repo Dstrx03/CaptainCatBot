@@ -1,5 +1,6 @@
-﻿using System.Web;
-using System.Web.Mvc;
+﻿using System.Web.Mvc;
+using Cat.Web.Infrastructure.Platform;
+using Cat.Web.Infrastructure.Platform.WebApi.Attributes;
 
 namespace Cat.Web
 {
@@ -8,6 +9,7 @@ namespace Cat.Web
         public static void RegisterGlobalFilters(GlobalFilterCollection filters)
         {
             filters.Add(new HandleErrorAttribute());
+            if (AppSettings.Instance.UseHttps) filters.Add(new RequireHttpsAttribute());
         }
     }
 }

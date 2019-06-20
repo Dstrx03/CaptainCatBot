@@ -1,10 +1,12 @@
-﻿using System.Web.Configuration;
+﻿using System;
+using System.Web.Configuration;
 using Cat.Web.App_Start;
 
 namespace Cat.Web.Infrastructure.Platform
 {
     public class AppSettings : IAppSettings
     {
+
         public static IAppSettings Instance
         {
             get
@@ -18,6 +20,22 @@ namespace Cat.Web.Infrastructure.Platform
             get
             {
                 return WebConfigurationManager.AppSettings["AppTitle"];
+            }
+        }
+
+        public string BaseUrl
+        {
+            get
+            {
+                return UseHttps ? BaseUrlProvider.HttpsBaseUrl : BaseUrlProvider.HttpBaseUrl;
+            }
+        }
+
+        public bool UseHttps
+        {
+            get
+            {
+                return Convert.ToBoolean(WebConfigurationManager.AppSettings["UseHttps"]);
             }
         }
 

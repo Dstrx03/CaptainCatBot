@@ -1,5 +1,7 @@
 ﻿using System.Web.Http;
 using System.Web.Http.Cors;
+using Cat.Web.Infrastructure.Platform;
+using Cat.Web.Infrastructure.Platform.WebApi.Attributes;
 
 namespace Cat.Web
 {
@@ -7,6 +9,8 @@ namespace Cat.Web
     {
         public static void Register(HttpConfiguration config)
         {
+            if (AppSettings.Instance.UseHttps) config.Filters.Add(new ApiRequireHttpsAttribute());
+
             config.EnableCors();
             config.MapHttpAttributeRoutes();
 
