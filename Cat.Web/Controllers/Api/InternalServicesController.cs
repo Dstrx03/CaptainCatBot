@@ -31,7 +31,7 @@ namespace Cat.Web.Controllers.Api
         public RefresherSettings RefresherSaveSettings([FromBody] RefresherSettings settings)
         {
             var settingsResult = _refresherManager.SaveSettings(settings);
-            RefresherConfig.RegisterRefresher();
+            RefresherConfig.Register();
             return settingsResult;
         }
 

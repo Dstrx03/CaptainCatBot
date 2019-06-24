@@ -1,6 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { AppMenuItem } from 'src/app/infrastructure/navigation/menu/models/appMenuItems';
-import { IdentityService } from 'src/app/services/identity/identity.service';
 
 @Component({
   selector: 'app-system',
@@ -9,16 +7,9 @@ import { IdentityService } from 'src/app/services/identity/identity.service';
 })
 export class SystemComponent implements OnInit {
 
-  menuItems: AppMenuItem[];
-
-  constructor(private identitySvc: IdentityService) { }
+  constructor() { }
 
   ngOnInit() {
-    this.identitySvc.currentMenuItems()
-      .subscribe(currentMenuItems => {
-        const systemItem = currentMenuItems.find(x => x.Id === 'sys');
-        if (systemItem !== undefined) this.menuItems = systemItem.Children;
-      });
   }
 
 }

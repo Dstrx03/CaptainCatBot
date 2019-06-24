@@ -8,6 +8,7 @@ using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
 using Cat.Business.Services.InternalServices;
+using Cat.Common.AppSettings;
 using Cat.Domain;
 using Cat.Web.App_Start;
 using Cat.Web.Infrastructure.Platform;
@@ -56,7 +57,8 @@ namespace Cat.Web
             GlobalConfiguration.Configure(WebApiConfig.Register);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
-            RefresherConfig.RegisterRefresher();
+            RefresherConfig.Register();
+            TelegramBotConfig.Register();
         }
 
         protected void Application_End(object sender, EventArgs e)
@@ -65,10 +67,11 @@ namespace Cat.Web
 
             ATriggerService.CallATrigger(
                 StructuremapMvc.StructureMapDependencyScope.Container.GetNestedContainer(), 
-                AppSettings.Instance.BaseUrl, 
+                BaseUrlProvider.BaseUrl, 
                 AppSettings.Instance.ATriggerApiKey, 
                 AppSettings.Instance.ATriggerApiSecret,
-                string.Format("{0} start", AppSettings.Instance.AppTitle));
+                string.Format("From '{0}' app; start call at {1} UTC", AppSettings.Instance.AppTitle, DateTime.UtcNow));
+            TelegramBotConfig.Unregister();
 
             _log.Debug("Application stopped.");
         }

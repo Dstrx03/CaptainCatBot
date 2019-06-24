@@ -1,3 +1,9 @@
-<p>
-  dashboard works!
-</p>
+<app-spacer height="4vh" class="d-none d-md-block"></app-spacer>
+<div class="container">
+  <div class="row" >
+    <div class="col" *ngIf="hasRoles([AppRoles.Admin])">
+      <app-telegram-status-monitor></app-telegram-status-monitor>
+    </div>
+  </div>
+</div>
+<app-spacer height="7vh" class="d-none d-md-block"></app-spacer>

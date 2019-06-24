@@ -1,0 +1,67 @@
+<mat-card>
+    <mat-progress-bar mode="indeterminate" [style.visibility]="loading ? 'visible' : 'hidden'"></mat-progress-bar>
+    <mat-card-header>
+      <mat-card-title>Telegram Status Monitor</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <div class="container">
+        <div class="row">
+          <div class="col-12 col-lg-6">
+            <app-form-value captionClass="col-5" [valueClass]="getTelSvcStatusClass(status.TelegramBotClientStatus)" caption="TelegramBotClient status" [value]="status.TelegramBotClientStatus | telegramServiceStatus"></app-form-value>
+          </div>
+          <div class="col-12 col-lg-6">
+            <app-form-value captionClass="col-5" [valueClass]="getTelSvcStatusClass(status.WebhookStatus)" caption="Webhook status" [value]="status.WebhookStatus | telegramServiceStatus"></app-form-value>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col">
+            <mat-divider></mat-divider>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col text-right">
+            <p><small>Webhook Info</small></p>
+         </div>
+        </div>
+        <div class="row">
+          <div class="col">
+            <app-form-value captionClass="col-4 col-lg-2" caption="Url" [value]="status.WebhookUrl | dashIfEmpty"></app-form-value>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-12 col-lg-6">
+            <app-form-value caption="Has Custom Certificate" [value]="status.WebhookHasCustomCertificate | yesNo | dashIfEmpty"></app-form-value>
+          </div>
+          <div class="col-12 col-lg-6">
+            <app-form-value caption="Pending Update Count" [value]="status.WebhookPendingUpdateCount | dashIfEmpty"></app-form-value>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-12 col-lg-6">
+            <app-form-value caption="Last Error Date" [value]="status.WebhookLastErrorDate | date:'medium' | dashIfEmpty"></app-form-value>
+          </div>
+          <div class="col-12 col-lg-6">
+            <app-form-value caption="Max Connections" [value]="status.WebhookMaxConnections | dashIfEmpty"></app-form-value>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col">
+            <app-form-value captionClass="col-4 col-lg-2" caption="Last Error Message" [value]="status.WebhookLastErrorMessage | dashIfEmpty"></app-form-value>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col">
+            <app-form-value captionClass="col-4 col-lg-2" caption="Allowed Updates" [value]="status.WebhookAllowedUpdates | dashIfEmpty"></app-form-value>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col">
+            <app-form-value captionClass="col-4 col-lg-2" caption="Webhook Info Date" [value]="status.WebhookUpdateDate | date:'medium' | dashIfEmpty"></app-form-value>
+          </div>
+        </div>
+      </div>
+    </mat-card-content>
+    <mat-card-actions>
+      <button mat-button (click)="viewLog()" [disabled]="loading">View Log</button>
+    </mat-card-actions>
+</mat-card>

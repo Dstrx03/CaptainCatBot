@@ -16,6 +16,8 @@ namespace Cat.Business.Services.SystemLogging
                     return container.GetInstance<RefresherLoggingService>();
                 case "ATriggerService":
                     return container.GetInstance<ATriggerLoggingService>();
+                case "TelegramBot":
+                    return container.GetInstance<TelegramBotLoggingService>();
                 case "":
                 case null:
                 default:

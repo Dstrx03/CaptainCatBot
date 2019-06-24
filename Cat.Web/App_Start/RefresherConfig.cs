@@ -8,6 +8,7 @@ using System.Web;
 using System.Web.Caching;
 using Cat.Business.Services.InternalServices;
 using Cat.Business.Services.SystemLogging;
+using Cat.Common.AppSettings;
 using Cat.Domain;
 using Cat.Web.Infrastructure.Platform;
 using log4net;
@@ -35,11 +36,10 @@ namespace Cat.Web.App_Start
             _client = new HttpClient();
             _client.DefaultRequestHeaders.Accept.Clear();
             _client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-            _callUrl = AppSettings.Instance.BaseUrl;
-
+            _callUrl = BaseUrlProvider.BaseUrl;
         }
 
-        public static void RegisterRefresher()
+        public static void Register()
         {
             //get curent settings
             if (_currDbContext != null) _currDbContext.Dispose();
@@ -111,7 +111,7 @@ namespace Cat.Web.App_Start
                 Cache.NoAbsoluteExpiration,
                 Cache.NoSlidingExpiration,
                 CacheItemPriority.Normal,
-                (s, o, r) => { RegisterRefresher(); }
+                (s, o, r) => { Register(); }
             );
         }
 

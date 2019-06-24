@@ -35,3 +35,8 @@ input.form-field-number {
 .flex-space {
     flex: 1 1 auto;
 }
+
+.row .row {
+    margin-right: 0;
+    margin-left: 0;
+}

@@ -12,13 +12,11 @@
             <div class="row">
               <div class="col">
                 <p>
-                  Refresher Service is a system internal service that provide continuous refresh of the application instance.    
-                </p>
-                <p><small>
+                  Refresher Service is a system internal service that provide continuous refresh of the application instance.
                   It calls base url of the instance with specified time interval to 'wake up' the hosting server and don't let it 'sleep'. 
                   It's meant to be used on shared hostings where it is impossible to manage server's or machine settings.
-                  Refresh of the instance itself is important to provide a stable continuous execution of the Hangfire tasks.
-                </small></p>
+                  Refresh of the instance itself is important to provide a stable continuous execution of the Hangfire tasks. 
+                </p>
               </div>
             </div>
             <div class="row">
@@ -67,13 +65,11 @@
               <div class="col">
                 <p>
                   ATrigger Service is a wrapper of third party scheduling tool ATrigger.
-                </p>
-                <p><small>
                   It performs request to the ATrigger before the application instance recycle by server.
                   After request callback to the application's API will be performed in specified minutes interval.
                   Callback triggers application start so Hangfire tasks and system porcesses can perform correctly.
                   It's meant to be used on shared hostings where it is impossible to manage server's or machine settings.
-                </small></p>
+                </p>
               </div>
             </div>
             <div class="row">

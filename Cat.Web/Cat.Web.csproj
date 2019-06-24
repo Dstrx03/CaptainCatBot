@@ -68,6 +68,10 @@
       <HintPath>..\packages\CommonServiceLocator.1.3\lib\portable-net4+sl5+netcore45+wpa81+wp8\Microsoft.Practices.ServiceLocation.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="StructureMap, Version=3.1.1.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\structuremap.3.1.1.134\lib\net40\StructureMap.dll</HintPath>
       <Private>True</Private>
@@ -157,6 +161,10 @@
       <Private>True</Private>
       <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.2\lib\net45\System.Web.WebPages.Razor.dll</HintPath>
     </Reference>
+    <Reference Include="Telegram.Bot, Version=14.12.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Telegram.Bot.14.12.0\lib\net45\Telegram.Bot.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="WebActivatorEx, Version=2.0.0.0, Culture=neutral, PublicKeyToken=7b26dc2a43f6a0d4, processorArchitecture=MSIL">
       <HintPath>..\packages\WebActivatorEx.2.0.5\lib\net40\WebActivatorEx.dll</HintPath>
       <Private>True</Private>
@@ -171,9 +179,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="Newtonsoft.Json">
-      <HintPath>..\packages\Newtonsoft.Json.6.0.4\lib\net45\Newtonsoft.Json.dll</HintPath>
-    </Reference>
     <Reference Include="EntityFramework">
       <HintPath>..\packages\EntityFramework.6.1.1\lib\net45\EntityFramework.dll</HintPath>
     </Reference>
@@ -223,8 +228,11 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="App_Start\StructuremapMvc.cs" />
+    <Compile Include="App_Start\TelegramBotConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\Api\IdentityController.cs" />
+    <Compile Include="Controllers\Api\TelegramStatusController.cs" />
+    <Compile Include="Controllers\Api\TelegramWebhookController.cs" />
     <Compile Include="Controllers\Api\ReverberationController.cs" />
     <Compile Include="Controllers\Api\SystemLoggingController.cs" />
     <Compile Include="Controllers\Api\InternalServicesController.cs" />
@@ -241,7 +249,6 @@
     <Compile Include="Infrastructure\Grids\Grids.cs" />
     <Compile Include="Infrastructure\Grids\GridScheme.cs" />
     <Compile Include="Infrastructure\Platform\AppSettings.cs" />
-    <Compile Include="Infrastructure\Platform\BaseUrlProvider.cs" />
     <Compile Include="Infrastructure\Platform\CurrentUserProvider.cs" />
     <Compile Include="Infrastructure\Platform\IAppSettings.cs" />
     <Compile Include="Infrastructure\Platform\Identity\IdentityUtilsProvider.cs" />
@@ -313,9 +320,17 @@
       <Project>{438FEC96-CFF3-41E6-A2B7-BACC226157F7}</Project>
       <Name>Cat.Business</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Cat.Common\Cat.Common.csproj">
+      <Project>{3ED72387-40A4-4F9B-879E-AAD92D92837D}</Project>
+      <Name>Cat.Common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Cat.Domain\Cat.Domain.csproj">
       <Project>{E895F43B-E493-4776-A11A-E3C4F980E009}</Project>
       <Name>Cat.Domain</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Telegram\Telegram.csproj">
+      <Project>{075DB1E4-8388-4345-AB13-07240FA0758F}</Project>
+      <Name>Telegram</Name>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup>

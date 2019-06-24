@@ -6,13 +6,13 @@ using StructureMap;
 
 namespace Cat.Business.Schedule.Tasks
 {
-    public class CleanUpSystemLog : IScheduledTask
+    public class CleanUpSystemLogTask : IScheduledTask
     {
         private readonly IContainer _container;
 
         private static readonly ILog _log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
-        public CleanUpSystemLog(IContainer container)
+        public CleanUpSystemLogTask(IContainer container)
         {
             _container = container;
         }

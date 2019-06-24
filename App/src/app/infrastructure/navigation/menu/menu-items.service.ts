@@ -25,7 +25,10 @@ export class MenuItemsService {
       })
       if (!isRolesAuth) return;
       const resultItem: AppMenuItem = {Id: i.Id, Caption: i.Caption, Position: i.Position, Path: i.Path, RequiredAuth: i.RequiredAuth, RequiredRoles: i.RequiredRoles, Children: undefined, IsHref: i.IsHref};
-      if (i.Children !== undefined) resultItem.Children = this.generateLevel(i.Children, authInfo);
+      if (i.Children !== undefined) {
+        resultItem.Children = this.generateLevel(i.Children, authInfo);
+        if (resultItem.Children.length == 0) return;
+      }
       result.push(resultItem);
     });
 

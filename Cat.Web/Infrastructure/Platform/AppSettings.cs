@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Web.Configuration;
+using Cat.Common.AppSettings;
 using Cat.Web.App_Start;
+using Telegram.AppSettings;
 
 namespace Cat.Web.Infrastructure.Platform
 {
@@ -16,26 +18,19 @@ namespace Cat.Web.Infrastructure.Platform
             }
         }
 
+        public static ITelegramAppSettings InstanceTelegram
+        {
+            get
+            {
+                var _container = StructuremapMvc.StructureMapDependencyScope.Container.GetNestedContainer();
+                return _container.GetInstance<ITelegramAppSettings>();
+            }
+        }
+
         public string AppTitle {
             get
             {
                 return WebConfigurationManager.AppSettings["AppTitle"];
-            }
-        }
-
-        public string BaseUrl
-        {
-            get
-            {
-                return UseHttps ? BaseUrlProvider.HttpsBaseUrl : BaseUrlProvider.HttpBaseUrl;
-            }
-        }
-
-        public bool UseHttps
-        {
-            get
-            {
-                return Convert.ToBoolean(WebConfigurationManager.AppSettings["UseHttps"]);
             }
         }
 
@@ -70,5 +65,8 @@ namespace Cat.Web.Infrastructure.Platform
                 return WebConfigurationManager.AppSettings["ATriggerApiSecret"];
             }
         }
+
+        
+
     }
 }

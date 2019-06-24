@@ -45,6 +45,14 @@ import { ViewSystemLogDialogComponent } from './controls/dialogs/view-system-log
 import { SystemComponent } from './views/system/system.component';
 import { InternalServicesComponent } from './views/internal-services/internal-services.component';
 import { IntegersOnlyDirective } from './directives/integers-only/integers-only.directive';
+import { TelegramComponent } from './views/telegram/telegram.component';
+import { SidenavMenuComponent } from './controls/sidenav-menu/sidenav-menu.component';
+import { TelegramStatusComponent } from './views/telegram-status/telegram-status.component';
+import { FormValueComponent } from './controls/form-value/form-value.component';
+import { TelegramStatusMonitorComponent } from './controls/telegram-status-monitor/telegram-status-monitor.component';
+import { TelegramServiceStatusPipe } from './pipes/telegram-service-status/telegram-service-status.pipe';
+import { YesNoPipe } from './pipes/yes-no/yes-no.pipe';
+import { DashIfEmptyPipe } from './pipes/dash-if-empty/dash-if-empty.pipe';
 
 @NgModule({
   declarations: [
@@ -64,7 +72,15 @@ import { IntegersOnlyDirective } from './directives/integers-only/integers-only.
     ViewSystemLogDialogComponent,
     SystemComponent,
     InternalServicesComponent,
-    IntegersOnlyDirective
+    IntegersOnlyDirective,
+    TelegramComponent,
+    SidenavMenuComponent,
+    TelegramStatusComponent,
+    FormValueComponent,
+    TelegramStatusMonitorComponent,
+    TelegramServiceStatusPipe,
+    YesNoPipe,
+    DashIfEmptyPipe
   ],
   entryComponents: [
     ConfirmDialogComponent,

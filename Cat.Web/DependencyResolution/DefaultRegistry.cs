@@ -16,7 +16,6 @@
 // --------------------------------------------------------------------------------------------------------------------
 
 using System.Data.Entity;
-using Cat.Domain;
 
 namespace Cat.Web.DependencyResolution {
     using StructureMap.Configuration.DSL;
