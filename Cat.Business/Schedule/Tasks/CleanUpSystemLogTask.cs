@@ -19,8 +19,6 @@ namespace Cat.Business.Schedule.Tasks
 
         public void Execute()
         {
-            _log.Debug("Clean up system log task started");
-
             var loggingServices = SystemLoggingServiceFactory.CreateAllServices(_container);
 
             _log.DebugFormat("Logging services found: {0}", loggingServices.Count == 0 ? "none" : string.Join(", ", loggingServices.Select(x => x.Descriptor())));
@@ -38,8 +36,6 @@ namespace Cat.Business.Schedule.Tasks
                 }
                 _log.DebugFormat("{0}'s entries older than {1} seconds ({2:F2} hours) successfully deleted", svc.Descriptor(), svc.DefaultSecondsThreshold(), svc.DefaultSecondsThreshold() / (60m * 60m));
             }
-
-            _log.Debug("Clean up system log task completed");
         }
     }
 }
