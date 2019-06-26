@@ -34,5 +34,7 @@ namespace Telegram.Models
         Unknown = 0,
         Stopped = 1,
         Running = 2,
+        Ok = 3,
+        Error = 4
     }
 }

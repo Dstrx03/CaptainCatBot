@@ -4,6 +4,8 @@ import { SystemLoggingService } from 'src/app/services/system-logging/system-log
 import { SystemLogEntry } from 'src/app/models/systemLogEntry';
 import { Subscription } from 'rxjs';
 import { MatSnackBar } from '@angular/material';
+import { SignalrConnectionService } from 'src/app/services/signalr/signalr-connection.service';
+import { SignalrHub } from 'src/app/services/signalr/signalr-hub.service';
 
 @Component({
   selector: 'app-view-system-log-dialog',
@@ -14,6 +16,10 @@ export class ViewSystemLogDialogComponent implements OnInit {
 
   private getSubscription: Subscription;
   private cleanSubscription: Subscription;
+  private entryAddedSubscription: Subscription;
+  private entriesRemovedSubscription: Subscription;
+
+  private hub: SignalrHub;
 
   logEntries: SystemLogEntry[];
   loadingEntries = false;
@@ -44,33 +50,74 @@ export class ViewSystemLogDialogComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public data: ViewSystemLogDialogData,
     private loggingSvc: SystemLoggingService,
     private snackBar: MatSnackBar,
+    private signalrConnectionSvc: SignalrConnectionService
   ) {
     this.logEntries = [];
     this.loadingEntries = false;
+    this.hub = this.signalrConnectionSvc.createHub(`${data.descriptor}SystemLoggingServiceHub`);
   }
 
-  clean() {
+  cleanEntries() {
     this.cleanLogBtn.options.active = true;
     const submittedThreshold = this.cleanThreshold;
-    this.getSubscription = this.loggingSvc.clean(this.data.descriptor, submittedThreshold.v).subscribe((result: SystemLogEntry[]) => {
+    this.cleanSubscription = this.loggingSvc.clean(this.data.descriptor, submittedThreshold.v).subscribe((result: SystemLogEntry[]) => {
       this.cleanLogBtn.options.active = false;
       this.logEntries = result;
+      this.sortEntries();
       const snackMsg = submittedThreshold.v === -1 ? 'Removed all entries.' : `Removed entries older than ${submittedThreshold.c}.`;
       this.snackBar.open(snackMsg, 'Ok', { duration: 5000 });
-    })
+    });
+  }
+
+  private loadEntries() {
+    this.loadingEntries = true;
+    this.getSubscription = this.loggingSvc.getEntries(this.data.descriptor).subscribe((result: SystemLogEntry[]) => {
+      this.logEntries = result;
+      this.sortEntries();
+      this.loadingEntries = false;
+    });
+  }
+
+  private sortEntries() {
+    this.logEntries.sort((a: SystemLogEntry, b: SystemLogEntry) => {
+      const at: number = a.EntryDate !== undefined && a.EntryDate !== null ? new Date(a.EntryDate).getTime() : 0;
+      const bt: number = b.EntryDate !== undefined && b.EntryDate !== null ? new Date(b.EntryDate).getTime() : 0;
+      return bt - at;
+    });
+  }
+
+  private addEntries(entries: SystemLogEntry[]) {
+    this.logEntries = this.logEntries.concat(entries);
+    this.sortEntries();
+  }
+
+  private removeEntries(ids: string[]) {
+    ids.forEach(id => {
+      const index = this.logEntries.findIndex(x => x.Id === id);
+      if (index > -1) this.logEntries.splice(index, 1);
+    });
   }
 
   ngOnInit() {
-    this.loadingEntries = true;
-    this.cleanSubscription = this.loggingSvc.getEntries(this.data.descriptor).subscribe((result: SystemLogEntry[]) => {
-      this.logEntries = result;
-      this.loadingEntries = false;
+    this.loadEntries();
+    this.hub.listen('entryAdded').then(o => {
+      this.entryAddedSubscription = o.subscribe(res => {
+        this.addEntries([res[0] as SystemLogEntry])
+      })
+    });
+    this.hub.listen('entriesRemoved').then(o => {
+      this.entriesRemovedSubscription = o.subscribe(res => {
+        this.removeEntries(res[0]);
+      })
     });
   }
 
   ngOnDestroy() {
     if (this.getSubscription !== undefined) this.getSubscription.unsubscribe();
     if (this.cleanSubscription !== undefined) this.cleanSubscription.unsubscribe();
+    if (this.entryAddedSubscription !== undefined) this.entryAddedSubscription.unsubscribe();
+    if (this.entriesRemovedSubscription !== undefined) this.entriesRemovedSubscription.unsubscribe();
+    this.hub.disconnect();
   }
 
 }

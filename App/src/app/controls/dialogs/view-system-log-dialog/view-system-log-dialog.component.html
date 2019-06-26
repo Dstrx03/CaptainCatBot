@@ -30,6 +30,6 @@
         <mat-option [value]="i" *ngFor="let i of cleanThresholdOptions">{{i.c}}</mat-option>
       </mat-select>
     </mat-form-field>
-    <mat-spinner-button #cleanLogBtn (btnClick)="clean()" [options]="{ active: false, text: 'Delete entries', spinnerSize: 19, flat: false,
+    <mat-spinner-button #cleanLogBtn (btnClick)="cleanEntries()" [options]="{ active: false, text: 'Delete entries', spinnerSize: 19, flat: false,
       buttonColor: 'primary', spinnerColor: 'primary', disabled: loadingEntries, mode: 'indeterminate' }"></mat-spinner-button>
 </div>

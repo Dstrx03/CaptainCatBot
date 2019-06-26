@@ -27,6 +27,8 @@ namespace Cat.Web
                       "~/Content/bootstrap.css",
                       "~/Content/site.css"));
 
+            //~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.
+
             bundles.Add(new ScriptBundle("~/Script/Bundles").Include(
                        "~/bundles/runtime.*",
                        "~/bundles/zone.*",
@@ -35,6 +37,10 @@ namespace Cat.Web
 
             bundles.Add(new StyleBundle("~/Content/Styles").Include(
                         "~/bundles/styles.*"));
+
+            bundles.Add(new ScriptBundle("~/Script/SignalR").Include(
+                "~/Scripts/jquery-1.10.2.min.js",
+                "~/Scripts/jquery.signalR-2.4.1.min.js"));
         }
     }
 }

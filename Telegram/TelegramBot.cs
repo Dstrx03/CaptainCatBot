@@ -1,16 +1,14 @@
 ﻿
 using System;
 using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Hosting;
 using Cat.Business.Services.SystemLogging;
-using Cat.Common.Helpers;
 using log4net;
+using Microsoft.AspNet.SignalR;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.InputFiles;
-using Telegram.Models;
 
 namespace Telegram
 {
@@ -19,6 +17,8 @@ namespace Telegram
         private static TelegramBotClient _client;
         private static WebhookInfo _currrentWebhookInfo;
         private static DateTime? _currentWebhookInfoUpdateDate;
+
+        private static readonly IHubContext _hubContext = GlobalHost.ConnectionManager.GetHubContext<TelegramBotHub>();
 
         private static readonly ILog _log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
@@ -36,9 +36,22 @@ namespace Telegram
             {
                 _client = new TelegramBotClient(token);
 
+                var tokenValid = Task.Run(async () => await _client.TestApiAsync()).Result;
+                if (!tokenValid)
+                {
+                    _client = null;
+                    _currrentWebhookInfo = null;
+                    
+                    _hubContext.Clients.All.statusInfoUpdated();
+
+                    throw new Exception(string.Format("TelegramBotClient token '{0}' is invalid", token));
+                }
+
                 var successMsg = string.Format("TelegramBotClient registered, token: '{0}'", token);
                 loggingService.AddEntry(successMsg);
                 _log.Debug(successMsg);
+
+                _hubContext.Clients.All.statusInfoUpdated();
             }
             catch (Exception ex)
             {
@@ -51,10 +64,13 @@ namespace Telegram
         public static void UnregisterClient(ISystemLoggingServiceBase loggingService)
         {
             _client = null;
+            _currrentWebhookInfo = null;
 
             var successMsg = "TelegramBotClient unregistered";
             loggingService.AddEntry(successMsg);
             _log.Debug(successMsg);
+
+            _hubContext.Clients.All.statusInfoUpdated();
         }
 
         public static void RegisterWebhook(string webhookUrl, bool needPublicCert, ISystemLoggingServiceBase loggingService)
@@ -132,9 +148,14 @@ namespace Telegram
         {
             if (_client == null)
             {
+                _currrentWebhookInfo = null;
+
                 var cannotRegisterMsg = "Cannot update webhook info due TelegramBotClient is null";
                 loggingService.AddEntry(cannotRegisterMsg);
                 _log.Debug(cannotRegisterMsg);
+
+                _hubContext.Clients.All.statusInfoUpdated();
+
                 return _currrentWebhookInfo;
             }
 
@@ -153,13 +174,21 @@ namespace Telegram
             }
             catch (Exception ex)
             {
+                _currrentWebhookInfo = null;
+
                 var errorMsg = string.Format("Error while updating WebhookInfo: {0}", ex);
                 loggingService.AddEntry(errorMsg);
                 _log.Error(errorMsg);
             }
-            
+
+            _hubContext.Clients.All.statusInfoUpdated();
+
             return _currrentWebhookInfo;
         }
 
+    }
+
+    public class TelegramBotHub : Hub
+    {
     }
 }

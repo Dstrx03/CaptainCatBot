@@ -19,7 +19,7 @@ namespace Cat.Web.Infrastructure.Schedule.Hangfire
             if (!baseResult) return false;
 
             var userManager = owinContext.GetUserManager<ApplicationUserManager>();
-            var curentUser = CurrentUserProvider.CurrentUser();
+            var curentUser = CurrentUserProvider.CurrentUser(owinContext);
             if (userManager == null || curentUser == null) return false;
 
             var requredRoles = new List<string> { AppRolesHelper.RoleSystemName(AppRole.Admin) };

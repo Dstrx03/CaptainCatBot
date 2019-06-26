@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Cat.Domain.Entities.SystemLog;
 using Cat.Domain.Repositories;
+using Microsoft.AspNet.SignalR;
 
 namespace Cat.Business.Services.SystemLogging
 {
@@ -32,6 +33,7 @@ namespace Cat.Business.Services.SystemLogging
         protected readonly ISystemLogEntriesRespository _logEntriesRepo;
         protected readonly string _descriptor;
 
+
         protected SystemLoggingServiceBase(ISystemLogEntriesRespository logEntriesRepo, string descriptor)
         {
             _logEntriesRepo = logEntriesRepo;
@@ -42,6 +44,11 @@ namespace Cat.Business.Services.SystemLogging
         {
             // 2 weeks
             return 60*60*24*7*2;
+        }
+
+        protected virtual IHubContext HubContext()
+        {
+            return GlobalHost.ConnectionManager.GetHubContext<SystemLoggingServiceHub>();
         }
 
         public string Descriptor()
@@ -63,6 +70,9 @@ namespace Cat.Business.Services.SystemLogging
         {
             var logEntry = Add(entry);
             _logEntriesRepo.SaveChanges();
+
+            HubContext().Clients.All.entryAdded(logEntry);
+
             return logEntry;
         }
 
@@ -70,6 +80,9 @@ namespace Cat.Business.Services.SystemLogging
         {
             var logEntry = Add(entry);
             await _logEntriesRepo.SaveChangesAsync();
+
+            HubContext().Clients.All.entryAdded(logEntry);
+
             return logEntry;
         }
 
@@ -88,24 +101,45 @@ namespace Cat.Business.Services.SystemLogging
         public void Clean(int secondsThreshold, DateTime? date = null)
         {
             if (!date.HasValue) date = DateTime.Now;
+
+            var removedIds = new List<string>();
             foreach (var e in GetEntries())
             {
                 if ((date.Value - e.EntryDate).TotalSeconds > secondsThreshold)
+                {
                     _logEntriesRepo.Remove(e.Id);
+                    removedIds.Add(e.Id);
+                }
             }
+
             _logEntriesRepo.SaveChanges();
+
+            HubContext().Clients.All.entriesRemoved(removedIds);
         }
 
         public async Task CleanAsync(int secondsThreshold, DateTime? date = null)
         {
             if (!date.HasValue) date = DateTime.Now;
+
+            var removedIds = new List<string>();
             foreach (var e in await GetEntriesAsync())
             {
-                if ((date.Value - e.EntryDate).TotalSeconds > secondsThreshold) 
+                if ((date.Value - e.EntryDate).TotalSeconds > secondsThreshold)
+                {
                     await _logEntriesRepo.RemoveAsync(e.Id);
+                    removedIds.Add(e.Id);
+                }
             }
+
             await _logEntriesRepo.SaveChangesAsync();
+
+            HubContext().Clients.All.entriesRemoved(removedIds);
         }
         
     }
+
+    public class SystemLoggingServiceHub : Hub
+    {
+    }
+
 }

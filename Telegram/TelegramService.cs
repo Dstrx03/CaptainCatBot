@@ -49,9 +49,9 @@ namespace Telegram
             if (TelegramBot.CurrentWebhookInfo == null) 
                 return TelegramServiceStatus.Unknown;
             else if (TelegramBot.CurrentWebhookInfo.Url == _telegramAppSettings.WebhookUrl) 
-                return TelegramServiceStatus.Running;
+                return TelegramServiceStatus.Ok;
             else 
-                return TelegramServiceStatus.Stopped;
+                return TelegramServiceStatus.Error;
         }
 
         public TelegramStatusViewModel GetTelegramStatusInfo()

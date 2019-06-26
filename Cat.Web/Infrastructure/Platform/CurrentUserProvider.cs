@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Net.Http;
 using System.Threading.Tasks;
-using System.Web;
 using Cat.Domain.Entities.Identity;
 using Cat.Web.Infrastructure.Platform.Identity;
 using log4net;
@@ -28,6 +27,19 @@ namespace Cat.Web.Infrastructure.Platform
             }
         }
 
+        public static ApplicationUser CurrentUser(IOwinContext context)
+        {
+            try
+            {
+                return FindCurrentUser(GetUserManager(context), context);
+            }
+            catch (Exception e)
+            {
+                _log.ErrorFormat("Cannot determine current user! Exception: " + e);
+                return null;
+            }
+        }
+
         public static async Task<ApplicationUser> CurrentUserAsync(HttpRequestMessage request = null)
         {
             try
@@ -41,6 +53,21 @@ namespace Cat.Web.Infrastructure.Platform
                 return null;
             }
         }
+
+        public static async Task<ApplicationUser> CurrentUserAsync(IOwinContext context)
+        {
+            try
+            {
+                return await FindCurrentUserAsync(GetUserManager(context), context);
+            }
+            catch (Exception e)
+            {
+                _log.ErrorFormat("Cannot determine current user! Exception: " + e);
+                return null;
+            }
+        }
+
+
 
         private static ApplicationUser FindCurrentUser(ApplicationUserManager userManager, IOwinContext context)
         {

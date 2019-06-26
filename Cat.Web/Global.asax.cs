@@ -13,6 +13,7 @@ using Cat.Domain;
 using Cat.Web.App_Start;
 using Cat.Web.Infrastructure.Platform;
 using log4net;
+using Microsoft.AspNet.SignalR;
 
 namespace Cat.Web
 {
@@ -57,6 +58,7 @@ namespace Cat.Web
             GlobalConfiguration.Configure(WebApiConfig.Register);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
+            GlobalHost.HubPipeline.RequireAuthentication();
             RefresherConfig.Register();
             TelegramBotConfig.Register();
         }
