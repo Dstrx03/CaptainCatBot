@@ -1,10 +1,12 @@
 ﻿
 using System;
+using System.Text;
 
 namespace Cat.Common.Helpers
 {
     public class MaskDataHelper
     {
+        private static readonly Random _random = new Random((int)DateTime.Now.Ticks);
 
         public static string MaskTelegramBotToken(string token)
         {
@@ -57,6 +59,17 @@ namespace Cat.Common.Helpers
             }
 
             return result;
+        }
+
+        public static string MoshText(string text)
+        {
+            var moshChars = new StringBuilder("~!@#$%^&*№?+-=_.`<>{}[]()");
+            var moshed = new StringBuilder(text);
+            for (var i = 0; i < _random.Next(text.Length); i++)
+            {
+                moshed[_random.Next(text.Length)] = moshChars[_random.Next(moshChars.Length)];
+            }
+            return moshed.ToString();
         }
     }
 }

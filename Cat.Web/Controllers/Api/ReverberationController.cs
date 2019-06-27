@@ -1,6 +1,10 @@
-﻿using System.Web.Http;
+﻿using System;
+using System.Linq;
+using System.Text;
+using System.Web.Http;
 using Cat.Business.Services.SystemLogging;
-using Cat.Web.Infrastructure.Platform.WebApi.Attributes;
+using Cat.Common.Helpers;
+using Cat.Web.Infrastructure.Platform;
 using log4net;
 using StructureMap;
 
@@ -15,6 +19,12 @@ namespace Cat.Web.Controllers.Api
         public ReverberationController(IContainer container)
         {
             _container = container;
+        }
+
+        [HttpGet]
+        public string Refresher()
+        {
+            return MaskDataHelper.MoshText(string.Format("{0} application | Powered by CaptainCatBot | Pre-alpha", AppSettings.Instance.AppTitle));
         }
 
         [HttpGet]

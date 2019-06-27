@@ -109,7 +109,7 @@ namespace Telegram
                 _loggingService.AddEntry(errorMsg);
                 _log.Error(errorMsg);
             }
-            else if (GetWebhookStatus() != TelegramServiceStatus.Running)
+            else if (GetWebhookStatus() != TelegramServiceStatus.Ok)
             {
                 var needToRegisterMsg = string.Format("Actual webhook url: '{0}', the app webhook url: '{1}'. Registering webhook...", TelegramBot.CurrentWebhookInfo.Url, _telegramAppSettings.WebhookUrl);
                 _loggingService.AddEntry(needToRegisterMsg);
@@ -127,76 +127,34 @@ namespace Telegram
 
         public async Task ProcessUpdate(Update update)
         {
+            _log.DebugFormat("Got telegram update: {0}", Newtonsoft.Json.JsonConvert.SerializeObject(update));
+
             var message = update.Message;
-
-            if (update.CallbackQuery != null)
-            {
-                await TelegramBot.Client.SendTextMessageAsync(message.Chat.Id, string.Format("recieved callback: '{0}'", update.CallbackQuery.Data),
-                            replyMarkup: new InlineKeyboardMarkup(new InlineKeyboardButton[]{
-                                new InlineKeyboardButton()
-                                {
-                                    Text = "button 1",
-                                    CallbackData = "Pressed button1"
-                                },
-                                new InlineKeyboardButton()
-                                {
-                                    Text = "button two",
-                                    CallbackData = "Pressed button2"
-                                },
-                                new InlineKeyboardButton()
-                                {
-                                    Text = "Button 3.0",
-                                    CallbackData = "Pressed button3"
-                                }
-                            }));
-            }
-
+            
             if (message.Type == MessageType.Text)
             {
-                var msgText = message.Text.ToLowerInvariant().Trim();
+                var msgText = message.Text.Trim();
 
                 switch (msgText)
                 {
                     case "/test1":
-                        await TelegramBot.Client.SendTextMessageAsync(message.Chat.Id, "Hello...");
-                        await TelegramBot.Client.SendTextMessageAsync(message.Chat.Id, "... World!");
+                        await TelegramBot.Client.SendTextMessageAsync(message.Chat.Id, "hello...");
+                        await TelegramBot.Client.SendTextMessageAsync(message.Chat.Id, "... world!");
                         break;
                     case "/test2":
                         var apiUrl = "http://api.open-notify.org/iss-now.json";
-
                         using (var client = new WebClient())
                         {
                             try
                             {
                                 string data = await client.DownloadStringTaskAsync(apiUrl);
-                                await TelegramBot.Client.SendTextMessageAsync(message.Chat.Id, string.Format("data: '{0}'", data));
+                                await TelegramBot.Client.SendTextMessageAsync(message.Chat.Id, string.Format("International Space Station position data: '{0}'", data));
                             }
                             catch (Exception ex)
                             {
                                 _log.Debug("client error: " + ex);
                             }
                         }
-
-                        break;
-                    case "/test3":
-                        await TelegramBot.Client.SendTextMessageAsync(message.Chat.Id, "press button",
-                            replyMarkup: new InlineKeyboardMarkup(new InlineKeyboardButton[]{
-                                new InlineKeyboardButton()
-                                {
-                                    Text = "button 1",
-                                    CallbackData = "Pressed button1"
-                                },
-                                new InlineKeyboardButton()
-                                {
-                                    Text = "button two",
-                                    CallbackData = "Pressed button2"
-                                },
-                                new InlineKeyboardButton()
-                                {
-                                    Text = "Button 3.0",
-                                    CallbackData = "Pressed button3"
-                                }
-                            }));
                         break;
                     case "/subscribe":
                         var dSub = "SubscriptionChatId_" + message.Chat.Id;

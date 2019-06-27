@@ -10,7 +10,15 @@ namespace Cat.Web
     {
         public static void Register(HttpConfiguration config)
         {
-            if (BaseUrlProvider.UseHttps) config.Filters.Add(new ApiRequireHttpsAttribute());
+            if (BaseUrlProvider.UseHttps)
+            {
+                var allowedPaths = new[]
+                {
+                    "api/v1/Reverberation/Refresher",
+                    "api/v1/Reverberation/ATrigger"
+                };
+                config.Filters.Add(new ApiRequireHttpsAttribute(allowedPaths));
+            }
 
             config.EnableCors();
             config.MapHttpAttributeRoutes();
@@ -19,7 +27,7 @@ namespace Cat.Web
                 name: "DefaultApi",
                 routeTemplate: "api/v1/{controller}/{action}/{id}",
                 defaults: new { id = RouteParameter.Optional },
-                constraints: new { controller = @"^(?:(?!TelegramWebhook).)*$" } // exclude TelegramController hack
+                constraints: new { controller = @"^(?:(?!TelegramWebhook).)*$" } // exclude TelegramWebhookController hack
             );
 
             config.Routes.MapHttpRoute(

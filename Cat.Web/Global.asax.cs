@@ -69,7 +69,7 @@ namespace Cat.Web
 
             ATriggerService.CallATrigger(
                 StructuremapMvc.StructureMapDependencyScope.Container.GetNestedContainer(), 
-                BaseUrlProvider.BaseUrl, 
+                BaseUrlProvider.HttpBaseUrl, 
                 AppSettings.Instance.ATriggerApiKey, 
                 AppSettings.Instance.ATriggerApiSecret,
                 string.Format("From '{0}' app; start call at {1} UTC", AppSettings.Instance.AppTitle, DateTime.UtcNow));

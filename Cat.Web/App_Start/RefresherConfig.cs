@@ -36,7 +36,7 @@ namespace Cat.Web.App_Start
             _client = new HttpClient();
             _client.DefaultRequestHeaders.Accept.Clear();
             _client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-            _callUrl = BaseUrlProvider.BaseUrl;
+            _callUrl = string.Format("{0}api/v1/Reverberation/Refresher", BaseUrlProvider.HttpBaseUrl);
         }
 
         public static void Register()
@@ -89,7 +89,8 @@ namespace Cat.Web.App_Start
                     try
                     {
                         var result = Task.Run<HttpResponseMessage>(async () => await _client.GetAsync(_callUrl)).Result;
-                        var successMsg = string.Format("Refresh job completed successfully (url: '{0}', status: {1}{2})", _callUrl, (int)result.StatusCode, result.StatusCode);
+                        var resultString = Task.Run<string>(async () => await result.Content.ReadAsStringAsync()).Result;
+                        var successMsg = string.Format("Refresh job completed successfully (url: '{0}', status: {1}{2}, content: {3})", _callUrl, (int)result.StatusCode, result.StatusCode, resultString);
                         _loggingService.AddEntry(successMsg);
                         _log.Debug(successMsg);
                     }
