@@ -32,7 +32,7 @@ namespace Telegram.Schedule.Tasks
                 {
                     _log.DebugFormat("Found chat id: '{0}'", cId.Data);
                     var chatId = Convert.ToInt64(cId.Data);
-                    TelegramBot.Client.SendTextMessageAsync(chatId, "");
+                    TelegramBot.Client.SendTextMessageAsync(chatId, "meow!");
                 }
                 catch (Exception e)
                 {
