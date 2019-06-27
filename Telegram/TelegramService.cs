@@ -1,12 +1,16 @@
 ﻿using System;
+using System.Net;
 using System.Threading.Tasks;
 using Cat.Business.Services;
 using Cat.Business.Services.SystemLogging;
 using Cat.Common.Helpers;
+using Cat.Domain.Entities.SystemValues;
 using log4net;
 using StructureMap;
 using Telegram.AppSettings;
 using Telegram.Bot.Types;
+using Telegram.Bot.Types.Enums;
+using Telegram.Bot.Types.ReplyMarkups;
 using Telegram.Models;
 
 namespace Telegram
@@ -123,7 +127,97 @@ namespace Telegram
 
         public async Task ProcessUpdate(Update update)
         {
-            // TODO
+            var message = update.Message;
+
+            if (update.CallbackQuery != null)
+            {
+                await TelegramBot.Client.SendTextMessageAsync(message.Chat.Id, string.Format("recieved callback: '{0}'", update.CallbackQuery.Data),
+                            replyMarkup: new InlineKeyboardMarkup(new InlineKeyboardButton[]{
+                                new InlineKeyboardButton()
+                                {
+                                    Text = "button 1",
+                                    CallbackData = "Pressed button1"
+                                },
+                                new InlineKeyboardButton()
+                                {
+                                    Text = "button two",
+                                    CallbackData = "Pressed button2"
+                                },
+                                new InlineKeyboardButton()
+                                {
+                                    Text = "Button 3.0",
+                                    CallbackData = "Pressed button3"
+                                }
+                            }));
+            }
+
+            if (message.Type == MessageType.Text)
+            {
+                var msgText = message.Text.ToLowerInvariant().Trim();
+
+                switch (msgText)
+                {
+                    case "/test1":
+                        await TelegramBot.Client.SendTextMessageAsync(message.Chat.Id, "Hello...");
+                        await TelegramBot.Client.SendTextMessageAsync(message.Chat.Id, "... World!");
+                        break;
+                    case "/test2":
+                        var apiUrl = "http://api.open-notify.org/iss-now.json";
+
+                        using (var client = new WebClient())
+                        {
+                            try
+                            {
+                                string data = await client.DownloadStringTaskAsync(apiUrl);
+                                await TelegramBot.Client.SendTextMessageAsync(message.Chat.Id, string.Format("data: '{0}'", data));
+                            }
+                            catch (Exception ex)
+                            {
+                                _log.Debug("client error: " + ex);
+                            }
+                        }
+
+                        break;
+                    case "/test3":
+                        await TelegramBot.Client.SendTextMessageAsync(message.Chat.Id, "press button",
+                            replyMarkup: new InlineKeyboardMarkup(new InlineKeyboardButton[]{
+                                new InlineKeyboardButton()
+                                {
+                                    Text = "button 1",
+                                    CallbackData = "Pressed button1"
+                                },
+                                new InlineKeyboardButton()
+                                {
+                                    Text = "button two",
+                                    CallbackData = "Pressed button2"
+                                },
+                                new InlineKeyboardButton()
+                                {
+                                    Text = "Button 3.0",
+                                    CallbackData = "Pressed button3"
+                                }
+                            }));
+                        break;
+                    case "/subscribe":
+                        var dSub = "SubscriptionChatId_" + message.Chat.Id;
+                        await _sysyemValues.SetAsync(message.Chat.Id, dSub, SystemValueType.Long);
+                        await TelegramBot.Client.SendTextMessageAsync(message.Chat.Id, "subscribed!");
+                        break;
+                    case "/unsubscribe":
+                        var dUnsub = "SubscriptionChatId_" + message.Chat.Id;
+                        await _sysyemValues.RemoveAsync(dUnsub);
+                        await TelegramBot.Client.SendTextMessageAsync(message.Chat.Id, "unsubscribed!");
+                        break;
+                    default:
+                        await TelegramBot.Client.SendTextMessageAsync(message.Chat.Id, string.Format("echo: '{0}'", msgText));
+                        break;
+                }
+            }
+            else
+            {
+                await TelegramBot.Client.SendTextMessageAsync(message.Chat.Id, string.Format("message type: {0}", message.Type));
+            }
         }
+
     }
 }

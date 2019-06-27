@@ -76,6 +76,7 @@
   <ItemGroup>
     <Compile Include="AppSettings\TelegramAppSettings.cs" />
     <Compile Include="Models\TelegramStatusViewModel.cs" />
+    <Compile Include="Schedule\Tasks\ProcessSubscriptionsTask.cs" />
     <Compile Include="Schedule\Tasks\CheckWebhookTask.cs" />
     <Compile Include="TelegramBot.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

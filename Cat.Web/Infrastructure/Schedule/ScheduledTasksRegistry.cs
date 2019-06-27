@@ -11,6 +11,7 @@ namespace Cat.Web.Infrastructure.Schedule
         {
             AddRecurring<CleanUpSystemLogTask>("0 */6 * * *");
             AddRecurring<CheckWebhookTask>("*/10 * * * *");
+            AddRecurring<ProcessSubscriptionsTask>("0 */1 * * *");
         }
 
         private static void AddRecurring<T>(string cronExpression) where T : IScheduledTask

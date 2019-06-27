@@ -24,6 +24,7 @@ namespace Cat.Domain.Entities.SystemValues
         Boolean = 1,
         String = 2,
         Int = 3,
-        DateTime = 4
+        DateTime = 4,
+        Long = 5
     }
 }
