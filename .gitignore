@@ -209,3 +209,4 @@ Cat.Web/log4net.config
 Cat.Web/ATriggerVerify.txt
 Cat.Web/Logs/*
 Cat.Web/Bundles/*
+Cat.Web/App_Data/PublicCert.pem
