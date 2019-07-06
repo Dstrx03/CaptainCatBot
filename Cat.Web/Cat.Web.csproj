@@ -280,14 +280,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="ATriggerVerify.txt" />
-    <Content Include="Bundles\3rdpartylicenses.txt" />
-    <Content Include="Bundles\es2015-polyfills.c5dd28b362270c767b34.js" />
-    <Content Include="Bundles\favicon.ico" />
-    <Content Include="Bundles\index.html" />
-    <Content Include="Bundles\main.8c57e7479647815a2d4c.js" />
-    <Content Include="Bundles\polyfills.8bbb231b43165d65d357.js" />
-    <Content Include="Bundles\runtime.26209474bfa8dc87a77c.js" />
-    <Content Include="Bundles\styles.a8944c402c889a9b5bda.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="favicon.ico" />
