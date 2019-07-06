@@ -62,7 +62,7 @@ export class IdentityService extends HttpBaseService {
         this.authInfo.next(res)
         this.menuItems.next(this.menuItemsSvc.generateMenuItemsForAuthInfo(res));
       }),
-      catchError(this.handleError<AuthInfo>('getAuthInfo'))
+      catchError(this.handleError<AuthInfo>('getAuthInfo', new AuthInfo()))
     );
   }
 

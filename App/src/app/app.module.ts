@@ -22,6 +22,7 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatSelectModule } from '@angular/material/select';
+import { MatChipsModule } from '@angular/material/chips';
 
 import { AppRoutingModule } from './infrastructure/navigation/app-routing.module';
 import { AppLoadModule } from './infrastructure/app-load/app-load.module';
@@ -53,6 +54,7 @@ import { TelegramStatusMonitorComponent } from './controls/telegram-status-monit
 import { TelegramServiceStatusPipe } from './pipes/telegram-service-status/telegram-service-status.pipe';
 import { YesNoPipe } from './pipes/yes-no/yes-no.pipe';
 import { DashIfEmptyPipe } from './pipes/dash-if-empty/dash-if-empty.pipe';
+import { MyCvComponent } from './controls/my-cv/my-cv.component';
 
 @NgModule({
   declarations: [
@@ -80,7 +82,8 @@ import { DashIfEmptyPipe } from './pipes/dash-if-empty/dash-if-empty.pipe';
     TelegramStatusMonitorComponent,
     TelegramServiceStatusPipe,
     YesNoPipe,
-    DashIfEmptyPipe
+    DashIfEmptyPipe,
+    MyCvComponent
   ],
   entryComponents: [
     ConfirmDialogComponent,
@@ -112,6 +115,7 @@ import { DashIfEmptyPipe } from './pipes/dash-if-empty/dash-if-empty.pipe';
     MatProgressBarModule,
     MatDividerModule,
     MatSelectModule,
+    MatChipsModule,
     AppRoutingModule,
     AppLoadModule,
     MatProgressButtonsModule.forRoot()

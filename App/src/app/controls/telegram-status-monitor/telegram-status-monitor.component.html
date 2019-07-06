@@ -7,10 +7,10 @@
       <div class="container">
         <div class="row">
           <div class="col-12 col-lg-6">
-            <app-form-value captionClass="col-5" [valueClass]="getTelSvcStatusClass(status.TelegramBotClientStatus)" caption="TelegramBotClient status" [value]="status.TelegramBotClientStatus | telegramServiceStatus"></app-form-value>
+            <app-form-value captionClass="col-5" [contentClass]="'col ' + getTelSvcStatusClass(status.TelegramBotClientStatus)" caption="TelegramBotClient status">{{status.TelegramBotClientStatus | telegramServiceStatus}}</app-form-value>
           </div>
           <div class="col-12 col-lg-6">
-            <app-form-value captionClass="col-5" [valueClass]="getTelSvcStatusClass(status.WebhookStatus)" caption="Webhook status" [value]="status.WebhookStatus | telegramServiceStatus"></app-form-value>
+            <app-form-value captionClass="col-5" [contentClass]="'col ' + getTelSvcStatusClass(status.WebhookStatus)" caption="Webhook status">{{status.WebhookStatus | telegramServiceStatus}}</app-form-value>
           </div>
         </div>
         <div class="row">
@@ -25,38 +25,38 @@
         </div>
         <div class="row">
           <div class="col">
-            <app-form-value captionClass="col-4 col-lg-2" caption="Url" [value]="status.WebhookUrl | dashIfEmpty"></app-form-value>
+            <app-form-value captionClass="col-4 col-lg-2" caption="Url">{{status.WebhookUrl | dashIfEmpty}}</app-form-value>
           </div>
         </div>
         <div class="row">
           <div class="col-12 col-lg-6">
-            <app-form-value caption="Has Custom Certificate" [value]="status.WebhookHasCustomCertificate | yesNo | dashIfEmpty"></app-form-value>
+            <app-form-value caption="Has Custom Certificate">{{status.WebhookHasCustomCertificate | yesNo | dashIfEmpty}}</app-form-value>
           </div>
           <div class="col-12 col-lg-6">
-            <app-form-value caption="Pending Update Count" [value]="status.WebhookPendingUpdateCount | dashIfEmpty"></app-form-value>
+            <app-form-value caption="Pending Update Count">{{status.WebhookPendingUpdateCount | dashIfEmpty}}</app-form-value>
           </div>
         </div>
         <div class="row">
           <div class="col-12 col-lg-6">
-            <app-form-value caption="Last Error Date" [value]="status.WebhookLastErrorDate | date:'medium' | dashIfEmpty"></app-form-value>
+            <app-form-value caption="Last Error Date">{{status.WebhookLastErrorDate | date:'medium' | dashIfEmpty}}</app-form-value>
           </div>
           <div class="col-12 col-lg-6">
-            <app-form-value caption="Max Connections" [value]="status.WebhookMaxConnections | dashIfEmpty"></app-form-value>
+            <app-form-value caption="Max Connections">{{status.WebhookMaxConnections | dashIfEmpty}}</app-form-value>
           </div>
         </div>
         <div class="row">
           <div class="col">
-            <app-form-value captionClass="col-4 col-lg-2" caption="Last Error Message" [value]="status.WebhookLastErrorMessage | dashIfEmpty"></app-form-value>
+            <app-form-value captionClass="col-4 col-lg-2" caption="Last Error Message">{{status.WebhookLastErrorMessage | dashIfEmpty}}</app-form-value>
           </div>
         </div>
         <div class="row">
           <div class="col">
-            <app-form-value captionClass="col-4 col-lg-2" caption="Allowed Updates" [value]="status.WebhookAllowedUpdates | dashIfEmpty"></app-form-value>
+            <app-form-value captionClass="col-4 col-lg-2" caption="Allowed Updates">{{status.WebhookAllowedUpdates | dashIfEmpty}}</app-form-value>
           </div>
         </div>
         <div class="row">
           <div class="col">
-            <app-form-value captionClass="col-4 col-lg-2" caption="Webhook Info Date" [value]="status.WebhookUpdateDate | date:'medium' | dashIfEmpty"></app-form-value>
+            <app-form-value captionClass="col-4 col-lg-2" caption="Webhook Info Date">{{status.WebhookUpdateDate | date:'medium' | dashIfEmpty}}</app-form-value>
           </div>
         </div>
       </div>

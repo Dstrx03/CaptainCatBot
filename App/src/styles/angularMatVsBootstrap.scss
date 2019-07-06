@@ -1,4 +1,17 @@
+@import 'theming.scss';
+
+a {
+    color: mat-color($candy-app-primary);
+}
 a:hover {
+    color: mat-color($candy-app-primary);
+    text-decoration: underline;
+}
+
+a[class~=mat-button]:hover, a[class~=mat-fab]:hover, 
+a[class~=mat-flat-button]:hover, a[class~=mat-icon-button]:hover, 
+a[class~=mat-mini-fab]:hover, a[class~=mat-raised-button]:hover, 
+a[class~=mat-stroked-button]:hover, a[class~=mat-menu-item]:hover {
     color: inherit;
     text-decoration: none;
 }

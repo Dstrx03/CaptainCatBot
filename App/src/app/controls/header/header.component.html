@@ -1,9 +1,12 @@
 <mat-toolbar [color]="getToolbarColor()">
     <div class="d-md-none">
-      <button mat-button (click)="onToggleSidenav()">
+      <button mat-button (click)="onToggleSidenav()" *ngIf="menuItems.length > 0">
           <mat-icon fontSet="fas" fontIcon="fa-bars"></mat-icon>
           <span>{{globalSvc.appTitle}}</span>
       </button>
+      <button mat-button routerLink="" *ngIf="menuItems.length === 0">
+        <span>{{globalSvc.appTitle}}</span>
+    </button>
   </div>
   <div class="d-none d-md-block">
       <button mat-button routerLink="">
