@@ -41,12 +41,17 @@ namespace Cat.Web
                     // Enables the application to validate the security stamp when the user logs in.
                     // This is a security feature which is used when you change a password or add an external login to your account.  
                     OnValidateIdentity = SecurityStampValidator.OnValidateIdentity<ApplicationUserManager, ApplicationUser>(
-                        validateInterval: TimeSpan.FromMinutes(30),
+                        validateInterval: TimeSpan.FromMinutes(15),
                         regenerateIdentity: (manager, user) => user.GenerateUserIdentityAsync(manager)),
                     OnApplyRedirect = ctx => {
                         // since all auth mechanics is being managed in Angular and ASP NET app used more like Web API app - no redirects to Login page from endpoint
                     }
-                }
+                },
+                SlidingExpiration = false,
+                ExpireTimeSpan = TimeSpan.FromDays(7)
+
+                // https://www.jamessturtevant.com/posts/ASPNET-Identity-Cookie-Authentication-Timeouts/
+
             });            
             app.UseExternalSignInCookie(DefaultAuthenticationTypes.ExternalCookie);
 

@@ -103,8 +103,10 @@ namespace Cat.Web.Controllers.Api
         }
 
         [HttpPost]
-        public bool LogOff()
+        public async Task<bool> LogOff()
         {
+            var currentUser = CurrentUserProvider.CurrentUser(Request);
+            await UserManager.UpdateSecurityStampAsync(currentUser.Id);
             AuthenticationManager.SignOut();
             return true;
         }
