@@ -55,6 +55,7 @@ import { TelegramServiceStatusPipe } from './pipes/telegram-service-status/teleg
 import { YesNoPipe } from './pipes/yes-no/yes-no.pipe';
 import { DashIfEmptyPipe } from './pipes/dash-if-empty/dash-if-empty.pipe';
 import { MyCvComponent } from './controls/my-cv/my-cv.component';
+import { MomentDatePipe } from './pipes/moment-date/moment-date.pipe';
 
 @NgModule({
   declarations: [
@@ -83,7 +84,8 @@ import { MyCvComponent } from './controls/my-cv/my-cv.component';
     TelegramServiceStatusPipe,
     YesNoPipe,
     DashIfEmptyPipe,
-    MyCvComponent
+    MyCvComponent,
+    MomentDatePipe
   ],
   entryComponents: [
     ConfirmDialogComponent,

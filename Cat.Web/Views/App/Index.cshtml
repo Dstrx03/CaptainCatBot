@@ -12,6 +12,7 @@
         <meta name="viewport" content="width=device-width" />
         <meta name="appTitle" content="@AppSettings.Instance.AppTitle" />
         <meta name="baseUrl" content="@BaseUrlProvider.BaseUrl" />
+        <meta name="serverTimezoneIana" content="@ServerTimeZoneProvider.Iana()" />
         <meta name="gridSchemesJson" content="@Grids.GetSchemesJson()" />
         <title>@AppSettings.Instance.AppTitle</title>
         @Styles.Render("~/Content/Styles")

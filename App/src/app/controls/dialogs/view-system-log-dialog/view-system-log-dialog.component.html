@@ -9,7 +9,7 @@
   <div class="container">
     <div class="row" *ngFor="let item of logEntries" >
       <div class="col">
-        <p><small class="primary-color">{{item.EntryDate | date:'medium'}}</small><br>{{item.Entry}}</p>
+        <p><small class="primary-color">{{item.EntryDate | momentDate:'medium'}}</small><br>{{item.Entry}}</p>
         <mat-divider></mat-divider>
       </div>
     </div>

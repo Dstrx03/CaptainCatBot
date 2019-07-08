@@ -57,9 +57,14 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
+    <Reference Include="TimeZoneConverter, Version=3.2.0.0, Culture=neutral, PublicKeyToken=e20ab7d0d9479841, processorArchitecture=MSIL">
+      <HintPath>..\packages\TimeZoneConverter.3.2.0\lib\net45\TimeZoneConverter.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AppSettings\BaseUrlProvider.cs" />
+    <Compile Include="AppSettings\ServerTimeZoneProvider.cs" />
     <Compile Include="AppSettings\TelegramBotTokenProvider.cs" />
     <Compile Include="Helpers\MaskDataHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

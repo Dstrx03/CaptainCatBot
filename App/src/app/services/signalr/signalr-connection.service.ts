@@ -1,9 +1,9 @@
 import { EventEmitter, Injectable, NgZone, OnDestroy } from "@angular/core";
 import { SignalrHub } from './signalr-hub.service';
-
-import 'jquery'; 
-import 'signalr';
 import { GlobalService } from 'src/app/infrastructure/global.service';
+
+// import 'jquery'; 
+// import 'signalr';
 
 declare var jQuery: any;
 declare var $: any;
