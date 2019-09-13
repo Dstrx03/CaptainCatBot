@@ -4,6 +4,7 @@ using System.Linq;
 using Cat.Domain;
 using Cat.Domain.Entities.Identity;
 using Cat.Web.Infrastructure.Platform;
+using Cat.Web.Infrastructure.Platform.Identity;
 using Cat.Web.Infrastructure.Roles;
 using log4net;
 using Microsoft.AspNet.Identity;
@@ -11,6 +12,7 @@ using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin;
 using Microsoft.Owin.Security.Cookies;
+using Microsoft.Owin.Security.DataProtection;
 using Owin;
 
 namespace Cat.Web
@@ -40,19 +42,16 @@ namespace Cat.Web
                 {
                     // Enables the application to validate the security stamp when the user logs in.
                     // This is a security feature which is used when you change a password or add an external login to your account.  
-                    OnValidateIdentity = SecurityStampValidator.OnValidateIdentity<ApplicationUserManager, ApplicationUser>(
-                        validateInterval: TimeSpan.FromMinutes(15),
+                    OnValidateIdentity = CatSecurityStampValidator.OnValidateIdentity<ApplicationUserManager, ApplicationUser>(
+                        validateInterval: TimeSpan.FromMinutes(1),
                         regenerateIdentity: (manager, user) => user.GenerateUserIdentityAsync(manager)),
                     OnApplyRedirect = ctx => {
                         // since all auth mechanics is being managed in Angular and ASP NET app used more like Web API app - no redirects to Login page from endpoint
                     }
                 },
-                SlidingExpiration = false,
-                ExpireTimeSpan = TimeSpan.FromDays(7)
+                SlidingExpiration = true
+            });
 
-                // https://www.jamessturtevant.com/posts/ASPNET-Identity-Cookie-Authentication-Timeouts/
-
-            });            
             app.UseExternalSignInCookie(DefaultAuthenticationTypes.ExternalCookie);
 
             // Enables the application to temporarily store user information when they are verifying the second factor in the two-factor authentication process.

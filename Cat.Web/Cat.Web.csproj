@@ -261,6 +261,7 @@
     <Compile Include="Infrastructure\Platform\AppSettings.cs" />
     <Compile Include="Infrastructure\Platform\CurrentUserProvider.cs" />
     <Compile Include="Infrastructure\Platform\IAppSettings.cs" />
+    <Compile Include="Infrastructure\Platform\Identity\CatSecurityStampValidator.cs" />
     <Compile Include="Infrastructure\Platform\Identity\IdentityUtilsProvider.cs" />
     <Compile Include="Infrastructure\Platform\WebApi\Attributes\ApiRequireHttpsAttribute.cs" />
     <Compile Include="Infrastructure\Platform\WebApi\CatProcedureResult.cs" />
