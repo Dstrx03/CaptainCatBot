@@ -127,53 +127,86 @@ namespace Telegram
 
         public async Task ProcessUpdate(Update update)
         {
+            // Telegram API tryout
+
             _log.DebugFormat("Got telegram update: {0}", Newtonsoft.Json.JsonConvert.SerializeObject(update));
 
             var message = update.Message;
-            
-            if (message.Type == MessageType.Text)
-            {
-                var msgText = message.Text.Trim();
+            var callbackQuery = update.CallbackQuery;
 
-                switch (msgText)
+            if (message != null)
+            {
+                if (message.Type == MessageType.Text)
                 {
-                    case "/test1":
-                        await TelegramBot.Client.SendTextMessageAsync(message.Chat.Id, "hello...");
-                        await TelegramBot.Client.SendTextMessageAsync(message.Chat.Id, "... world!");
-                        break;
-                    case "/test2":
-                        var apiUrl = "http://api.open-notify.org/iss-now.json";
-                        using (var client = new WebClient())
-                        {
-                            try
+                    var msgText = message.Text.Trim();
+
+                    switch (msgText)
+                    {
+                        case "/test1":
+                            await TelegramBot.Client.SendTextMessageAsync(message.Chat.Id, "hello...");
+                            await TelegramBot.Client.SendTextMessageAsync(message.Chat.Id, "... world!");
+                            break;
+                        case "/test2":
+                            var apiUrl = "http://api.open-notify.org/iss-now.json";
+                            using (var client = new WebClient())
                             {
-                                string data = await client.DownloadStringTaskAsync(apiUrl);
-                                await TelegramBot.Client.SendTextMessageAsync(message.Chat.Id, string.Format("International Space Station position data: '{0}'", data));
+                                try
+                                {
+                                    string data = await client.DownloadStringTaskAsync(apiUrl);
+                                    await TelegramBot.Client.SendTextMessageAsync(message.Chat.Id, string.Format("International Space Station position data: '{0}'", data));
+                                }
+                                catch (Exception ex)
+                                {
+                                    _log.Debug("client error: " + ex);
+                                }
                             }
-                            catch (Exception ex)
-                            {
-                                _log.Debug("client error: " + ex);
-                            }
-                        }
-                        break;
-                    case "/subscribe":
-                        var dSub = "SubscriptionChatId_" + message.Chat.Id;
-                        await _sysyemValues.SetAsync(message.Chat.Id, dSub, SystemValueType.Long);
-                        await TelegramBot.Client.SendTextMessageAsync(message.Chat.Id, "subscribed!");
-                        break;
-                    case "/unsubscribe":
-                        var dUnsub = "SubscriptionChatId_" + message.Chat.Id;
-                        await _sysyemValues.RemoveAsync(dUnsub);
-                        await TelegramBot.Client.SendTextMessageAsync(message.Chat.Id, "unsubscribed!");
-                        break;
-                    default:
-                        await TelegramBot.Client.SendTextMessageAsync(message.Chat.Id, string.Format("echo: '{0}'", msgText));
-                        break;
+                            break;
+                        case "/test3":
+                            await TelegramBot.Client.SendTextMessageAsync(message.Chat.Id, "press button",
+                                replyMarkup: new InlineKeyboardMarkup(new[]{	
+                                new InlineKeyboardButton()	
+                                {	
+                                    Text = "meow",	
+                                    CallbackData = "meow! meooow!"
+                                },	
+                                new InlineKeyboardButton()	
+                                {	
+                                    Text = "purr",	
+                                    CallbackData = "purrrrrr :3"	
+                                }
+                            }));
+                            break;
+                        case "/subscribe":
+                            var dSub = "SubscriptionChatId_" + message.Chat.Id;
+                            await _sysyemValues.SetAsync(message.Chat.Id, dSub, SystemValueType.Long);
+                            await TelegramBot.Client.SendTextMessageAsync(message.Chat.Id, "subscribed!");
+                            break;
+                        case "/unsubscribe":
+                            var dUnsub = "SubscriptionChatId_" + message.Chat.Id;
+                            await _sysyemValues.RemoveAsync(dUnsub);
+                            await TelegramBot.Client.SendTextMessageAsync(message.Chat.Id, "unsubscribed!");
+                            break;
+                        default:
+                            await TelegramBot.Client.SendTextMessageAsync(message.Chat.Id, string.Format("echo: '{0}'", msgText));
+                            break;
+                    }
+                }
+                else if (message.Type == MessageType.Sticker)
+                {
+                    var stickerSet = await TelegramBot.Client.GetStickerSetAsync(message.Sticker.SetName);
+                    if (stickerSet == null) return;
+                    var random = new Random(Guid.NewGuid().GetHashCode());
+                    var randomSticker = stickerSet.Stickers[random.Next(stickerSet.Stickers.Length)];
+                    await TelegramBot.Client.SendStickerAsync(message.Chat.Id, randomSticker.FileId);
+                }
+                else
+                {
+                    await TelegramBot.Client.SendTextMessageAsync(message.Chat.Id, string.Format("message type: {0}", message.Type));
                 }
             }
-            else
+            else if (callbackQuery != null)
             {
-                await TelegramBot.Client.SendTextMessageAsync(message.Chat.Id, string.Format("message type: {0}", message.Type));
+                await TelegramBot.Client.SendTextMessageAsync(callbackQuery.Message.Chat.Id, callbackQuery.Data);
             }
         }
 
