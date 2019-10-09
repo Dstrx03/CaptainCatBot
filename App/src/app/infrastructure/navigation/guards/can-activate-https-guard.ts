@@ -8,13 +8,13 @@ import { GlobalService } from '../../global.service';
 })
 export class CanActivateHttpsGuard implements CanActivate {
 
-    constructor(private gloablSvc: GlobalService) {
+    constructor(private globalSvc: GlobalService) {
     }
 
     canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> | Promise<boolean> | boolean {
-        if (this.gloablSvc.baseUrl.toLowerCase().startsWith('https:') && 
+        if (this.globalSvc.baseUrl.toLowerCase().startsWith('https:') && 
         location.protocol.toLowerCase() === 'http:') {
-            window.location.href = `${this.gloablSvc.baseUrl}#${state.url}`;
+            window.location.href = `${this.globalSvc.baseUrl}#${state.url}`;
             return false;
         }
         return true;

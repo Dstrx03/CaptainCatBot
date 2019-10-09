@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
 import { GlobalService } from '../infrastructure/global.service';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable, of } from 'rxjs';
+import { Observable, of, throwError } from 'rxjs';
 import { CatProcedureResult } from '../infrastructure/webApi/catProcedureResult';
+import { catchError } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -28,6 +29,8 @@ export abstract class HttpBaseService {
    */
   protected handleError<T>(operation = 'operation', result?: T) {
     return (error: any): Observable<T> => {
+      // If 401 (Unauthorized) error occurred then stop the pipeline instead of returning result.
+      if (error.status == 401) return throwError(`${operation} request is unauthorized: ${error.message}`);
 
       // TODO: send the error to remote logging infrastructure
       console.error(error); // log to console instead

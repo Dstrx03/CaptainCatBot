@@ -4,6 +4,7 @@ import { NgModule } from '@angular/core';
 import { HttpClientModule } from '@angular/common/http';
 import { FormsModule } from '@angular/forms'; // <-- NgModel lives here
 import { ReactiveFormsModule } from '@angular/forms';
+import { HTTP_INTERCEPTORS } from '@angular/common/http';
 
 import { MatButtonModule, MatCheckboxModule, MatInputModule } from '@angular/material';
 import { MatToolbarModule } from '@angular/material/toolbar';
@@ -56,6 +57,7 @@ import { YesNoPipe } from './pipes/yes-no/yes-no.pipe';
 import { DashIfEmptyPipe } from './pipes/dash-if-empty/dash-if-empty.pipe';
 import { MyCvComponent } from './controls/my-cv/my-cv.component';
 import { MomentDatePipe } from './pipes/moment-date/moment-date.pipe';
+import { AuthenticationInterceptor } from './infrastructure/http-interceptors/authentication-interceptor/authentication-interceptor.service';
 
 @NgModule({
   declarations: [
@@ -122,7 +124,13 @@ import { MomentDatePipe } from './pipes/moment-date/moment-date.pipe';
     AppLoadModule,
     MatProgressButtonsModule.forRoot()
   ],
-  providers: [],
+  providers: [
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: AuthenticationInterceptor,
+      multi: true
+    }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
