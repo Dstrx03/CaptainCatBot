@@ -37,7 +37,8 @@ export class AppGridComponent implements OnInit {
     this.searchColumns = this.gridScheme.Columns.filter(x => x.Searchable === true).map(({ColumnId}) => ColumnId);
     this.dataSource.filterPredicate = (data, filter: string): boolean => {
       for (const searchCol of this.searchColumns) {
-        if (data[searchCol].toString().toLowerCase().includes(filter)) return true;
+        if (data[searchCol] === null) continue;
+        else if (data[searchCol].toString().toLowerCase().includes(filter)) return true;
       }
       return false;
     };
