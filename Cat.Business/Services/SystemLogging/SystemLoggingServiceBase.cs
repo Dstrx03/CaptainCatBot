@@ -11,7 +11,7 @@ namespace Cat.Business.Services.SystemLogging
 {
     public interface ISystemLoggingServiceBase
     {
-        int DefaultSecondsThreshold();
+        TimeSpan CleanThreshold();
 
         string Descriptor();
 
@@ -23,15 +23,15 @@ namespace Cat.Business.Services.SystemLogging
 
         Task<SystemLogEntry> AddEntryAsync(string entry);
 
-        void Clean(int secondsThreshold, DateTime? date = null);
+        List<string> Clean(TimeSpan threshold, DateTime? date = null);
 
-        Task CleanAsync(int secondsThreshold, DateTime? date = null);
+        Task<List<string>> CleanAsync(TimeSpan threshold, DateTime? date = null);
     }
 
     public abstract class SystemLoggingServiceBase : ISystemLoggingServiceBase
     {
         protected readonly ISystemLogEntriesRespository _logEntriesRepo;
-        protected readonly string _descriptor;
+        private readonly string _descriptor;
 
 
         protected SystemLoggingServiceBase(ISystemLogEntriesRespository logEntriesRepo, string descriptor)
@@ -40,10 +40,10 @@ namespace Cat.Business.Services.SystemLogging
             _descriptor = descriptor;
         }
 
-        public virtual int DefaultSecondsThreshold()
+        public virtual TimeSpan CleanThreshold()
         {
             // 2 weeks
-            return 60*60*24*7*2;
+            return TimeSpan.FromDays(14);
         }
 
         protected virtual IHubContext HubContext()
@@ -98,14 +98,14 @@ namespace Cat.Business.Services.SystemLogging
             return logEntry;
         }
 
-        public void Clean(int secondsThreshold, DateTime? date = null)
+        public List<string> Clean(TimeSpan threshold, DateTime? date = null)
         {
             if (!date.HasValue) date = DateTime.Now;
 
             var removedIds = new List<string>();
             foreach (var e in GetEntries())
             {
-                if ((date.Value - e.EntryDate).TotalSeconds > secondsThreshold)
+                if ((date.Value - e.EntryDate).TotalSeconds > threshold.TotalSeconds)
                 {
                     _logEntriesRepo.Remove(e.Id);
                     removedIds.Add(e.Id);
@@ -115,16 +115,18 @@ namespace Cat.Business.Services.SystemLogging
             _logEntriesRepo.SaveChanges();
 
             HubContext().Clients.All.entriesRemoved(removedIds);
+
+            return removedIds;
         }
 
-        public async Task CleanAsync(int secondsThreshold, DateTime? date = null)
+        public async Task<List<string>> CleanAsync(TimeSpan threshold, DateTime? date = null)
         {
             if (!date.HasValue) date = DateTime.Now;
 
             var removedIds = new List<string>();
             foreach (var e in await GetEntriesAsync())
             {
-                if ((date.Value - e.EntryDate).TotalSeconds > secondsThreshold)
+                if ((date.Value - e.EntryDate).TotalSeconds > threshold.TotalSeconds)
                 {
                     await _logEntriesRepo.RemoveAsync(e.Id);
                     removedIds.Add(e.Id);
@@ -134,6 +136,8 @@ namespace Cat.Business.Services.SystemLogging
             await _logEntriesRepo.SaveChangesAsync();
 
             HubContext().Clients.All.entriesRemoved(removedIds);
+
+            return removedIds;
         }
         
     }

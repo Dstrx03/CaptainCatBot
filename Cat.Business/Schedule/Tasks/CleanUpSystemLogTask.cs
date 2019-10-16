@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Cat.Business.Services.SystemLogging;
 using log4net;
@@ -23,18 +24,20 @@ namespace Cat.Business.Schedule.Tasks
 
             _log.DebugFormat("Logging services found: {0}", loggingServices.Count == 0 ? "none" : string.Join(", ", loggingServices.Select(x => x.Descriptor())));
 
+            var removedIds = new List<string>();
             foreach (var svc in loggingServices)
             {
+                var cleanThreshold = svc.CleanThreshold();
                 try
                 {
-                    _log.DebugFormat("Cleaning {0} entries older than {1} seconds ({2:F2} hours)", svc.Descriptor(), svc.DefaultSecondsThreshold(), svc.DefaultSecondsThreshold() / (60m * 60m));
-                    svc.Clean(svc.DefaultSecondsThreshold());
+                    _log.DebugFormat("Cleaning {0} entries older than {1}", svc.Descriptor(), cleanThreshold);
+                    removedIds = svc.Clean(cleanThreshold);
                 }
                 catch (Exception ex)
                 {
                     _log.ErrorFormat("Error while cleaning log entries for {0}: {1}", svc.Descriptor(), ex);
                 }
-                _log.DebugFormat("{0}'s entries older than {1} seconds ({2:F2} hours) successfully deleted", svc.Descriptor(), svc.DefaultSecondsThreshold(), svc.DefaultSecondsThreshold() / (60m * 60m));
+                _log.DebugFormat("{0}'s entries older than {1} successfully cleaned ({2} entries deleted)", svc.Descriptor(), cleanThreshold, removedIds.Count);
             }
         }
     }

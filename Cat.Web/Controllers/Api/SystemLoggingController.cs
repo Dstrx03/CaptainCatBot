@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Web.Http;
 using Cat.Business.Services.SystemLogging;
@@ -30,7 +31,7 @@ namespace Cat.Web.Controllers.Api
         public async Task<List<SystemLogEntry>> Clean(string descriptor, int secondsThreshold)
         {
             var loggingService = SystemLoggingServiceFactory.CreateService(descriptor, _container);
-            await loggingService.CleanAsync(secondsThreshold);
+            await loggingService.CleanAsync(TimeSpan.FromSeconds(secondsThreshold));
             var result = await loggingService.GetEntriesAsync();
             return result;
         }

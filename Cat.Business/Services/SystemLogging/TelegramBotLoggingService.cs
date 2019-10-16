@@ -1,4 +1,5 @@
-﻿using Cat.Domain.Repositories;
+﻿using System;
+using Cat.Domain.Repositories;
 using Microsoft.AspNet.SignalR;
 
 namespace Cat.Business.Services.SystemLogging
@@ -11,10 +12,10 @@ namespace Cat.Business.Services.SystemLogging
         {
         }
 
-        public override int DefaultSecondsThreshold()
+        public override TimeSpan CleanThreshold()
         {
             // 3 days
-            return 60 * 60 * 24 * 3;
+            return TimeSpan.FromDays(3);
         }
 
         protected override IHubContext HubContext()
