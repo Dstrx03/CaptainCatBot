@@ -4,3 +4,8 @@ export interface SystemLogEntry {
     EntryDate: Date;
     Entry: string;
 }
+
+export interface SystemLogEntriesPackage {
+    Entries: SystemLogEntry[];
+    IsLast: boolean;
+}

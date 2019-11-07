@@ -4,7 +4,7 @@ import { GlobalService } from 'src/app/infrastructure/global.service';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
-import { SystemLogEntry } from 'src/app/models/systemLogEntry';
+import { SystemLogEntry, SystemLogEntriesPackage } from 'src/app/models/systemLogEntry';
 
 @Injectable({
   providedIn: 'root'
@@ -22,10 +22,17 @@ export class SystemLoggingService extends HttpBaseService {
     );
   }
 
-  clean(descriptor: string, secondsThreshold: number): Observable<SystemLogEntry[]> {
-    return this.http.post<SystemLogEntry[]>(this.apiUrl + `Clean?descriptor=${descriptor}&secondsThreshold=${secondsThreshold}`, null).pipe(
-      tap((res: SystemLogEntry[]) => {}),
-      catchError(this.handleError<SystemLogEntry[]>('clean'))
+  getNextEntries(descriptor: string, lastEntryId: string, count: number): Observable<SystemLogEntriesPackage> {
+    return this.http.get<SystemLogEntriesPackage>(this.apiUrl + `GetNextEntries?descriptor=${descriptor}&lastEntryId=${lastEntryId === null ? '' : lastEntryId}&count=${count}`).pipe(
+      tap((res: SystemLogEntriesPackage) => {}),
+      catchError(this.handleError<SystemLogEntriesPackage>('getNextEntries'))
+    );
+  }
+
+  clean(descriptor: string, secondsThreshold: number, prevLoadedCount: number): Observable<SystemLogEntriesPackage> {
+    return this.http.post<SystemLogEntriesPackage>(this.apiUrl + `Clean?descriptor=${descriptor}&secondsThreshold=${secondsThreshold}&prevLoadedCount=${prevLoadedCount}`, null).pipe(
+      tap((res: SystemLogEntriesPackage) => {}),
+      catchError(this.handleError<SystemLogEntriesPackage>('clean'))
     );
   }
 

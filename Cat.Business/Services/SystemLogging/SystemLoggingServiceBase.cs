@@ -1,7 +1,9 @@
 ﻿using System;
+using System.CodeDom;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using Cat.Domain.Entities.SystemLog;
 using Cat.Domain.Repositories;
@@ -18,6 +20,10 @@ namespace Cat.Business.Services.SystemLogging
         List<SystemLogEntry> GetEntries();
 
         Task<List<SystemLogEntry>> GetEntriesAsync();
+
+        SystemLogEntriesPackage GetNextEntries(string lastEntryId, int count);
+
+        Task<SystemLogEntriesPackage> GetNextEntriesAsync(string lastEntryId, int count);
 
         SystemLogEntry AddEntry(string entry);
 
@@ -58,12 +64,38 @@ namespace Cat.Business.Services.SystemLogging
 
         public List<SystemLogEntry> GetEntries()
         {
-            return _logEntriesRepo.GetAll().Where(x => x.EntryDescriptor == _descriptor).OrderByDescending(x => x.EntryDate).ToList();
+            return _logEntriesRepo.GetEntries(_descriptor).ToList();
         }
 
         public async Task<List<SystemLogEntry>> GetEntriesAsync()
         {
-            return await _logEntriesRepo.GetAll().Where(x => x.EntryDescriptor == _descriptor).OrderByDescending(x => x.EntryDate).ToListAsync();
+            return await _logEntriesRepo.GetEntries(_descriptor).ToListAsync();
+        }
+
+        public SystemLogEntriesPackage GetNextEntries(string lastEntryId, int count)
+        {
+            var entries = _logEntriesRepo.GetNextEntries(_descriptor, lastEntryId, count).ToList();
+            return new SystemLogEntriesPackage(entries, IsLastPackage(entries));
+        }
+
+        public async Task<SystemLogEntriesPackage> GetNextEntriesAsync(string lastEntryId, int count)
+        {
+            var query = await _logEntriesRepo.GetNextEntriesAsync(_descriptor, lastEntryId, count);
+            var entries = await query.ToListAsync();
+            return new SystemLogEntriesPackage(entries, IsLastPackage(entries));
+        }
+
+        private bool IsLastPackage(List<SystemLogEntry> entries)
+        {
+            var lastEntry = entries.LastOrDefault();
+            var lastEntryTotal = _logEntriesRepo.GetAll()
+                .Where(x => x.EntryDescriptor == _descriptor)
+                .OrderBy(x => x.EntryDate)
+                .FirstOrDefault();
+
+            if (lastEntry == null || lastEntryTotal == null) return true;
+            if (lastEntry.Id == lastEntryTotal.Id) return true;
+            return false;
         }
 
         public SystemLogEntry AddEntry(string entry)
@@ -146,4 +178,16 @@ namespace Cat.Business.Services.SystemLogging
     {
     }
 
+    public class SystemLogEntriesPackage
+    {
+        public List<SystemLogEntry> Entries { get; set; }
+
+        public bool IsLast { get; set; }
+
+        public SystemLogEntriesPackage(List<SystemLogEntry> entries, bool isLast)
+        {
+            Entries = entries;
+            IsLast = isLast;
+        }
+    }
 }

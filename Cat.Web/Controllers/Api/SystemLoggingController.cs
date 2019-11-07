@@ -27,12 +27,19 @@ namespace Cat.Web.Controllers.Api
             return await loggingService.GetEntriesAsync();
         }
 
+        [HttpGet]
+        public async Task<SystemLogEntriesPackage> GetNextEntries(string descriptor, string lastEntryId, int count)
+        {
+            var loggingService = SystemLoggingServiceFactory.CreateService(descriptor, _container);
+            return await loggingService.GetNextEntriesAsync(lastEntryId, count);
+        }
+
         [HttpPost]
-        public async Task<List<SystemLogEntry>> Clean(string descriptor, int secondsThreshold)
+        public async Task<SystemLogEntriesPackage> Clean(string descriptor, int secondsThreshold, int prevLoadedCount)
         {
             var loggingService = SystemLoggingServiceFactory.CreateService(descriptor, _container);
             await loggingService.CleanAsync(TimeSpan.FromSeconds(secondsThreshold));
-            var result = await loggingService.GetEntriesAsync();
+            var result = await loggingService.GetNextEntriesAsync(null, prevLoadedCount);
             return result;
         }
 

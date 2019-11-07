@@ -1,7 +1,7 @@
 import { Component, OnInit, Inject, ViewChild } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { SystemLoggingService } from 'src/app/services/system-logging/system-logging.service';
-import { SystemLogEntry } from 'src/app/models/systemLogEntry';
+import { SystemLogEntry, SystemLogEntriesPackage } from 'src/app/models/systemLogEntry';
 import { Subscription } from 'rxjs';
 import { MatSnackBar } from '@angular/material';
 import { SignalrConnectionService } from 'src/app/services/signalr/signalr-connection.service';
@@ -23,6 +23,8 @@ export class ViewSystemLogDialogComponent implements OnInit {
 
   logEntries: SystemLogEntry[];
   loadingEntries = false;
+  allEntriesLoaded = false;
+  entriesLoadCount = 20;
 
   @ViewChild('cleanLogBtn') cleanLogBtn;
   cleanThresholdOptions = [
@@ -60,20 +62,24 @@ export class ViewSystemLogDialogComponent implements OnInit {
   cleanEntries() {
     this.cleanLogBtn.options.active = true;
     const submittedThreshold = this.cleanThreshold;
-    this.cleanSubscription = this.loggingSvc.clean(this.data.descriptor, submittedThreshold.v).subscribe((result: SystemLogEntry[]) => {
+    this.cleanSubscription = this.loggingSvc.clean(this.data.descriptor, submittedThreshold.v, this.logEntries.length).subscribe((result: SystemLogEntriesPackage) => {
       this.cleanLogBtn.options.active = false;
-      this.logEntries = result;
-      this.sortEntries();
+      this.addEntries(result.Entries);
+      this.allEntriesLoaded = result.IsLast;
       const snackMsg = submittedThreshold.v === -1 ? 'Removed all entries.' : `Removed entries older than ${submittedThreshold.c}.`;
       this.snackBar.open(snackMsg, 'Ok', { duration: 5000 });
     });
   }
 
-  private loadEntries() {
+  loadNextEntries() {
+    this.loadEntries(this.logEntries[this.logEntries.length - 1].Id, this.entriesLoadCount);
+  }
+
+  private loadEntries(lastEntryId: string, count: number) {
     this.loadingEntries = true;
-    this.getSubscription = this.loggingSvc.getEntries(this.data.descriptor).subscribe((result: SystemLogEntry[]) => {
-      this.logEntries = result;
-      this.sortEntries();
+    this.getSubscription = this.loggingSvc.getNextEntries(this.data.descriptor, lastEntryId, count).subscribe((result: SystemLogEntriesPackage) => {
+      this.addEntries(result.Entries);
+      this.allEntriesLoaded = result.IsLast;
       this.loadingEntries = false;
     });
   }
@@ -87,7 +93,12 @@ export class ViewSystemLogDialogComponent implements OnInit {
   }
 
   private addEntries(entries: SystemLogEntry[]) {
-    this.logEntries = this.logEntries.concat(entries);
+    var lastLoadedEntries = [];
+    entries.forEach(x => { 
+      if (this.logEntries.find(z => z.Id == x.Id) === undefined) 
+        lastLoadedEntries.push(x) 
+    });
+    this.logEntries = this.logEntries.concat(lastLoadedEntries);
     this.sortEntries();
   }
 
@@ -99,7 +110,7 @@ export class ViewSystemLogDialogComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.loadEntries();
+    this.loadEntries(null, this.entriesLoadCount);
     this.hub.listen('entryAdded').then(o => {
       this.entryAddedSubscription = o.subscribe(res => {
         this.addEntries([res[0] as SystemLogEntry])

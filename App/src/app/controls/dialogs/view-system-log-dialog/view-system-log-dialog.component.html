@@ -1,16 +1,17 @@
 <mat-progress-bar mode="indeterminate" [style.visibility]="loadingEntries ? 'visible' : 'hidden'"></mat-progress-bar>
 <h1 mat-dialog-title>{{data.name}} log</h1>
-<div class="container">
-  <div class="row">
-      <div class="col text-right"><small>Total: {{logEntries.length}} item(s)</small></div>
-  </div>
-</div>
 <div mat-dialog-content>
   <div class="container">
     <div class="row" *ngFor="let item of logEntries" >
       <div class="col">
         <p><small class="primary-color">{{item.EntryDate | momentDate:'medium'}}</small><br>{{item.Entry}}</p>
         <mat-divider></mat-divider>
+      </div>
+    </div>
+    <div class="row" *ngIf="!allEntriesLoaded">
+      <div class="col text-center">
+        <mat-spinner-button #loadNextEntriesBtn (btnClick)="loadNextEntries()" [options]="{ active: false, text: 'Show more...', spinnerSize: 19, flat: false,
+          buttonColor: 'accent', spinnerColor: 'accent', disabled: loadingEntries, mode: 'indeterminate' }"></mat-spinner-button>
       </div>
     </div>
     <div class="row" *ngIf="logEntries.length === 0 && !loadingEntries">
