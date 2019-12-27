@@ -48,10 +48,19 @@ export class MyCvComponent implements OnInit {
       'Full Stack .NET Developer',
       new Date(2015, 3, 6),
       null,
-      `End-to-end software development and support of the company's main product including custom and internal projects, in particular, 
-      participating in development of financial calculations, decision-making systems, integrations with credit bureaus and payment services.
-      Working in Agile Scrum methodology within a team and delivering accepted functionality in each sprint. 
-      Environment: C#, ASP.NET MVC, ASP.NET Web API, Entity Framework, StructureMap, HTML5, CSS3, JavaScript, jQuery, Bootstrap, AngularJS, Microsoft SQL Server, IIS.`
+      [
+        `<i class="primary-color">TurnKey Lender</i> is the intelligent all-in-one platform which automates the entire lending process and comes with an AI-driven origination engine built-in.
+        Responsibilities: End-to-end software development and support of the product and custom projects, in particular, 
+        participating in development of financial calculations, decision-making systems, integrations with credit bureaus and payment services.
+        Working in Agile Scrum methodology within a team and delivering accepted functionality in each sprint.
+        Environment: C#, ASP.NET MVC, ASP.NET Web API, Entity Framework, StructureMap, HTML5, CSS3, JavaScript, jQuery, Bootstrap, AngularJS, Microsoft SQL Server, IIS.`,
+        `<i class="primary-color">Image Forgery Detector</i> reveals digitally edited document photos, identifies altered (forged) parts in photos, provides an accurate Forgery Score and camera identification.
+        Responsibilities: Development of web service which handles requests from the front-end client, implementation of new functionality in the data processing engine, support of testing tools.
+        Environment: C#, ASP.NET Web Service, Windows Forms.`,
+        `Project for internal use which automates management of deployed instances.
+        Responsibilities: Reports implementation. 
+        Environment: C#, ASP.NET MVC, T-SQL, Entity Framework, StructureMap, HTML5, CSS3, JavaScript, jQuery, Bootstrap, AngularJS, Microsoft SQL Server, IIS.`
+      ]
     ));
     
     this.cvData.professionalSummary = new ProfessionalSummary();
@@ -144,20 +153,20 @@ export class WorkExperienceEntry {
   jobTitle: string;
   startDate: Date;
   endDate: Date;
-  description: string;
+  descriptionParagraphs: string[];
 
   constructor(name: string,
     link: string,
     jobTitle: string,
     startDate: Date,
     endDate: Date,
-    description: string) {
+    descriptionParagraphs: string[]) {
       this.name = name;
       this.link = link;
       this.jobTitle = jobTitle;
       this.startDate = startDate;
       this.endDate = endDate;
-      this.description = description;
+      this.descriptionParagraphs = descriptionParagraphs;
   }
 
   getExperience(): string {

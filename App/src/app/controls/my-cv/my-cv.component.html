@@ -104,7 +104,7 @@
           </span>
         </h4>
       </div>
-      <p>{{e.description}}</p>
+      <p *ngFor="let d of e.descriptionParagraphs" [innerHTML]="d"></p>
     </div>
   </div>
   <div class="row">
