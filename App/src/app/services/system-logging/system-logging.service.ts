@@ -5,6 +5,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 import { SystemLogEntry, SystemLogEntriesPackage } from 'src/app/models/systemLogEntry';
+import { SystemLoggingSettings } from 'src/app/models/systemLoggingSettings';
 
 @Injectable({
   providedIn: 'root'
@@ -33,6 +34,27 @@ export class SystemLoggingService extends HttpBaseService {
     return this.http.post<SystemLogEntriesPackage>(this.apiUrl + `Clean?descriptor=${descriptor}&secondsThreshold=${secondsThreshold}&prevLoadedCount=${prevLoadedCount}`, null).pipe(
       tap((res: SystemLogEntriesPackage) => {}),
       catchError(this.handleError<SystemLogEntriesPackage>('clean'))
+    );
+  }
+
+  getSettings(): Observable<SystemLoggingSettings[]> {
+    return this.http.get<SystemLoggingSettings[]>(this.apiUrl + 'GetSettings').pipe(
+      tap((res: SystemLoggingSettings[]) => {}),
+      catchError(this.handleError<SystemLoggingSettings[]>('getSettings'))
+    );
+  }
+
+  updateSettings(settings: SystemLoggingSettings[]): Observable<SystemLoggingSettings[]> {
+    return this.http.put<SystemLoggingSettings[]>(this.apiUrl + 'UpdateSettings', settings, this.httpOptions).pipe(
+      tap((res: SystemLoggingSettings[]) => {}),
+      catchError(this.handleError<SystemLoggingSettings[]>('updateSettings'))
+    );
+  }
+
+  resetCleanThreshold(descriptor: string): Observable<SystemLoggingSettings> {
+    return this.http.put<SystemLoggingSettings>(this.apiUrl + `ResetCleanThreshold?descriptor=${descriptor}`, null).pipe(
+      tap((res: SystemLoggingSettings) => {}),
+      catchError(this.handleError<SystemLoggingSettings>('resetCleanThreshold'))
     );
   }
 

@@ -1,6 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { TelegramStatusService } from 'src/app/services/telegram-status/telegram-status.service';
 import { MatSnackBar } from '@angular/material';
+import { AppMatSpinnerButtonComponent } from 'src/app/controls/app-mat-spinner-button/app-mat-spinner-button.component';
 
 @Component({
   selector: 'app-telegram-status',
@@ -11,12 +12,12 @@ export class TelegramStatusComponent implements OnInit {
 
   disableControlButtons: boolean = false;
 
-  @ViewChild('registerClientBtn') registerClientBtn;
-  @ViewChild('unregisterClientBtn') unregisterClientBtn;
-  @ViewChild('registerWebhookBtn') registerWebhookBtn;
-  @ViewChild('unregisterWebhookBtn') unregisterWebhookBtn;
-  @ViewChild('checkWebhookBtn') checkWebhookBtn;
-  @ViewChild('updateWebhookBtn') updateWebhookBtn;
+  @ViewChild('registerClientBtn') registerClientBtn: AppMatSpinnerButtonComponent;
+  @ViewChild('unregisterClientBtn') unregisterClientBtn: AppMatSpinnerButtonComponent;
+  @ViewChild('registerWebhookBtn') registerWebhookBtn: AppMatSpinnerButtonComponent;
+  @ViewChild('unregisterWebhookBtn') unregisterWebhookBtn: AppMatSpinnerButtonComponent;
+  @ViewChild('checkWebhookBtn') checkWebhookBtn: AppMatSpinnerButtonComponent;
+  @ViewChild('updateWebhookBtn') updateWebhookBtn: AppMatSpinnerButtonComponent;
 
   constructor(private telegramStatusSvc: TelegramStatusService, private snackBar: MatSnackBar) { }
 

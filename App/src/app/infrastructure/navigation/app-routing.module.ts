@@ -13,6 +13,7 @@ import { SystemComponent } from 'src/app/views/system/system.component';
 import { InternalServicesComponent } from 'src/app/views/internal-services/internal-services.component';
 import { TelegramComponent } from 'src/app/views/telegram/telegram.component';
 import { TelegramStatusComponent } from 'src/app/views/telegram-status/telegram-status.component';
+import { SystemLoggingComponent } from 'src/app/views/system-logging/system-logging.component';
 
 
 
@@ -26,7 +27,8 @@ export class AppRoutes {
     ]},
     { path: 'System', component: SystemComponent, canActivate: [CanActivateAuthGuard, CanActivateHttpsGuard], data: {roles: [AppRoles.Admin]}, children: [
       { path: 'Users', component: UsersComponent, canActivate: [CanActivateAuthGuard, CanActivateHttpsGuard], data: {roles: [AppRoles.Admin]} },
-      { path: 'InternalServices', component: InternalServicesComponent, canActivate: [CanActivateAuthGuard, CanActivateHttpsGuard], data: {roles: [AppRoles.Admin]} }
+      { path: 'InternalServices', component: InternalServicesComponent, canActivate: [CanActivateAuthGuard, CanActivateHttpsGuard], data: {roles: [AppRoles.Admin]} },
+      { path: 'SystemLogging', component: SystemLoggingComponent, canActivate: [CanActivateAuthGuard, CanActivateHttpsGuard], data: {roles: [AppRoles.Admin]} }
     ]}
   ];
 }

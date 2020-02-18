@@ -1,6 +1,6 @@
 import { Component, OnInit, Inject, ViewChild } from '@angular/core';
 import { FormControl, Validators, AbstractControl } from '@angular/forms';
-import { FormControlHelper } from '../../../infrastructure/helpers/formControlHelper';
+import { FormControlHelper } from '../../../infrastructure/helpers/form-control-helper';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { AppUserModel } from '../../../models/appUserModel';
 import { ParsedAppRole, AuthInfo } from '../../../models/authInfo';
@@ -8,6 +8,7 @@ import { Observable, of, Subscription } from 'rxjs';
 import { tap, mergeMap } from 'rxjs/operators';
 import { UsersService } from '../../../services/identity/users.service';
 import { IdentityService } from '../../../services/identity/identity.service';
+import { AppMatSpinnerButtonComponent } from '../../app-mat-spinner-button/app-mat-spinner-button.component';
 
 @Component({
   selector: 'app-edit-user-dialog',
@@ -16,7 +17,7 @@ import { IdentityService } from '../../../services/identity/identity.service';
 })
 export class EditUserDialogComponent implements OnInit {
 
-  @ViewChild('applySpinnerBtn') applySpinnerBtn;
+  @ViewChild('applySpinnerBtn') applySpinnerBtn: AppMatSpinnerButtonComponent;
 
   private dSubscription: Subscription;
 

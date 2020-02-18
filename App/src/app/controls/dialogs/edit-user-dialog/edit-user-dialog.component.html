@@ -89,8 +89,8 @@
   </div>
 </div>
 <div mat-dialog-actions>
-  <mat-spinner-button #applySpinnerBtn (btnClick)="apply()" [options]="{ active: false, text: 'Apply', spinnerSize: 19, flat: true,
+  <app-mat-spinner-button #applySpinnerBtn (btnClick)="apply()" [options]="{ active: false, text: 'Apply', spinnerSize: 19, flat: true,
     buttonColor: 'primary', spinnerColor: 'accent', disabled: formControlHelper.isError() || loadingData, mode: 'indeterminate'}">
-  </mat-spinner-button>
+  </app-mat-spinner-button>
   <button mat-button (click)="dialogRef.close()" [disabled]="dialogRef.disableClose">Cancel</button>
 </div>

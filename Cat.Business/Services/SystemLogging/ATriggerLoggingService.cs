@@ -8,11 +8,11 @@ namespace Cat.Business.Services.SystemLogging
     public class ATriggerLoggingService : SystemLoggingServiceBase
     {
         public ATriggerLoggingService(ISystemLogEntriesRespository logEntriesRepo)
-            : base(logEntriesRepo, "ATriggerService")
+            : base(logEntriesRepo, "ATrigger Logging Service", "ATriggerService")
         {
         }
 
-        public override TimeSpan CleanThreshold()
+        public override TimeSpan DefaultCleanThreshold()
         {
             // 1 week
             return TimeSpan.FromDays(7);

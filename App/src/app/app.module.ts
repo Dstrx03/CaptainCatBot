@@ -46,7 +46,7 @@ import { EditUserDialogComponent } from './controls/dialogs/edit-user-dialog/edi
 import { ViewSystemLogDialogComponent } from './controls/dialogs/view-system-log-dialog/view-system-log-dialog.component';
 import { SystemComponent } from './views/system/system.component';
 import { InternalServicesComponent } from './views/internal-services/internal-services.component';
-import { IntegersOnlyDirective } from './directives/integers-only/integers-only.directive';
+import { NumbersOnlyDirective } from './directives/numbers-only/numbers-only.directive';
 import { TelegramComponent } from './views/telegram/telegram.component';
 import { SidenavMenuComponent } from './controls/sidenav-menu/sidenav-menu.component';
 import { TelegramStatusComponent } from './views/telegram-status/telegram-status.component';
@@ -58,6 +58,8 @@ import { DashIfEmptyPipe } from './pipes/dash-if-empty/dash-if-empty.pipe';
 import { MyCvComponent } from './controls/my-cv/my-cv.component';
 import { MomentDatePipe } from './pipes/moment-date/moment-date.pipe';
 import { AuthenticationInterceptor } from './infrastructure/http-interceptors/authentication-interceptor/authentication-interceptor.service';
+import { SystemLoggingComponent } from './views/system-logging/system-logging.component';
+import { AppMatSpinnerButtonComponent } from './controls/app-mat-spinner-button/app-mat-spinner-button.component';
 
 @NgModule({
   declarations: [
@@ -77,16 +79,18 @@ import { AuthenticationInterceptor } from './infrastructure/http-interceptors/au
     ViewSystemLogDialogComponent,
     SystemComponent,
     InternalServicesComponent,
-    IntegersOnlyDirective,
+    NumbersOnlyDirective,
     TelegramComponent,
     SidenavMenuComponent,
     TelegramStatusComponent,
     FormValueComponent,
     TelegramStatusMonitorComponent,
+    MyCvComponent,
+    SystemLoggingComponent,
+    AppMatSpinnerButtonComponent,
     TelegramServiceStatusPipe,
     YesNoPipe,
     DashIfEmptyPipe,
-    MyCvComponent,
     MomentDatePipe
   ],
   entryComponents: [

@@ -17,6 +17,7 @@ namespace Telegram
         private static TelegramBotClient _client;
         private static WebhookInfo _currrentWebhookInfo;
         private static DateTime? _currentWebhookInfoUpdateDate;
+        private static bool _clientRegistrationError = false;
 
         private static readonly IHubContext _hubContext = GlobalHost.ConnectionManager.GetHubContext<TelegramBotHub>();
 
@@ -29,42 +30,42 @@ namespace Telegram
 
         public static DateTime? CurrentWebhookInfoUpdateDate { get { return _currentWebhookInfoUpdateDate; } }
 
+        public static bool ClientRegistrationError { get { return _clientRegistrationError; } }
+
 
         public static void RegisterClient(string token, ISystemLoggingServiceBase loggingService)
         {
             try
             {
                 _client = new TelegramBotClient(token);
+                _clientRegistrationError = false;
 
                 var tokenValid = Task.Run(async () => await _client.TestApiAsync()).Result;
-                if (!tokenValid)
-                {
-                    _client = null;
-                    _currrentWebhookInfo = null;
-                    
-                    _hubContext.Clients.All.statusInfoUpdated();
-
-                    throw new Exception(string.Format("TelegramBotClient token '{0}' is invalid", token));
-                }
+                if (!tokenValid) throw new Exception(string.Format("TelegramBotClient token '{0}' is invalid", token));
 
                 var successMsg = string.Format("TelegramBotClient registered, token: '{0}'", token);
                 loggingService.AddEntry(successMsg);
                 _log.Debug(successMsg);
-
-                _hubContext.Clients.All.statusInfoUpdated();
             }
             catch (Exception ex)
             {
+                _client = null;
+                _currrentWebhookInfo = null;
+                _clientRegistrationError = true;
+
                 var errorMsg = string.Format("Error while registering TelegramBotClient: {0}", ex);
                 loggingService.AddEntry(errorMsg);
                 _log.Error(errorMsg);
             }
+
+            _hubContext.Clients.All.statusInfoUpdated();
         }
 
         public static void UnregisterClient(ISystemLoggingServiceBase loggingService)
         {
             _client = null;
             _currrentWebhookInfo = null;
+            _clientRegistrationError = false;
 
             var successMsg = "TelegramBotClient unregistered";
             loggingService.AddEntry(successMsg);

@@ -25,6 +25,7 @@ namespace Cat.Domain.Entities.SystemValues
         String = 2,
         Int = 3,
         DateTime = 4,
-        Long = 5
+        Long = 5,
+        TimeSpan = 6
     }
 }

@@ -3,9 +3,10 @@ import { FormControl, Validators} from '@angular/forms';
 import { LoginViewModel } from '../../models/loginViewModel';
 import { IdentityService } from '../../services/identity/identity.service';
 import { Router } from '@angular/router';
-import { FormControlHelper } from 'src/app/infrastructure/helpers/formControlHelper';
+import { FormControlHelper } from 'src/app/infrastructure/helpers/form-control-helper';
 import { MatSnackBar } from '@angular/material';
 import { GlobalService } from 'src/app/infrastructure/global.service';
+import { AppMatSpinnerButtonComponent } from 'src/app/controls/app-mat-spinner-button/app-mat-spinner-button.component';
 
 @Component({
   selector: 'app-login',
@@ -14,7 +15,7 @@ import { GlobalService } from 'src/app/infrastructure/global.service';
 })
 export class LoginComponent implements OnInit {
 
-  @ViewChild('loginBtn') loginBtn;
+  @ViewChild('loginBtn') loginBtn: AppMatSpinnerButtonComponent;
 
   imgLoaded = false;
   passwordHide = true;

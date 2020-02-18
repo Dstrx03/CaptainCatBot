@@ -13,7 +13,9 @@ namespace Cat.Business.Services.SystemLogging
 {
     public interface ISystemLoggingServiceBase
     {
-        TimeSpan CleanThreshold();
+        TimeSpan DefaultCleanThreshold();
+
+        string Name();
 
         string Descriptor();
 
@@ -37,16 +39,18 @@ namespace Cat.Business.Services.SystemLogging
     public abstract class SystemLoggingServiceBase : ISystemLoggingServiceBase
     {
         protected readonly ISystemLogEntriesRespository _logEntriesRepo;
+        private readonly string _name;
         private readonly string _descriptor;
 
 
-        protected SystemLoggingServiceBase(ISystemLogEntriesRespository logEntriesRepo, string descriptor)
+        protected SystemLoggingServiceBase(ISystemLogEntriesRespository logEntriesRepo, string name, string descriptor)
         {
             _logEntriesRepo = logEntriesRepo;
+            _name = name;
             _descriptor = descriptor;
         }
 
-        public virtual TimeSpan CleanThreshold()
+        public virtual TimeSpan DefaultCleanThreshold()
         {
             // 2 weeks
             return TimeSpan.FromDays(14);
@@ -55,6 +59,11 @@ namespace Cat.Business.Services.SystemLogging
         protected virtual IHubContext HubContext()
         {
             return GlobalHost.ConnectionManager.GetHubContext<SystemLoggingServiceHub>();
+        }
+
+        public string Name()
+        {
+            return _name;
         }
 
         public string Descriptor()

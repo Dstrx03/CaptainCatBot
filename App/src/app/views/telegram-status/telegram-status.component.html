@@ -15,22 +15,22 @@
           <div class="container buttons-full-width">
             <div class="row">
               <div class="col-12 col-md-6">
-                <mat-spinner-button #registerClientBtn (btnClick)="registerClient()" [options]="{ active: false, text: 'Register TelegramBotClient', spinnerSize: 19, flat: false,
-                  buttonColor: 'primary', spinnerColor: 'accent', disabled: disableControlButtons && !registerClientBtn.options.active, mode: 'indeterminate'}"></mat-spinner-button>
+                <app-mat-spinner-button #registerClientBtn (btnClick)="registerClient()" [options]="{ active: false, text: 'Register TelegramBotClient', spinnerSize: 19, flat: false,
+                  buttonColor: 'primary', spinnerColor: 'accent', disabled: disableControlButtons && !registerClientBtn.options.active, mode: 'indeterminate'}"></app-mat-spinner-button>
               </div>
               <div class="col-12 col-md-6">
-                <mat-spinner-button #unregisterClientBtn (btnClick)="unregisterClient()" [options]="{ active: false, text: 'Unregister TelegramBotClient', spinnerSize: 19, flat: false,
-                  buttonColor: 'primary', spinnerColor: 'accent', disabled: disableControlButtons && !unregisterClientBtn.options.active, mode: 'indeterminate'}"></mat-spinner-button>
+                <app-mat-spinner-button #unregisterClientBtn (btnClick)="unregisterClient()" [options]="{ active: false, text: 'Unregister TelegramBotClient', spinnerSize: 19, flat: false,
+                  buttonColor: 'primary', spinnerColor: 'accent', disabled: disableControlButtons && !unregisterClientBtn.options.active, mode: 'indeterminate'}"></app-mat-spinner-button>
               </div>
             </div>
             <div class="row">
               <div class="col-12 col-md-6">
-                <mat-spinner-button #registerWebhookBtn (btnClick)="registerWebhook()" [options]="{ active: false, text: 'Register Webhook', spinnerSize: 19, flat: false,
-                  buttonColor: 'primary', spinnerColor: 'accent', disabled: disableControlButtons && !registerWebhookBtn.options.active, mode: 'indeterminate'}"></mat-spinner-button>
+                <app-mat-spinner-button #registerWebhookBtn (btnClick)="registerWebhook()" [options]="{ active: false, text: 'Register Webhook', spinnerSize: 19, flat: false,
+                  buttonColor: 'primary', spinnerColor: 'accent', disabled: disableControlButtons && !registerWebhookBtn.options.active, mode: 'indeterminate'}"></app-mat-spinner-button>
               </div>
               <div class="col-12 col-md-6">
-                <mat-spinner-button #unregisterWebhookBtn (btnClick)="unregisterWebhook()" [options]="{ active: false, text: 'Unregister Webhook', spinnerSize: 19, flat: false,
-                  buttonColor: 'primary', spinnerColor: 'accent', disabled: disableControlButtons && !unregisterWebhookBtn.options.active, mode: 'indeterminate'}"></mat-spinner-button>
+                <app-mat-spinner-button #unregisterWebhookBtn (btnClick)="unregisterWebhook()" [options]="{ active: false, text: 'Unregister Webhook', spinnerSize: 19, flat: false,
+                  buttonColor: 'primary', spinnerColor: 'accent', disabled: disableControlButtons && !unregisterWebhookBtn.options.active, mode: 'indeterminate'}"></app-mat-spinner-button>
               </div>
             </div>
             <div class="row">
@@ -40,12 +40,12 @@
             </div>
             <div class="row">
               <div class="col-12 col-md-6">
-                <mat-spinner-button #checkWebhookBtn (btnClick)="checkWebhook()" [options]="{ active: false, text: 'Check Webhook Registry', spinnerSize: 19, flat: false,
-                  buttonColor: 'primary', spinnerColor: 'accent', disabled: disableControlButtons && !checkWebhookBtn.options.active, mode: 'indeterminate'}"></mat-spinner-button>
+                <app-mat-spinner-button #checkWebhookBtn (btnClick)="checkWebhook()" [options]="{ active: false, text: 'Check Webhook Registry', spinnerSize: 19, flat: false,
+                  buttonColor: 'primary', spinnerColor: 'accent', disabled: disableControlButtons && !checkWebhookBtn.options.active, mode: 'indeterminate'}"></app-mat-spinner-button>
               </div>
               <div class="col-12 col-md-6">
-                <mat-spinner-button #updateWebhookBtn (btnClick)="updateWebhook()" [options]="{ active: false, text: 'Update Webhook Info', spinnerSize: 19, flat: false,
-                  buttonColor: 'primary', spinnerColor: 'accent', disabled: disableControlButtons && !updateWebhookBtn.options.active, mode: 'indeterminate'}"></mat-spinner-button>
+                <app-mat-spinner-button #updateWebhookBtn (btnClick)="updateWebhook()" [options]="{ active: false, text: 'Update Webhook Info', spinnerSize: 19, flat: false,
+                  buttonColor: 'primary', spinnerColor: 'accent', disabled: disableControlButtons && !updateWebhookBtn.options.active, mode: 'indeterminate'}"></app-mat-spinner-button>
               </div>
             </div>
           </div>

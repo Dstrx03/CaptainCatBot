@@ -1,5 +1,4 @@
-﻿using System.ComponentModel;
-using Cat.Business.Schedule.Tasks;
+﻿using Cat.Business.Schedule.Tasks;
 using log4net;
 
 namespace Telegram.Schedule.Tasks

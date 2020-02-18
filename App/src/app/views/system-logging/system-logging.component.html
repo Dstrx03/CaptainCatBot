@@ -1,0 +1,76 @@
+<app-spacer height="4vh" class="d-none d-md-block"></app-spacer>
+<div class="container">
+  <div class="row">
+    <div class="col">
+      <h1>System Logging</h1>
+      <p>
+        System Logging services are dedicated to log events from concrete component, operation, remote service integration etc of the system. 
+        They are consumable from user interface. The recurring <i>Cleanup Task</i> (<code>CleanUpSystemLogTask</code>) triggers every 6 hours and delete any entry 
+        which is older than specific time threshold which is defined in each logging service.
+      </p>
+    </div>
+  </div>
+  <div class="row" [style.visibility]="loadingLoggingSettings ? 'visible' : 'hidden'">
+    <div class="col">
+      <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    </div>
+  </div>
+  <div class="row" *ngFor="let settingsForm of this.systemLoggingSettingsForms">
+    <div class="col">
+      <mat-card>
+        <mat-card-header>
+        <mat-card-title>{{settingsForm.systemLoggingSettings.Name}}</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="container form-fields-full-width">
+            <div class="row">
+              <div class="col">
+                <mat-divider></mat-divider>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col">
+              <p>
+                Recurring Cleanup Task will delete any entries of &laquo;{{settingsForm.systemLoggingSettings.Name}}&raquo; which is more than 
+                <span class="accent-color">{{settingsForm.cleanThreshold.kind && (settingsForm.valueFormControl.valid || !settingsForm.controlHelper.isEnabled()) ? settingsForm.cleanThreshold.value : "..."}} {{settingsForm.cleanThreshold.kind && (settingsForm.valueFormControl.valid || !settingsForm.controlHelper.isEnabled()) ? settingsForm.cleanThreshold.kind.caption : ""}}</span> 
+                old at the moment of task execution.
+              </p>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-4 col-md-3 col-lg-2">
+                <mat-form-field>
+                  <mat-label>Cleanup Task Threshold</mat-label>
+                  <input matInput type="text" appNumbersOnly class="text-right" autocomplete="off" 
+                    [formControl]="settingsForm.valueFormControl" [(ngModel)]="settingsForm.cleanThreshold.value">
+                  <mat-error *ngIf="settingsForm.valueFormControl.invalid">
+                    <span [innerHTML]="settingsForm.controlHelper.errorMessage(settingsForm.valueFormControl)"></span>
+                  </mat-error>
+                </mat-form-field>
+              </div>
+              <div class="col-4 col-md-3 col-lg-2">
+                <mat-form-field>
+                  <mat-label></mat-label>
+                  <mat-select [formControl]="settingsForm.kindFormControl" [(ngModel)]="settingsForm.cleanThreshold.kind">
+                    <mat-option [value]="i" *ngFor="let i of settingsForm.appTimeSpanConvertor.appTimeSpanKindOptions">{{i.caption}}</mat-option>
+                  </mat-select>
+                </mat-form-field>
+              </div>
+              <div class="col">
+              <app-mat-spinner-button #resetCleanThresholdBtn *ngIf="!settingsForm.systemLoggingSettings.IsDefaultCleanThreshold" [id]="settingsForm.formId + '_btn'" (btnClick)="settingsForm.resetCleanThreshold()" [options]="{ active: false, text: 'Reset', spinnerSize: 19, flat: false,
+                  spinnerColor: 'accent', disabled: loadingLoggingSettings, mode: 'indeterminate'}"></app-mat-spinner-button>
+              </div>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col text-right">
+      <app-mat-spinner-button #saveSettingsBtn (btnClick)="saveSettings()" [options]="{ active: false, text: 'Save Settings', spinnerSize: 19, flat: true,
+            buttonColor: 'primary', spinnerColor: 'accent', disabled: loadingLoggingSettings || isSettingsFormsErrorOrLoading(), mode: 'indeterminate'}"></app-mat-spinner-button>
+    </div>
+  </div>
+</div>
+<app-spacer height="7vh" class="d-none d-md-block"></app-spacer>

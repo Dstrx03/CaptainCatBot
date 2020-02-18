@@ -1,6 +1,7 @@
 import { Component, OnInit, Inject, ViewChild } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Observable } from 'rxjs';
+import { AppMatSpinnerButtonComponent } from '../../app-mat-spinner-button/app-mat-spinner-button.component';
 
 @Component({
   selector: 'app-confirm-dialog',
@@ -9,7 +10,7 @@ import { Observable } from 'rxjs';
 })
 export class ConfirmDialogComponent implements OnInit {
 
-  @ViewChild('okSpinnerBtn') okSpinnerBtn;
+  @ViewChild('okSpinnerBtn') okSpinnerBtn: AppMatSpinnerButtonComponent;
 
   constructor(
     public dialogRef: MatDialogRef<ConfirmDialogComponent>,

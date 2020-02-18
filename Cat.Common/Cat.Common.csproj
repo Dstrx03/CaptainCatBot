@@ -66,6 +66,7 @@
     <Compile Include="AppSettings\BaseUrlProvider.cs" />
     <Compile Include="AppSettings\ServerTimeZoneProvider.cs" />
     <Compile Include="AppSettings\TelegramBotTokenProvider.cs" />
+    <Compile Include="Converters\CatTimeSpanConverter.cs" />
     <Compile Include="Helpers\MaskDataHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

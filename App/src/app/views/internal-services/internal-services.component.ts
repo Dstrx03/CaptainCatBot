@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { FormControlHelper } from 'src/app/infrastructure/helpers/formControlHelper';
+import { FormControlHelper } from 'src/app/infrastructure/helpers/form-control-helper';
 import { FormControl, Validators} from '@angular/forms';
 import { InternalServicesService } from '../../services/internal-services/internal-services.service';
 import { RefresherSettings } from 'src/app/models/RefresherSettings';
@@ -7,6 +7,7 @@ import { ViewSystemLogDialogComponent } from 'src/app/controls/dialogs/view-syst
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material';
 import { ATriggerSettings } from 'src/app/models/atriggerSettings';
+import { AppMatSpinnerButtonComponent } from 'src/app/controls/app-mat-spinner-button/app-mat-spinner-button.component';
 
 @Component({
   selector: 'app-internal-services',
@@ -17,7 +18,7 @@ export class InternalServicesComponent implements OnInit {
 
   loadingRefresherData: boolean = false;
 
-  @ViewChild('saveRefresherBtn') saveRefresherBtn;
+  @ViewChild('saveRefresherBtn') saveRefresherBtn: AppMatSpinnerButtonComponent;
 
   refresherSettings: RefresherSettings;
 
@@ -32,7 +33,7 @@ export class InternalServicesComponent implements OnInit {
   
   loadingATriggerData: boolean = false;
 
-  @ViewChild('saveATriggerBtn') saveATriggerBtn;
+  @ViewChild('saveATriggerBtn') saveATriggerBtn: AppMatSpinnerButtonComponent;
 
   atriggerSettings: ATriggerSettings;
 

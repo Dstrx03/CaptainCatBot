@@ -6,6 +6,7 @@ import { Subscription } from 'rxjs';
 import { MatSnackBar } from '@angular/material';
 import { SignalrConnectionService } from 'src/app/services/signalr/signalr-connection.service';
 import { SignalrHub } from 'src/app/services/signalr/signalr-hub.service';
+import { AppMatSpinnerButtonComponent } from '../../app-mat-spinner-button/app-mat-spinner-button.component';
 
 @Component({
   selector: 'app-view-system-log-dialog',
@@ -26,7 +27,7 @@ export class ViewSystemLogDialogComponent implements OnInit {
   allEntriesLoaded = false;
   entriesLoadCount = 20;
 
-  @ViewChild('cleanLogBtn') cleanLogBtn;
+  @ViewChild('cleanLogBtn') cleanLogBtn: AppMatSpinnerButtonComponent;
   cleanThresholdOptions = [
     { c: 'Delete All', v: -1 },
     { c: '5 minutes', v: 60*5 },

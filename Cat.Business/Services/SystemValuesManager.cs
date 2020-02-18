@@ -130,6 +130,8 @@ namespace Cat.Business.Services
                     return Newtonsoft.Json.JsonConvert.DeserializeObject<Int32>(value);
                 case SystemValueType.DateTime:
                     return Newtonsoft.Json.JsonConvert.DeserializeObject<DateTime>(value);
+                case SystemValueType.TimeSpan:
+                    return Newtonsoft.Json.JsonConvert.DeserializeObject<TimeSpan>(value);
                 case SystemValueType.Unknown:
                 default:
                     throw new ArgumentOutOfRangeException("type", type, null);

@@ -3,7 +3,6 @@
   <div class="row">
     <div class="col">
       <mat-card>
-        <mat-progress-bar mode="indeterminate" [style.visibility]="loadingRefresherData ? 'visible' : 'hidden'"></mat-progress-bar>
         <mat-card-header>
           <mat-card-title>Refresher Service</mat-card-title>
         </mat-card-header>
@@ -12,7 +11,7 @@
             <div class="row">
               <div class="col">
                 <p>
-                  Refresher Service is a system internal service that provide continuous refresh of the application instance.
+                  &laquo;Refresher Service&raquo; is a system internal service that provide continuous refresh of the application instance.
                   It calls base url of the instance with specified time interval to 'wake up' the hosting server and don't let it 'sleep'. 
                   It's meant to be used on shared hostings where it is impossible to manage server's or machine settings.
                   Refresh of the instance itself is important to provide a stable continuous execution of the Hangfire tasks. 
@@ -32,7 +31,7 @@
             <div class="row">
               <div class="col-12 col-md-6 col-lg-4">
                 <mat-form-field>
-                  <input matInput type="text" appIntegersOnly class="text-right" autocomplete="off" 
+                  <input matInput type="text" appNumbersOnly class="text-right" autocomplete="off" 
                     [formControl]="refresherIntervalFormControl" [(ngModel)]="refresherSettings.IntervalMinutes">
                   <span matPrefix>Refresh every&nbsp;</span>
                   <span matSuffix>&nbsp;minute(s)</span>
@@ -45,8 +44,8 @@
           </div>
         </mat-card-content>
         <mat-card-actions>
-          <mat-spinner-button #saveRefresherBtn (btnClick)="refresherSaveChanges()" [options]="{ active: false, text: 'Save Settings', spinnerSize: 19, flat: false,
-            buttonColor: 'accent', spinnerColor: 'accent', disabled: refresherControlHelper.isError() || loadingRefresherData, mode: 'indeterminate'}"></mat-spinner-button>
+          <app-mat-spinner-button #saveRefresherBtn (btnClick)="refresherSaveChanges()" [options]="{ active: false, text: 'Save Settings', spinnerSize: 19, flat: false,
+            buttonColor: 'accent', spinnerColor: 'accent', disabled: refresherControlHelper.isError() || loadingRefresherData, mode: 'indeterminate'}"></app-mat-spinner-button>
           <button mat-button (click)="refresherViewLog()" [disabled]="loadingRefresherData">View Log</button>
         </mat-card-actions>
       </mat-card>
@@ -64,7 +63,7 @@
             <div class="row">
               <div class="col">
                 <p>
-                  ATrigger Service is a wrapper of third party scheduling tool ATrigger.
+                  &laquo;ATrigger Service&raquo; is a wrapper of third party scheduling tool ATrigger.
                   It performs request to the ATrigger before the application instance recycle by server.
                   After request callback to the application's API will be performed in specified minutes interval.
                   Callback triggers application start so Hangfire tasks and system porcesses can perform correctly.
@@ -85,7 +84,7 @@
             <div class="row">
               <div class="col-12 col-md-6 col-lg-4">
                 <mat-form-field>
-                  <input matInput type="text" appIntegersOnly class="text-right" autocomplete="off" 
+                  <input matInput type="text" appNumbersOnly class="text-right" autocomplete="off" 
                     [formControl]="atriggerTimeSliceFormControl" [(ngModel)]="atriggerSettings.TimeSliceMinutes">
                   <span matPrefix>Callback after&nbsp;</span>
                   <span matSuffix>&nbsp;minute(s)</span>
@@ -98,8 +97,8 @@
           </div>
         </mat-card-content>
         <mat-card-actions>
-          <mat-spinner-button #saveATriggerBtn (btnClick)="atriggerSaveChanges()" [options]="{ active: false, text: 'Save Settings', spinnerSize: 19, flat: false,
-            buttonColor: 'accent', spinnerColor: 'accent', disabled: atriggerControlHelper.isError() || loadingATriggerData, mode: 'indeterminate'}"></mat-spinner-button>
+          <app-mat-spinner-button #saveATriggerBtn (btnClick)="atriggerSaveChanges()" [options]="{ active: false, text: 'Save Settings', spinnerSize: 19, flat: false,
+            buttonColor: 'accent', spinnerColor: 'accent', disabled: atriggerControlHelper.isError() || loadingATriggerData, mode: 'indeterminate'}"></app-mat-spinner-button>
           <button mat-button (click)="atriggerViewLog()" [disabled]="loadingATriggerData">View Log</button>
         </mat-card-actions>
       </mat-card>

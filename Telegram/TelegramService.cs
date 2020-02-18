@@ -45,7 +45,12 @@ namespace Telegram
 
         public TelegramServiceStatus GetClientStatus()
         {
-            return TelegramBot.Client == null ? TelegramServiceStatus.Stopped : TelegramServiceStatus.Running;
+            if (TelegramBot.ClientRegistrationError) 
+                return TelegramServiceStatus.Error;
+            else if (TelegramBot.Client == null)
+                return TelegramServiceStatus.Stopped;
+            else
+                return TelegramServiceStatus.Running;
         }
 
         public TelegramServiceStatus GetWebhookStatus()

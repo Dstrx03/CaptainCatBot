@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { GlobalService } from '../infrastructure/global.service';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, of, throwError } from 'rxjs';
-import { CatProcedureResult } from '../infrastructure/webApi/catProcedureResult';
+import { CatProcedureResult } from '../infrastructure/webApi/cat-procedure-result';
 import { catchError } from 'rxjs/operators';
 
 @Injectable({

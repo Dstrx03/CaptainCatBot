@@ -49,9 +49,9 @@
             </form>
           </mat-card-content>
           <mat-card-actions class="text-right">
-            <mat-spinner-button #loginBtn (btnClick)="login()" [options]="{ active: false, text: 'Log in', spinnerSize: 19, flat: true,
+            <app-mat-spinner-button #loginBtn (btnClick)="login()" [options]="{ active: false, text: 'Log in', spinnerSize: 19, flat: true,
               buttonColor: 'primary', spinnerColor: 'accent', disabled: formControlHelper.isError(), mode: 'indeterminate'}" 
-              matTooltip="Please provide email and password to continue." [matTooltipDisabled]="!formControlHelper.isError()"></mat-spinner-button>
+              matTooltip="Please provide email and password to continue." [matTooltipDisabled]="!formControlHelper.isError()"></app-mat-spinner-button>
           </mat-card-actions>
         </mat-card>
       </div>
