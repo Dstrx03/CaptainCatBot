@@ -1,7 +1,4 @@
-﻿
-using System.Collections.Generic;
-using Microsoft.AspNet.SignalR;
-using Microsoft.AspNet.SignalR.Hubs;
+﻿using Microsoft.AspNet.SignalR;
 using Owin;
 
 namespace Cat.Web.App_Start

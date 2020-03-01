@@ -1,8 +1,5 @@
-﻿using System;
-using System.Web.Http;
-using Cat.Business.Services;
+﻿using System.Web.Http;
 using Cat.Business.Services.InternalServices;
-using Cat.Domain.Entities.SystemValues;
 using Cat.Web.App_Start;
 using Cat.Web.Infrastructure.Roles;
 using Cat.Web.Infrastructure.Roles.Attributes;
@@ -12,25 +9,25 @@ namespace Cat.Web.Controllers.Api
     [AppAuthorize(AppRole.Admin)]
     public class InternalServicesController : ApiController
     {
-        private readonly IRefresherManager _refresherManager;
+        private readonly IRefresherService _refresherService;
         private readonly IATriggerService _atriggerService;
 
-        public InternalServicesController(IRefresherManager refresherManager, IATriggerService atriggerService)
+        public InternalServicesController(IRefresherService refresherManager, IATriggerService atriggerService)
         {
-            _refresherManager = refresherManager;
+            _refresherService = refresherManager;
             _atriggerService = atriggerService;
         }
 
         [HttpGet]
         public RefresherSettings RefresherGetSettings()
         {
-            return _refresherManager.GetSettings();
+            return _refresherService.GetSettings();
         }
 
         [HttpPost]
         public RefresherSettings RefresherSaveSettings([FromBody] RefresherSettings settings)
         {
-            var settingsResult = _refresherManager.SaveSettings(settings);
+            var settingsResult = _refresherService.SaveSettings(settings);
             RefresherConfig.Register();
             return settingsResult;
         }

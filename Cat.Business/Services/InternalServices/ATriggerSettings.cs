@@ -1,7 +1,7 @@
 ﻿
 namespace Cat.Business.Services.InternalServices
 {
-    public struct ATriggerSettings
+    public class ATriggerSettings
     {
         public bool IsEnabled { get; set; }
 

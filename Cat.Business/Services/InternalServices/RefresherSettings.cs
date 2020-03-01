@@ -1,7 +1,7 @@
 ﻿
 namespace Cat.Business.Services.InternalServices
 {
-    public struct RefresherSettings
+    public class RefresherSettings
     {
         public bool IsEnabled { get; set; }
 

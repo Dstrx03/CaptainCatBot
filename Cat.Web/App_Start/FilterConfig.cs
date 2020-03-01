@@ -1,5 +1,4 @@
 ﻿using System.Web.Mvc;
-using Cat.Common.AppSettings;
 
 namespace Cat.Web
 {

@@ -1,7 +1,5 @@
 ﻿using System.Web.Http;
-using System.Web.Http.Cors;
 using Cat.Common.AppSettings;
-using Cat.Web.Infrastructure.Platform;
 using Cat.Web.Infrastructure.Platform.WebApi.Attributes;
 
 namespace Cat.Web
