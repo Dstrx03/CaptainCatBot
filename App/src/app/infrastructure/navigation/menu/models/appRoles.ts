@@ -1,4 +1,4 @@
 export class AppRoles {
-    static Admin = '_admin';
-    static Operator = '_operator';
+    static readonly Admin = '_admin';
+    static readonly Operator = '_operator';
 }

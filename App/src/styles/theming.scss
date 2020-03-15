@@ -1,24 +1,81 @@
 @import '~@angular/material/theming';
 @include mat-core();
 
-$candy-app-primary: mat-palette($mat-blue-grey);
-$candy-app-accent:  mat-palette($mat-light-blue, A200, A100, A400);
+$cat-app-light-primary:     mat-palette($mat-blue-grey);
+$cat-app-light-accent:      mat-palette($mat-light-blue, A200, A100, A400);
+$cat-app-light-warn:        mat-palette($mat-red);
+$cat-app-light-theme:       mat-light-theme($cat-app-light-primary, $cat-app-light-accent, $cat-app-light-warn);
 
-$candy-app-warn:    mat-palette($mat-red);
+$cat-app-dark-primary:      mat-palette($mat-yellow);
+$cat-app-dark-accent:       mat-palette($mat-green, A200, A100, A400);
+$cat-app-dark-warn:         mat-palette($mat-red);
+$cat-app-dark-theme:        mat-dark-theme($cat-app-dark-primary, $cat-app-dark-accent, $cat-app-dark-warn);
 
-$candy-app-theme: mat-light-theme($candy-app-primary, $candy-app-accent, $candy-app-warn);
+// Angular Material vs Bootstrap <a/> elements styling workaround mixin (moved from angularMatVsBootstrap.scss)
+@mixin cat-app-a($theme) {
+    $color-primary: map-get($theme, primary);
 
-@include angular-material-theme($candy-app-theme);
+    a {
+        color: mat-color($color-primary);
+    }
+    a:hover {
+        color: mat-color($color-primary);
+        text-decoration: underline;
+    }
 
-
-.primary-color {
-    color: mat-color($candy-app-primary) !important;
+    a[class~=mat-button]:hover, a[class~=mat-fab]:hover, 
+    a[class~=mat-flat-button]:hover, a[class~=mat-icon-button]:hover, 
+    a[class~=mat-mini-fab]:hover, a[class~=mat-raised-button]:hover, 
+    a[class~=mat-stroked-button]:hover, a[class~=mat-menu-item]:hover,
+    a[class~=mat-list-item]:hover {
+        color: inherit;
+        text-decoration: none;
+    }
 }
 
-.accent-color {
-    color: mat-color($candy-app-accent) !important;
+// Main app colors mixin
+@mixin cat-app-colors($theme) {
+    $color-primary: map-get($theme, primary);
+    $color-accent: map-get($theme, accent);
+    $color-warn: map-get($theme, warn);
+
+    .primary-color {
+        color: mat-color($color-primary) !important;
+    }
+    .accent-color {
+        color: mat-color($color-accent) !important;
+    }
+    .warn-color {
+        color: mat-color($color-warn) !important;
+    }
 }
 
-.warn-color {
-    color: mat-color($candy-app-warn) !important;
+// ======== Note: order of these classes matter ======== 
+.light-theme {
+    $theme: $cat-app-light-theme;
+    @include angular-material-theme($theme);
+    @include cat-app-a($theme);
+    @include cat-app-colors($theme);
 }
+
+.light-negative-theme {
+    $theme: $cat-app-dark-theme;
+    @include angular-material-theme($theme);
+    @include cat-app-a($theme);
+    @include cat-app-colors($theme);
+}
+
+.dark-theme {
+    $theme: $cat-app-dark-theme;
+    @include angular-material-theme($theme);
+    @include cat-app-a($theme);
+    @include cat-app-colors($theme);
+}
+
+.dark-negative-theme {
+    $theme: $cat-app-light-theme;
+    @include angular-material-theme($theme);
+    @include cat-app-a($theme);
+    @include cat-app-colors($theme);
+}
+// =====================================================

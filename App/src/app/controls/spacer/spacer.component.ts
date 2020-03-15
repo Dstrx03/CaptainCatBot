@@ -8,7 +8,7 @@ import { Component, OnInit, Input } from '@angular/core';
 export class SpacerComponent implements OnInit {
 
   @Input() height: string;
-
+  
   render() {
     return this.height !== undefined;
   }

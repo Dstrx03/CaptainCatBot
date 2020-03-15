@@ -1,0 +1,9 @@
+$app-footer-spacer-height: 12vh;
+$app-main-min-height: calc(100vh - #{$app-footer-spacer-height} - 64px); 
+$app-main-min-height-extra-small: calc(100vh - #{$app-footer-spacer-height} - 56px);
+
+:export {
+    appFooterSpacerHeight: $app-footer-spacer-height;
+    appMainMinHeight: $app-main-min-height;
+    appMainMinHeightExtraSmall: $app-main-min-height-extra-small;
+}

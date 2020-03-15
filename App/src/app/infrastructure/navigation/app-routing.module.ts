@@ -18,7 +18,7 @@ import { SystemLoggingComponent } from 'src/app/views/system-logging/system-logg
 
 
 export class AppRoutes {
-  static Routes: Routes = [
+  static readonly RoutesAppSet: Routes = [
     { path: '', component: HomeComponent },
     { path: 'Login', component: LoginComponent, canActivate: [CanActivateHttpsGuard] },
     { path: 'Dashboard', component: DashboardComponent, canActivate: [CanActivateAuthGuard, CanActivateHttpsGuard] },
@@ -35,7 +35,7 @@ export class AppRoutes {
 
 @NgModule({
   declarations: [],
-  imports: [ RouterModule.forRoot(AppRoutes.Routes, {useHash: true}) ],
+  imports: [ RouterModule.forRoot(AppRoutes.RoutesAppSet, {useHash: true}) ],
   exports: [ RouterModule ]
 })
 export class AppRoutingModule {}

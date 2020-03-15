@@ -1,6 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { AppMenuItem } from 'src/app/infrastructure/navigation/menu/models/appMenuItems';
-import { IdentityService } from 'src/app/services/identity/identity.service';
+import { AppMenu } from 'src/app/infrastructure/navigation/menu/models/appMenu';
+import { MenuItemsService } from 'src/app/infrastructure/navigation/menu/menu-items.service';
 
 @Component({
   selector: 'app-sidenav-menu',
@@ -11,15 +11,17 @@ export class SidenavMenuComponent implements OnInit {
 
   @Input() menuId: string;
 
-  menuItems: AppMenuItem[];
+  appMenu: AppMenu;
 
-  constructor(private identitySvc: IdentityService) { }
+  constructor(private menuItemsSvc: MenuItemsService) { 
+    this.appMenu = new AppMenu();
+  }
 
   ngOnInit() {
-    this.identitySvc.currentMenuItems()
-      .subscribe(currentMenuItems => {
-        const systemItem = currentMenuItems.find(x => x.Id === this.menuId);
-        if (systemItem !== undefined) this.menuItems = systemItem.Children;
+    this.menuItemsSvc.currentAppMenu()
+      .subscribe(currentAppMenu => {
+        const systemItem = currentAppMenu.menuItems.find(x => x.Id === this.menuId);
+        if (systemItem !== undefined) this.appMenu.menuItems = systemItem.Children;
       });
   }
 

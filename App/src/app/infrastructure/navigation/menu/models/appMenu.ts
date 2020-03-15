@@ -9,10 +9,11 @@ export class AppMenuItem {
     RequiredRoles: string[];
     Children: AppMenuItem[];
     IsHref: boolean;
+    IsActivatedRoute?: boolean;
 }
 
 export class AppMenu {
-    static Items: AppMenuItem[] = [
+    static readonly ItemsAppSet: AppMenuItem[] = [
         { Id: 'dashb', Caption: 'Dashboard', Position: 100, Path: 'Dashboard', IsHref: false, RequiredAuth: true, RequiredRoles: [], Children: undefined },
         { Id: 'tele', Caption: 'Telegram', Position: 200, Path: 'Telegram', IsHref: false, RequiredAuth: true, RequiredRoles: [], Children: [
             { Id: 'tele.status', Caption: 'Status', Position: 100, Path: 'Status', IsHref: false, RequiredAuth: true, RequiredRoles: [AppRoles.Admin], Children: undefined },
@@ -24,4 +25,11 @@ export class AppMenu {
             { Id: 'sys.hangfire', Caption: 'Hangfire Dashboard', Position: 400, Path: '../../hangfire', IsHref: true, RequiredAuth: true, RequiredRoles: [AppRoles.Admin], Children: undefined },
         ]},
     ];
+
+    constructor() {
+        this.menuItems = [];
+    }
+
+    menuItems: AppMenuItem[];
+    isActivatedHomeRoute: boolean;
 }

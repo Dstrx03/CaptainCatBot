@@ -1,19 +1,62 @@
 import { Injectable } from '@angular/core';
+import { Observable, BehaviorSubject } from 'rxjs';
+import { Router, NavigationEnd } from '@angular/router';
 import { AuthInfo } from '../../../models/authInfo';
-import { AppMenuItem, AppMenu } from './models/appMenuItems';
+import { AppMenuItem, AppMenu } from './models/appMenu';
 
 @Injectable({
   providedIn: 'root'
 })
 export class MenuItemsService {
 
-  constructor() {}
+  private appMenu: BehaviorSubject<AppMenu>;
+  private currentUrl: string;
 
-  generateMenuItemsForAuthInfo(authInfo: AuthInfo): AppMenuItem[] {
-    return this.generateLevel(AppMenu.Items, authInfo);
+  currentAppMenu(): Observable<AppMenu> {
+    return this.appMenu.asObservable();
   }
 
-  private generateLevel(items: AppMenuItem[], authInfo: AuthInfo) {
+  constructor(private router: Router) {
+    this.appMenu = new BehaviorSubject<AppMenu>(new AppMenu());
+    this.currentUrl = '';
+    this.subscribeToRouterNavigation(router);
+  }
+
+  updateMenuItems(authInfo: AuthInfo) {
+    let appMenu = this.appMenu.getValue();
+    appMenu.menuItems = this.generateMenuItemsLevel(AppMenu.ItemsAppSet, authInfo);
+    this.updateUrl(appMenu, this.currentUrl);
+  }
+
+  private updateUrl(appMenu: AppMenu, url: string) {
+    this.clearActivatedRouteTree(appMenu.menuItems);
+    if (url !== '/'){
+      let urlSplitted = url.split('/');
+      for (let i = 0; i < urlSplitted.length; i++) {
+        let path = urlSplitted[i];
+        if (path.length === 0) continue;
+        this.applyActivatedRoute(appMenu.menuItems, path)
+      }
+      appMenu.isActivatedHomeRoute = false;
+    } else {
+      appMenu.isActivatedHomeRoute = true;
+    }
+    this.completeActivatedRouteTree(appMenu.menuItems);
+    this.currentUrl = url;
+    this.appMenu.next(appMenu);
+  }
+
+  private subscribeToRouterNavigation(router: Router) {
+    router.events.subscribe((val) => {
+      if (val instanceof NavigationEnd) {
+        let navigationEnd: NavigationEnd = val;
+        let appMenu = this.appMenu.getValue();
+        this.updateUrl(appMenu, navigationEnd.urlAfterRedirects);
+      }
+    });
+  }
+
+  private generateMenuItemsLevel(items: AppMenuItem[], authInfo: AuthInfo) {
     let result: AppMenuItem[] = [];
 
     items.forEach(i => {
@@ -26,7 +69,7 @@ export class MenuItemsService {
       if (!isRolesAuth) return;
       const resultItem: AppMenuItem = {Id: i.Id, Caption: i.Caption, Position: i.Position, Path: i.Path, RequiredAuth: i.RequiredAuth, RequiredRoles: i.RequiredRoles, Children: undefined, IsHref: i.IsHref};
       if (i.Children !== undefined) {
-        resultItem.Children = this.generateLevel(i.Children, authInfo);
+        resultItem.Children = this.generateMenuItemsLevel(i.Children, authInfo);
         if (resultItem.Children.length == 0) return;
       }
       result.push(resultItem);
@@ -41,6 +84,31 @@ export class MenuItemsService {
     });
     
     return result;
+  }
+
+  private applyActivatedRoute(menuItems: AppMenuItem[], path: string): boolean {
+    let applied = false;
+    menuItems.forEach(i => {
+      if (i.IsActivatedRoute === undefined && i.Path === path) { 
+        i.IsActivatedRoute = applied = true; 
+      } 
+      if (i.Children !== undefined) this.applyActivatedRoute(i.Children, path);
+    });
+    return applied;
+  }
+
+  private clearActivatedRouteTree(menuItems: AppMenuItem[]) {
+    menuItems.forEach(i => {
+      i.IsActivatedRoute = undefined; 
+      if (i.Children !== undefined) this.clearActivatedRouteTree(i.Children);
+    });
+  }
+
+  private completeActivatedRouteTree(menuItems: AppMenuItem[]) {
+    menuItems.forEach(i => {
+      if (i.IsActivatedRoute === undefined) i.IsActivatedRoute = false; 
+      if (i.Children !== undefined) this.completeActivatedRouteTree(i.Children);
+    });
   }
 
 }

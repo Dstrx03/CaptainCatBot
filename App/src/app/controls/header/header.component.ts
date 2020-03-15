@@ -1,8 +1,9 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { IdentityService } from '../../services/identity/identity.service';
 import { AuthInfo } from 'src/app/models/authInfo';
-import { AppMenuItem } from 'src/app/infrastructure/navigation/menu/models/appMenuItems';
+import { AppMenu, AppMenuItem } from 'src/app/infrastructure/navigation/menu/models/appMenu';
 import { GlobalService } from 'src/app/infrastructure/global.service';
+import { MenuItemsService } from 'src/app/infrastructure/navigation/menu/menu-items.service';
 
 @Component({
   selector: 'app-header',
@@ -14,9 +15,11 @@ export class HeaderComponent implements OnInit {
   @Output() public sidenavToggle = new EventEmitter();
 
   authInfo: AuthInfo;
-  menuItems: AppMenuItem[];
+  appMenu: AppMenu;
 
-  constructor(private identitySvc: IdentityService, public globalSvc: GlobalService) { }
+  constructor(private identitySvc: IdentityService, private menuItemsSvc: MenuItemsService, public globalSvc: GlobalService) { 
+    this.appMenu = new AppMenu();
+  }
 
   public onToggleSidenav = () => {
     this.sidenavToggle.emit();
@@ -26,11 +29,15 @@ export class HeaderComponent implements OnInit {
     return this.authInfo.IsAuthenticated ? 'primary' : null;
   }
 
+  getRouterLink(item: AppMenuItem): string{
+    return (item.Children === undefined) ? item.Path : item.Path + '/' + item.Children[0].Path;
+  }
+
   ngOnInit() {
     this.identitySvc.currentAuthInfo()
       .subscribe(currentAuthInfo => this.authInfo = currentAuthInfo);
-    this.identitySvc.currentMenuItems()
-      .subscribe(currentMenuItems => this.menuItems = currentMenuItems);
+    this.menuItemsSvc.currentAppMenu()
+      .subscribe(currentAppMenu => this.appMenu = currentAppMenu);
   }
 
 }

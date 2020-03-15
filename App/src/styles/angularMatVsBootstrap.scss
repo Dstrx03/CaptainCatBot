@@ -1,21 +1,3 @@
-@import 'theming.scss';
-
-a {
-    color: mat-color($candy-app-primary);
-}
-a:hover {
-    color: mat-color($candy-app-primary);
-    text-decoration: underline;
-}
-
-a[class~=mat-button]:hover, a[class~=mat-fab]:hover, 
-a[class~=mat-flat-button]:hover, a[class~=mat-icon-button]:hover, 
-a[class~=mat-mini-fab]:hover, a[class~=mat-raised-button]:hover, 
-a[class~=mat-stroked-button]:hover, a[class~=mat-menu-item]:hover {
-    color: inherit;
-    text-decoration: none;
-}
-
 button:focus {
     outline: none;
 }
@@ -25,6 +7,10 @@ button:focus {
 .mat-mini-fab .mat-button-wrapper>*, .mat-raised-button .mat-button-wrapper>*, 
 .mat-stroked-button .mat-button-wrapper>* {
     vertical-align: inherit !important;
+}
+
+.mat-icon {
+    line-height: inherit;
 }
 
 .mat-menu-item .mat-icon {

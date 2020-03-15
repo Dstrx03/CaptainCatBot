@@ -1,6 +1,6 @@
 import { Component, OnInit, Output, EventEmitter } from '@angular/core';
-import { AppMenuItem } from 'src/app/infrastructure/navigation/menu/models/appMenuItems';
-import { IdentityService } from 'src/app/services/identity/identity.service';
+import { AppMenu } from 'src/app/infrastructure/navigation/menu/models/appMenu';
+import { MenuItemsService } from 'src/app/infrastructure/navigation/menu/menu-items.service';
 
 @Component({
   selector: 'app-sidenav-list',
@@ -11,13 +11,15 @@ export class SidenavListComponent implements OnInit {
 
   @Output() sidenavClose = new EventEmitter();
 
-  menuItems: AppMenuItem[];
+  appMenu: AppMenu;
 
-  constructor(private identitySvc: IdentityService) { }
+  constructor(private menuItemsSvc: MenuItemsService) { 
+    this.appMenu = new AppMenu();
+  }
 
   ngOnInit() {
-    this.identitySvc.currentMenuItems()
-      .subscribe(currentMenuItems => this.menuItems = currentMenuItems);
+    this.menuItemsSvc.currentAppMenu()
+      .subscribe(currentAppMenu => this.appMenu = currentAppMenu);
   }
 
   public onSidenavClose = () => {

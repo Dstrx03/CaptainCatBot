@@ -1,23 +1,27 @@
 <mat-toolbar [color]="getToolbarColor()">
     <div class="d-md-none">
-      <button mat-button (click)="onToggleSidenav()" *ngIf="menuItems.length > 0">
+      <button mat-button (click)="onToggleSidenav()" *ngIf="appMenu.menuItems.length > 0">
           <mat-icon fontSet="fas" fontIcon="fa-bars"></mat-icon>
           <span>{{globalSvc.appTitle}}</span>
       </button>
-      <button mat-button routerLink="" *ngIf="menuItems.length === 0">
+      <button mat-button routerLink="" *ngIf="appMenu.menuItems.length === 0">
         <span>{{globalSvc.appTitle}}</span>
     </button>
   </div>
   <div class="d-none d-md-block">
-      <button mat-button routerLink="">
+      <button mat-button routerLink="" *ngIf="!appMenu.isActivatedHomeRoute">
+        <strong>{{globalSvc.appTitle}}</strong>
+      </button>
+      <button mat-raised-button routerLink="" *ngIf="appMenu.isActivatedHomeRoute">
         <strong>{{globalSvc.appTitle}}</strong>
       </button>
   </div>
   <span class="flex-space">
   </span>
   <div class="d-none d-md-block">
-    <ng-container *ngFor="let item of menuItems">
-        <button mat-button *ngIf="!item.IsHref" [routerLink]="(item.Children === undefined) ? item.Path : item.Path + '/' + item.Children[0].Path">{{item.Caption}}</button>
+    <ng-container *ngFor="let item of appMenu.menuItems">
+        <button mat-button *ngIf="!item.IsHref && !item.IsActivatedRoute" [routerLink]="getRouterLink(item)">{{item.Caption}}</button>
+        <button mat-raised-button *ngIf="!item.IsHref && item.IsActivatedRoute" [routerLink]="getRouterLink(item)">{{item.Caption}}</button>
         <a mat-button *ngIf="item.IsHref" [href]="item.Path">{{item.Caption}}</a>
     </ng-container>
   </div>
