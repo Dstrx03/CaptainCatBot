@@ -3,7 +3,7 @@ import { Observable, Subject, of } from 'rxjs';
 import { tap, mergeMap } from 'rxjs/operators';
 import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
 import { AppUserModel } from '../../models/appUserModel';
-import { CatProcedureResult } from '../../infrastructure/webApi/cat-procedure-result';
+import { CatProcedureResult } from '../../infrastructure/web-api/cat-procedure-result';
 import { UsersService } from '../../services/identity/users.service';
 import { IdentityService } from '../../services/identity/identity.service';
 import { MatSnackBar } from '@angular/material';

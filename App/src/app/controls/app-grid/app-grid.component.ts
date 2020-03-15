@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild, Input, Output, EventEmitter } from '@angular/core';
 import { Observable } from 'rxjs';
-import { GridSchemesService } from '../../infrastructure/gridsSchemes/grid-schemes.service';
+import { GridSchemesService } from '../../infrastructure/grids-schemes/grid-schemes.service';
 import { GridScheme } from '../../models/gridScheme';
 import { MatSort } from '@angular/material/sort';
 import { MatPaginator } from '@angular/material/paginator';

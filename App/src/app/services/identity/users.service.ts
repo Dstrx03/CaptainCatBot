@@ -5,7 +5,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { catchError, tap, distinctUntilChanged } from 'rxjs/operators';
 import { AppUserModel } from '../../models/appUserModel';
-import { CatProcedureResult } from '../../infrastructure/webApi/cat-procedure-result';
+import { CatProcedureResult } from '../../infrastructure/web-api/cat-procedure-result';
 
 @Injectable({
   providedIn: 'root'
