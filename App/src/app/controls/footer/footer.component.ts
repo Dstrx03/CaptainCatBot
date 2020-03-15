@@ -8,7 +8,7 @@ import styles from '../../../styles/export/variables.scss';
 })
 export class FooterComponent implements OnInit {
 
-  styles1 = styles;
+  //styles1 = styles;
 
   constructor() { }
 
