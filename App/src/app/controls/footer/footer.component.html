@@ -1,11 +1,12 @@
 <app-spacer heightClass="app-footer-spacer" inheritHeightFromClass="true"></app-spacer>
-<div class="light-negative-theme">
+<div class="light-negative-theme" [ngClass]="{'light-negative-theme': !isDarkTheme, 'dark-negative-theme': isDarkTheme}">
     <div class="mat-drawer-container">
         <div class="container">
             <div class="row">
                 <div class="col text-center">
                     <p>TEST <span class="primary-color">primary</span> <span class="accent-color">accent</span> <span class="warn-color">warn</span></p>
                     <a href="/">Link</a>
+                    <h1>is dark theme {{isDarkTheme}}</h1>
                 </div>
             </div>
         </div>

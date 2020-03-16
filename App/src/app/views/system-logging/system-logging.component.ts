@@ -2,10 +2,11 @@ import { Component, OnInit, ViewChild, QueryList, ViewChildren } from '@angular/
 import { FormControlHelper } from 'src/app/infrastructure/helpers/form-control-helper';
 import { FormControl, Validators} from '@angular/forms';
 import { SystemLoggingSettings } from 'src/app/models/systemLoggingSettings';
-import { MatSnackBar } from '@angular/material';
+import { MatSnackBar, MatDialog } from '@angular/material';
 import { SystemLoggingService } from 'src/app/services/system-logging/system-logging.service';
 import { AppTimeSpanConvertor, AppTimeSpan } from 'src/app/infrastructure/convertors/app-time-span-convertor';
 import { AppMatSpinnerButtonComponent } from 'src/app/controls/app-mat-spinner-button/app-mat-spinner-button.component';
+import { ViewSystemLogDialogComponent } from 'src/app/controls/dialogs/view-system-log-dialog/view-system-log-dialog.component';
 
 @Component({
   selector: 'app-system-logging',
@@ -22,6 +23,7 @@ export class SystemLoggingComponent implements OnInit {
 
   constructor(
     private loggingSvc: SystemLoggingService,
+    private dialog: MatDialog,
     private snackBar: MatSnackBar) { 
     this.loadingLoggingSettings = true;
     this.systemLoggingSettingsForms = [];
@@ -62,7 +64,7 @@ export class SystemLoggingComponent implements OnInit {
   private initSettingsForms(settings: SystemLoggingSettings[]) {
     this.systemLoggingSettingsForms = [];
     settings.forEach(settings => {
-      this.systemLoggingSettingsForms.push(new SystemLoggingSettingsForm(settings, this.loggingSvc))
+      this.systemLoggingSettingsForms.push(new SystemLoggingSettingsForm(settings, this.loggingSvc, this.dialog))
     });
   }
 
@@ -74,7 +76,7 @@ export class SystemLoggingComponent implements OnInit {
 
 export class SystemLoggingSettingsForm {
 
-  constructor(private settings: SystemLoggingSettings, private loggingSvc: SystemLoggingService,) {
+  constructor(private settings: SystemLoggingSettings, private loggingSvc: SystemLoggingService, private dialog: MatDialog) {
     this.initForm(settings);
   }
 
@@ -123,5 +125,16 @@ export class SystemLoggingSettingsForm {
       CleanThresholdString: cleanThresholdString,
       IsDefaultCleanThreshold: isDefaultCleanThreshold
     };
+  }
+
+  loggingServiceViewLog() {
+    this.dialog.open(ViewSystemLogDialogComponent, {
+      autoFocus: false,
+      minWidth: '63vw',
+      data: {
+        descriptor: this.systemLoggingSettings.Descriptor,
+        name: `(descriptor:${this.systemLoggingSettings.Descriptor})`
+      }
+    });
   }
 }

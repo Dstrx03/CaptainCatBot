@@ -34,7 +34,7 @@ export class CanActivateAuthGuard implements CanActivate {
         return this.applyCanActivate(isRolesAuth);
     }
 
-    private applyCanActivate(canActivate: boolean) : boolean {
+    protected applyCanActivate(canActivate: boolean) : boolean {
         if (!canActivate) this.router.navigate(['Login']);
         return canActivate;
     }

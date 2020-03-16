@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { IdentityService } from '../../services/identity/identity.service';
 import { AuthInfo } from '../../models/authInfo';
 import { Router } from '@angular/router';
+import { ThemeService } from 'src/app/infrastructure/theme/theme.service';
 
 @Component({
   selector: 'app-auth-toolbar',
@@ -19,7 +20,11 @@ export class AuthToolbarComponent implements OnInit {
       });
   }
 
-  constructor(private identitySvc: IdentityService, private router: Router) { }
+  toggleThemeMode() {
+    this.themeSvc.toggleThemeMode();
+  }
+
+  constructor(private identitySvc: IdentityService, private router: Router, private themeSvc: ThemeService) { }
 
   ngOnInit() {
     this.identitySvc.currentAuthInfo()

@@ -3,6 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 
 import { CanActivateAuthGuard } from './guards/can-activate-auth-guard';
 import { CanActivateHttpsGuard } from './guards/can-activate-https-guard';
+import { CanActivateNoAuthGuard } from './guards/can-activate-no-auth-guard';
 import { AppRoles } from './menu/models/appRoles';
 
 import { HomeComponent } from '../../views/home/home.component';
@@ -20,7 +21,7 @@ import { SystemLoggingComponent } from 'src/app/views/system-logging/system-logg
 export class AppRoutes {
   static readonly RoutesAppSet: Routes = [
     { path: '', component: HomeComponent },
-    { path: 'Login', component: LoginComponent, canActivate: [CanActivateHttpsGuard] },
+    { path: 'Login', component: LoginComponent, canActivate: [CanActivateNoAuthGuard, CanActivateHttpsGuard] },
     { path: 'Dashboard', component: DashboardComponent, canActivate: [CanActivateAuthGuard, CanActivateHttpsGuard] },
     { path: 'Telegram', component: TelegramComponent, canActivate: [CanActivateAuthGuard, CanActivateHttpsGuard], children: [
       { path: 'Status', component: TelegramStatusComponent, canActivate: [CanActivateAuthGuard, CanActivateHttpsGuard], data: {roles: [AppRoles.Admin]} },
