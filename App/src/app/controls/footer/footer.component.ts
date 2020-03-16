@@ -8,13 +8,13 @@ import { ThemeService } from 'src/app/infrastructure/theme/theme.service';
 })
 export class FooterComponent implements OnInit {
 
-  isDarkTheme: boolean = undefined;
+  isDarkMode: boolean = undefined;
 
   constructor(private themeSvc: ThemeService) { }
 
   ngOnInit() {
     this.themeSvc.currentIsDarkMode()
-      .subscribe(currentIsDarkTheme => this.isDarkTheme = currentIsDarkTheme);
+      .subscribe(currentIsDarkMode => this.isDarkMode = currentIsDarkMode);
   }
 
 }
