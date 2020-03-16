@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, ElementRef } from '@angular/core';
 
 @Component({
   selector: 'app-spacer',
@@ -8,14 +8,21 @@ import { Component, OnInit, Input } from '@angular/core';
 export class SpacerComponent implements OnInit {
 
   @Input() height: string;
+  @Input() heightClass: string;
+  @Input() inheritHeightFromClass: boolean;
+  @Input() displayClass: string;
   
   render() {
     return this.height !== undefined;
   }
 
-  constructor() { }
+  constructor(private el: ElementRef) { }
 
   ngOnInit() {
+    if (!this.inheritHeightFromClass) return;
+
+    this.el.nativeElement.classList = this.heightClass;
+    this.height = "inherit";
   }
 
 }

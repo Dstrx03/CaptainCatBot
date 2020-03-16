@@ -1,6 +1,24 @@
+@import '../../../styles/variables.scss';
+
+$approx-mat-card-height: 428px;
+$login-image-height: 16vh;
+
+@mixin calc-login-spacer-height($toolbar-height) {
+  height: calc(50vh + #{$login-image-height} - #{$app-footer-spacer-height} - (#{$approx-mat-card-height}/1.695) - #{$toolbar-height});
+}
+
+.login-spacer {
+  @include calc-login-spacer-height($app-toolbar-height);
+}
+@media (max-width: 599px) {
+  .login-spacer {
+    @include calc-login-spacer-height($app-toolbar-height-extra-small);
+  }
+}
+
 .login-image {
     object-fit: cover;
-    height: 16vh;
+    height: $login-image-height;
 }
 
 .hide {

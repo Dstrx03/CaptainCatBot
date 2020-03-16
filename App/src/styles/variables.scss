@@ -1,3 +1,10 @@
+$app-spacer-top-regular: 4vh;
+$app-spacer-bottom-regular: 7vh;
+
 $app-footer-spacer-height: 12vh;
-$app-main-min-height: calc(100vh - #{$app-footer-spacer-height} - 64px); 
-$app-main-min-height-extra-small: calc(100vh - #{$app-footer-spacer-height} - 56px);
+
+$app-toolbar-height: 64px;
+$app-toolbar-height-extra-small: 56px;
+
+$app-main-min-height: calc(100vh - #{$app-footer-spacer-height} - #{$app-toolbar-height}); 
+$app-main-min-height-extra-small: calc(100vh - #{$app-footer-spacer-height} - #{$app-toolbar-height-extra-small});

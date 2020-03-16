@@ -4,6 +4,7 @@
 @import url("https://use.fontawesome.com/releases/v5.8.1/css/all.css");
 @import "angularMatVsBootstrap.scss";
 @import "theming.scss";
+@import "variables.scss";
 
 
 .form-fields-full-width mat-form-field,
@@ -32,4 +33,11 @@ input.form-field-number {
 .row .row {
     margin-right: 0;
     margin-left: 0;
+}
+
+.app-spacer-top.regular {
+    height: $app-spacer-top-regular;
+}
+.app-spacer-bottom.regular {
+    height: $app-spacer-bottom-regular;
 }
