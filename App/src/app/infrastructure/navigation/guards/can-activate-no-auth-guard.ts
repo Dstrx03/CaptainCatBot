@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, RouterStateSnapshot } from '@angular/router';
 import { IdentityService } from '../../../services/identity/identity.service';
 import { GlobalService } from '../../global.service';
 import { CanActivateAuthGuard } from './can-activate-auth-guard';
@@ -13,7 +13,8 @@ export class CanActivateNoAuthGuard extends CanActivateAuthGuard {
         super(identitySvc, globalSvc, router);
     }
 
-    protected applyCanActivate(canActivate: boolean) : boolean {
+    protected applyCanActivate(state: RouterStateSnapshot, canActivate: boolean) : boolean {
+        if (canActivate && state.url.toLowerCase() === '/Login'.toLowerCase()) this.router.navigate(['Dashboard']);
         return !canActivate;
     }
 
