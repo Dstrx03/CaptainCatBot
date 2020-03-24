@@ -24,10 +24,10 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatSelectModule } from '@angular/material/select';
 import { MatChipsModule } from '@angular/material/chips';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 
 import { AppRoutingModule } from './infrastructure/navigation/app-routing.module';
 import { AppLoadModule } from './infrastructure/app-load/app-load.module';
-
 import { MatProgressButtonsModule } from 'mat-progress-buttons';
 
 import { AppComponent } from './app.component';
@@ -60,6 +60,9 @@ import { MomentDatePipe } from './pipes/moment-date/moment-date.pipe';
 import { AuthenticationInterceptor } from './infrastructure/http-interceptors/authentication-interceptor/authentication-interceptor.service';
 import { SystemLoggingComponent } from './views/system-logging/system-logging.component';
 import { AppMatSpinnerButtonComponent } from './controls/app-mat-spinner-button/app-mat-spinner-button.component';
+import { AppToolbarControlsComponent } from './controls/app-toolbar-controls/app-toolbar-controls.component';
+import { AppToolbarMenuComponent } from './controls/app-toolbar-menu/app-toolbar-menu.component';
+import { TemplatesRegistryDirective } from './infrastructure/templates/templates-registry/templates-registry.directive';
 
 @NgModule({
   declarations: [
@@ -88,10 +91,13 @@ import { AppMatSpinnerButtonComponent } from './controls/app-mat-spinner-button/
     MyCvComponent,
     SystemLoggingComponent,
     AppMatSpinnerButtonComponent,
+    AppToolbarControlsComponent,
     TelegramServiceStatusPipe,
     YesNoPipe,
     DashIfEmptyPipe,
-    MomentDatePipe
+    MomentDatePipe,
+    AppToolbarMenuComponent,
+    TemplatesRegistryDirective
   ],
   entryComponents: [
     ConfirmDialogComponent,
@@ -124,6 +130,7 @@ import { AppMatSpinnerButtonComponent } from './controls/app-mat-spinner-button/
     MatDividerModule,
     MatSelectModule,
     MatChipsModule,
+    MatSlideToggleModule,
     AppRoutingModule,
     AppLoadModule,
     MatProgressButtonsModule.forRoot()

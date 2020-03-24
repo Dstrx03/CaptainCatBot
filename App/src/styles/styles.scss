@@ -41,3 +41,12 @@ input.form-field-number {
 .app-spacer-bottom.regular {
     height: $app-spacer-bottom-regular;
 }
+
+.app-toolbar-menu-panel {
+    max-width: unset !important;
+}
+
+.app-toolbar-menu-template-text {
+    white-space: initial;
+    line-height: initial;
+}
