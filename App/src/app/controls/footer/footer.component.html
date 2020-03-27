@@ -1,14 +1,20 @@
 <app-spacer heightClass="app-footer-spacer" inheritHeightFromClass="true"></app-spacer>
 <div class="light-negative-theme" [ngClass]="{'light-negative-theme': !isDarkMode, 'dark-negative-theme': isDarkMode}">
     <div class="mat-drawer-container">
+        <app-spacer heightClass="app-spacer-top footer" inheritHeightFromClass="true"></app-spacer>
         <div class="container">
             <div class="row">
+                <div class="col">
+                    <small>{{gloabalSvc.appTitle}}</small>
+                </div>
                 <div class="col text-center">
-                    <p>TEST <span class="primary-color">primary</span> <span class="accent-color">accent</span> <span class="warn-color">warn</span></p>
-                    <a href="/">Link</a>
-                    <h1>is dark theme {{isDarkMode}}</h1>
+                    <small>CaptainCatBot</small>
+                </div>
+                <div class="col text-right">
+                    <small>v{{gloabalSvc.appVersion}}</small>
                 </div>
             </div>
         </div>
+        <app-spacer heightClass="app-spacer-bottom footer" inheritHeightFromClass="true"></app-spacer>
     </div>
 </div>

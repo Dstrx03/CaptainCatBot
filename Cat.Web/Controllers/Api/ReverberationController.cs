@@ -1,10 +1,7 @@
-﻿using System;
-using System.Linq;
-using System.Text;
-using System.Web.Http;
+﻿using System.Web.Http;
 using Cat.Business.Services.SystemLogging;
+using Cat.Common.AppSettings;
 using Cat.Common.Helpers;
-using Cat.Web.Infrastructure.Platform;
 using log4net;
 using StructureMap;
 
@@ -24,15 +21,14 @@ namespace Cat.Web.Controllers.Api
         [HttpGet]
         public string Refresher()
         {
-            return MaskDataHelper.MoshText(string.Format("{0} application | Powered by CaptainCatBot | Pre-alpha", AppSettings.Instance.AppTitle));
+            return MaskDataHelper.MoshText(string.Format("'{0}' app Refresher Service endpoint", AppTitleProvider.AppTitleFullInternalFormat));
         }
 
         [HttpGet]
         public void ATrigger(string message)
         {
-            var reverbMsg = string.Format("Received request on ATrigger Service endpoint, message: '{0}'", message);
-
             var loggingService = SystemLoggingServiceFactory.CreateService("ATriggerService", _container);
+            var reverbMsg = string.Format("Received request on ATrigger Service endpoint, message: '{0}'", message);
             loggingService.AddEntry(reverbMsg);
             _log.Debug(reverbMsg);
         }

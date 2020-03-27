@@ -7,7 +7,8 @@ export class AuthInfo {
         this.IsAuthenticated = false;
         this.AuthUserInfo = {
             Name: '',
-            Roles: []
+            Roles: [],
+            RolesView: ''
         };
         this.RegisteredRoles = [];
     }
@@ -16,6 +17,7 @@ export class AuthInfo {
 export class AuthUserInfo {
     Name: string;
     Roles: string[];
+    RolesView: string;
 }
 
 export class ParsedAppRole {

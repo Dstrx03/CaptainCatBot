@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Data.Entity;
 using System.Data.Entity.Validation;
-using System.Net;
 using System.Web;
 using System.Web.Http;
 using System.Web.Mvc;
@@ -71,8 +70,7 @@ namespace Cat.Web
                 StructuremapMvc.StructureMapDependencyScope.Container.GetNestedContainer(), 
                 BaseUrlProvider.HttpBaseUrl, 
                 AppSettings.Instance.ATriggerApiKey, 
-                AppSettings.Instance.ATriggerApiSecret,
-                string.Format("From '{0}' app; start call at {1} UTC", AppSettings.Instance.AppTitle, DateTime.UtcNow));
+                AppSettings.Instance.ATriggerApiSecret);
             TelegramBotConfig.Unregister();
 
             _log.Debug("Application stopped.");

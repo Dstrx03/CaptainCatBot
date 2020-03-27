@@ -4,6 +4,9 @@ import { AuthInfo } from '../../models/authInfo';
 import { Router } from '@angular/router';
 import { ThemeService } from 'src/app/infrastructure/theme/theme.service';
 import { AppToolbarMenuItem, AppToolbarMenuComponent } from '../app-toolbar-menu/app-toolbar-menu.component';
+import { MatDialog } from '@angular/material/dialog';
+import { ConfirmDialogComponent } from '../dialogs/confirm-dialog/confirm-dialog.component';
+import { tap, mergeMap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-toolbar-controls',
@@ -16,28 +19,44 @@ export class AppToolbarControlsComponent implements OnInit {
   isDarkMode: boolean;
 
   darkModeMenuItem = AppToolbarMenuComponent.BuildTemplateMenuItem("Dark Mode", "far fa-moon", "tmpltDarkMode");
-  menuSettingsItems: AppToolbarMenuItem[] = [
+  menuPersonalizationItems: AppToolbarMenuItem[] = [
     this.darkModeMenuItem
   ];
 
-  logOff() {
-    this.identitySvc.logOff()
-      .subscribe(signedOut => {
-        if (signedOut) { this.router.navigateByUrl('Login'); }
-      });
+  menuAuthItems: AppToolbarMenuItem[] = [
+    AppToolbarMenuComponent.BuildOnClickMenuItem("Log out", "fas fa-sign-out-alt", this.logOff)
+  ];
+
+  logOff(injector: Injector) {
+    let dialog = injector.get(MatDialog);
+    let identitySvc = injector.get(IdentityService);
+    let router = injector.get(Router);
+    dialog.open(ConfirmDialogComponent, {
+      autoFocus: false,
+      data: {
+        header: `Log out`,
+        contentHtml: `<p>Are you sure you wish to log out?</p>`,
+        useAgent: true,
+        agent: identitySvc.logOff().pipe(
+          tap(signedOut => {
+            if (signedOut) { router.navigateByUrl('Login'); }
+          })
+        )
+      }
+    });
   }
 
   toggleThemeMode() {
     this.themeSvc.toggleThemeMode();
   }
 
+  constructor(private identitySvc: IdentityService, private router: Router, private themeSvc: ThemeService) { }
+
   onCurrentIsDarkModeUpdate(isDarkMode: boolean) {
     this.isDarkMode = isDarkMode;
     this.darkModeMenuItem.Caption = `Dark Mode: ${this.isDarkMode ? "On" : "Off"}`;
     this.darkModeMenuItem.Icon.FontSet = this.isDarkMode ? "fas" : "far";
   }
-
-  constructor(private identitySvc: IdentityService, private router: Router, private themeSvc: ThemeService) { }
 
   ngOnInit() {
     this.identitySvc.currentAuthInfo()

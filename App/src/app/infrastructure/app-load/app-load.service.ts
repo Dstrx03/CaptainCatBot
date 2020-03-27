@@ -1,6 +1,7 @@
 import { Injectable, Injector } from '@angular/core';
 import { IdentityService } from '../../services/identity/identity.service';
 import { ThemeService } from '../theme/theme.service';
+import { UserPreferencesService } from '../user-preferences/user-preferences.service';
 
 @Injectable({
   providedIn: 'root'
@@ -9,10 +10,12 @@ export class AppLoadService {
 
   private identitySvc: IdentityService;
   private themeSvc: ThemeService;
+  private userPreferencesSvc: UserPreferencesService
 
   constructor(private injector: Injector) { }
 
-  load(): Promise<any>{
+  load(): Promise<any> {
+    this.initUserPreferences();
     this.initTheme();
     return this.initAuthInfo();
   }
@@ -20,6 +23,11 @@ export class AppLoadService {
   private initAuthInfo(): Promise<any> {
     this.identitySvc = this.injector.get(IdentityService);
     return this.identitySvc.getAuthInfo().toPromise();
+  }
+
+  private initUserPreferences(): void {
+    this.userPreferencesSvc = this.injector.get(UserPreferencesService);
+    this.userPreferencesSvc.initUserPreferences();
   }
 
   private initTheme(): void {

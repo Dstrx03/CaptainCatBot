@@ -1,13 +1,13 @@
-<button mat-icon-button [matMenuTriggerFor]="menuSettings">
+<button mat-icon-button [matMenuTriggerFor]="menuPersonalization">
   <mat-icon fontSet="fas" fontIcon="fa-th"></mat-icon>
 </button>
-<mat-menu #menuSettings="matMenu" xPosition="before" class="app-toolbar-menu-panel" menuClosed="">
+<mat-menu #menuPersonalization="matMenu" xPosition="before" class="app-toolbar-menu-panel">
   <ng-template matMenuContent>
-    <app-toolbar-menu [menuItems]="menuSettingsItems">
+    <app-toolbar-menu [menuItems]="menuPersonalizationItems">
       <div class="container" appToolbarMenuHeader>
         <div class="row">
           <div class="col text-center">
-            <h6>Settings</h6>
+            <h6>Personalization</h6>
           </div>
         </div>
       </div>
@@ -21,8 +21,8 @@
           <div class="row">
             <div class="col app-toolbar-menu-template-text">
               <p>
-                Dark Mode applies color scheme that uses light-colored text, icons, graphical user interface elements etc. on a dark background.
-                It can be useful at night time or in darker environment to reduce eye strain.
+                The Dark Mode applies color scheme that uses light-colored text, icons, graphical user interface elements etc. against a dark background.
+                It can be useful at night or in low-light environment to reduce eye strain.
               </p>
             </div>
           </div>
@@ -37,22 +37,22 @@
   </ng-template>
 </mat-menu>
 
-<!-- TODO!!!! -->
 <button mat-icon-button [matMenuTriggerFor]="menuAuth" *ngIf="authInfo.IsAuthenticated">
   <mat-icon fontSet="fas" fontIcon="fa-user-circle"></mat-icon>
 </button>
 <mat-menu #menuAuth="matMenu" xPosition="before" class="app-toolbar-menu-panel">
-  <button mat-menu-item class="text-center">Hello World!</button>
-  <div class="container">
-    <div class="row">
-      <div class="col buttons-full-width">
-        <button mat-stroked-button color="accent" (click)="logOff()">
-          <mat-icon fontSet="fas" fontIcon="fa-sign-out-alt"></mat-icon>
-          <span>Log out</span>
-        </button>
+  <ng-template matMenuContent>
+    <app-toolbar-menu [menuItems]="menuAuthItems">
+      <div class="container app-toolbar-menu-template-text" appToolbarMenuHeader>
+        <div class="row">
+          <div class="col text-right stick-pack">
+            <h6 class="primary-color">{{authInfo.AuthUserInfo.Name}}</h6>
+            <small>{{authInfo.AuthUserInfo.RolesView}}</small>
+          </div>
+        </div>
       </div>
-    </div>
-  </div>
+    </app-toolbar-menu>
+  </ng-template>
 </mat-menu>
 
 <button mat-stroked-button color="primary" routerLink="Login" *ngIf="!authInfo.IsAuthenticated">

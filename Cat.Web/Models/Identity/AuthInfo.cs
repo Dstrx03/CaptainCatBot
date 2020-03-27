@@ -18,6 +18,8 @@ namespace Cat.Web.Models.Identity
         public string Name { get; set; }
 
         public List<string> Roles { get; set; }
+
+        public string RolesView { get; set; }
     }
 
     public class ParsedAppRole

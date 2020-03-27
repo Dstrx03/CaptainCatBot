@@ -1,6 +1,4 @@
-﻿using System;
-using System.Web.Configuration;
-using Cat.Common.AppSettings;
+﻿using System.Web.Configuration;
 using Cat.Web.App_Start;
 using Telegram.AppSettings;
 
@@ -24,13 +22,6 @@ namespace Cat.Web.Infrastructure.Platform
             {
                 var _container = StructuremapMvc.StructureMapDependencyScope.Container.GetNestedContainer();
                 return _container.GetInstance<ITelegramAppSettings>();
-            }
-        }
-
-        public string AppTitle {
-            get
-            {
-                return WebConfigurationManager.AppSettings["AppTitle"];
             }
         }
 

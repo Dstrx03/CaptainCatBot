@@ -1,5 +1,6 @@
 ﻿
 using System;
+using System.Linq;
 using System.Text;
 
 namespace Cat.Common.Helpers
@@ -63,12 +64,27 @@ namespace Cat.Common.Helpers
 
         public static string MoshText(string text)
         {
-            var moshChars = new StringBuilder("~!@#$%^&*№?+-=_.`<>{}[]()");
+            var moshCharsPredefined = "~!@#$%^&*№?+-=_.`";
+            var moshCharsArray = new char[moshCharsPredefined.Length + text.Length];
+
+            var index = 0;
+            foreach (var c in moshCharsPredefined)
+                moshCharsArray[index++] = c;
+
+            index = moshCharsPredefined.Length - 1;
+            foreach (var c in text)
+                if (moshCharsArray.All(x => x != c)) moshCharsArray[index++] = c;
+
+            var moshChars = new StringBuilder(moshCharsArray.Length);
+            foreach (var c in moshCharsArray)
+                if (c != '\0') moshChars.Append(c);
+
             var moshed = new StringBuilder(text);
             for (var i = 0; i < _random.Next(text.Length); i++)
             {
                 moshed[_random.Next(text.Length)] = moshChars[_random.Next(moshChars.Length)];
             }
+
             return moshed.ToString();
         }
     }

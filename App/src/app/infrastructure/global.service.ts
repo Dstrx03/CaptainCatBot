@@ -7,6 +7,7 @@ import { Meta } from '@angular/platform-browser';
 export class GlobalService {
 
   public appTitle: string;
+  public appVersion: string;
   public baseUrl: string;
   public serverTimezoneIana: string;
   public gridSchemesJson: string;
@@ -16,6 +17,7 @@ export class GlobalService {
     this.baseUrl = this.meta.getTag('name=baseUrl').content;
     this.serverTimezoneIana = this.meta.getTag('name=serverTimezoneIana').content;
     this.gridSchemesJson = this.meta.getTag('name=gridSchemesJson').content;
+    this.appVersion = this.meta.getTag('name=appVersion').content;
   }
 
 }

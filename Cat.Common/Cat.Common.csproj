@@ -64,6 +64,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AppSettings\AppTitleProvider.cs" />
     <Compile Include="AppSettings\BaseUrlProvider.cs" />
     <Compile Include="AppSettings\ServerTimeZoneProvider.cs" />
     <Compile Include="AppSettings\TelegramBotTokenProvider.cs" />

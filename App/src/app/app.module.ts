@@ -6,6 +6,8 @@ import { FormsModule } from '@angular/forms'; // <-- NgModel lives here
 import { ReactiveFormsModule } from '@angular/forms';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 
+import { CookieService } from 'ngx-cookie-service';
+
 import { MatButtonModule, MatCheckboxModule, MatInputModule } from '@angular/material';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatSidenavModule } from '@angular/material/sidenav';
@@ -34,7 +36,6 @@ import { AppComponent } from './app.component';
 import { DashboardComponent } from './views/dashboard/dashboard.component';
 import { LoginComponent } from './views/login/login.component';
 import { HomeComponent } from './views/home/home.component';
-import { AuthToolbarComponent } from './controls/auth-toolbar/auth-toolbar.component';
 import { HeaderComponent } from './controls/header/header.component';
 import { SidenavListComponent } from './controls/sidenav-list/sidenav-list.component';
 import { SpacerComponent } from './controls/spacer/spacer.component';
@@ -70,7 +71,6 @@ import { TemplatesRegistryDirective } from './infrastructure/templates/templates
     DashboardComponent,
     LoginComponent,
     HomeComponent,
-    AuthToolbarComponent,
     HeaderComponent,
     SidenavListComponent,
     SpacerComponent,
@@ -136,6 +136,7 @@ import { TemplatesRegistryDirective } from './infrastructure/templates/templates
     MatProgressButtonsModule.forRoot()
   ],
   providers: [
+    CookieService,
     {
       provide: HTTP_INTERCEPTORS,
       useClass: AuthenticationInterceptor,

@@ -41,6 +41,12 @@ input.form-field-number {
 .app-spacer-bottom.regular {
     height: $app-spacer-bottom-regular;
 }
+.app-spacer-top.footer {
+    height: $app-spacer-top-footer;
+}
+.app-spacer-bottom.footer {
+    height: $app-spacer-bottom-footer;
+}
 
 .app-toolbar-menu-panel {
     max-width: unset !important;
@@ -49,4 +55,8 @@ input.form-field-number {
 .app-toolbar-menu-template-text {
     white-space: initial;
     line-height: initial;
+}
+
+.stick-pack :not(:last-child){
+    margin-bottom: 0;
 }

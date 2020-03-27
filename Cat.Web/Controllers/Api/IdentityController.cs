@@ -61,12 +61,17 @@ namespace Cat.Web.Controllers.Api
             var currentUser = CurrentUserProvider.CurrentUser(Request);
 
             var authUserInfo = new AuthUserInfo();
-            if (currentUser != null) 
+            if (currentUser != null)
+            {
+                var roles = AppRolesHelper.SelectUserRoles(currentUser.Id, Request);
+                var rolesView = AppRolesHelper.SelectUserRolesView(roles);
                 authUserInfo = new AuthUserInfo
                 {
-                    Name = currentUser.UserName, 
-                    Roles = AppRolesHelper.SelectUserRoles(currentUser.Id, Request)
-                }; 
+                    Name = currentUser.UserName,
+                    Roles = AppRolesHelper.SelectUserRoles(currentUser.Id, Request),
+                    RolesView = String.Join(", ", rolesView)
+                };
+            }
 
             return new AuthInfo
             {
