@@ -8,9 +8,9 @@ using System.Web.Optimization;
 using System.Web.Routing;
 using Cat.Business.Services.InternalServices;
 using Cat.Common.AppSettings;
+using Cat.Common.AppSettings.Providers;
 using Cat.Domain;
 using Cat.Web.App_Start;
-using Cat.Web.Infrastructure.Platform;
 using log4net;
 using Microsoft.AspNet.SignalR;
 

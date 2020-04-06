@@ -1,7 +1,7 @@
 ﻿using System;
 using TimeZoneConverter;
 
-namespace Cat.Common.AppSettings
+namespace Cat.Common.AppSettings.Providers
 {
     public class ServerTimeZoneProvider
     {

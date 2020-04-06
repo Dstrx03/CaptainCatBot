@@ -1,12 +1,12 @@
 ﻿
 using System;
-using System.Configuration;
 using System.Data.Entity;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Cat.Business.Services.SystemLogging;
 using Cat.Common.AppSettings;
+using Cat.Common.AppSettings.Providers;
 using Cat.Domain;
 using Cat.Domain.Entities.SystemValues;
 using log4net;
@@ -57,7 +57,7 @@ namespace Cat.Business.Services.InternalServices
             _loggingService = SystemLoggingServiceFactory.CreateService("ATriggerService", _currContainer);
             _settings = _atriggerService.GetSettings();
 
-            var message = string.Format("From '{0}' app; started call at {1} UTC", AppTitleProvider.AppTitleFullInternalFormat, DateTime.UtcNow);
+            var message = string.Format("From '{0}' app; started call at {1} UTC", AppSettings.Instance.AppTitleFormatter.AppTitleFullInternalFormat, DateTime.UtcNow);
             var urlCallback = string.Format("{0}api/v1/Reverberation/ATrigger?message={1}", baseUrl, message);
 
             var initCallMsg = string.Format("Initializing ATrigger request. Enabled: {0}, callback url: '{1}', callback after {2} minute(s)", _settings.IsEnabled, urlCallback, _settings.TimeSliceMinutes);

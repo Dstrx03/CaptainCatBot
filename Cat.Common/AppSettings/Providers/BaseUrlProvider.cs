@@ -2,7 +2,7 @@
 using System;
 using System.Web.Configuration;
 
-namespace Cat.Common.AppSettings
+namespace Cat.Common.AppSettings.Providers
 {
     public class BaseUrlProvider
     {

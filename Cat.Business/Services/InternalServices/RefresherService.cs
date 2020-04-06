@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Web.Caching;
 using Cat.Business.Services.SystemLogging;
-using Cat.Common.AppSettings;
+using Cat.Common.AppSettings.Providers;
 using Cat.Domain;
 using log4net;
 using StructureMap;

@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Web.Configuration;
-using Cat.Common.AppSettings;
+using Cat.Common.AppSettings.Providers;
 
-namespace Telegram.AppSettings
+namespace Cat.Common.AppSettings.Assemblies
 {
     public interface ITelegramAppSettings
     {

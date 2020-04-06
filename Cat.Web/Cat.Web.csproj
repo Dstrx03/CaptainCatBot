@@ -260,9 +260,7 @@
     </Compile>
     <Compile Include="Infrastructure\Grids\Grids.cs" />
     <Compile Include="Infrastructure\Grids\GridScheme.cs" />
-    <Compile Include="Infrastructure\Platform\AppSettings.cs" />
     <Compile Include="Infrastructure\Platform\Identity\CurrentUserProvider.cs" />
-    <Compile Include="Infrastructure\Platform\IAppSettings.cs" />
     <Compile Include="Infrastructure\Platform\Identity\CatSecurityStampValidator.cs" />
     <Compile Include="Infrastructure\Platform\Identity\IdentityUtilsProvider.cs" />
     <Compile Include="Infrastructure\Platform\WebApi\Attributes\ApiRequireHttpsAttribute.cs" />

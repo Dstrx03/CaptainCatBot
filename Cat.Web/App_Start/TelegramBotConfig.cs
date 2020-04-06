@@ -2,9 +2,9 @@
 using System.Net;
 using Cat.Business.Services.SystemLogging;
 using Cat.Common.AppSettings;
+using Cat.Common.AppSettings.Providers;
 using Cat.Domain;
 using Cat.Web.App_Start;
-using Cat.Web.Infrastructure.Platform;
 using Telegram;
 
 namespace Cat.Web

@@ -1,7 +1,7 @@
 ﻿using System.Web.Http;
 using Cat.Business.Services.SystemLogging;
 using Cat.Common.AppSettings;
-using Cat.Web.Infrastructure.Platform;
+using Cat.Common.AppSettings.Providers;
 using Cat.Web.Infrastructure.Roles;
 using Cat.Web.Infrastructure.Roles.Attributes;
 using log4net;

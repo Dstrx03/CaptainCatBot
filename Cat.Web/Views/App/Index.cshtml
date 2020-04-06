@@ -1,4 +1,5 @@
 ﻿@using Cat.Common.AppSettings
+@using Cat.Common.AppSettings.Providers
 @using Cat.Web.Infrastructure.Grids
 
 @{
@@ -9,12 +10,12 @@
 <html>
 <head>
     <meta name="viewport" content="width=device-width" />
-    <meta name="appTitle" content="@AppTitleProvider.AppTitle" />
-    <meta name="appVersion" content="@AppTitleProvider.AppVersion" />
+    <meta name="appTitle" content="@AppSettings.Instance.AppTitle" />
+    <meta name="appVersion" content="@AppSettings.Instance.AppVersion" />
     <meta name="baseUrl" content="@BaseUrlProvider.BaseUrl" />
     <meta name="serverTimezoneIana" content="@ServerTimeZoneProvider.Iana()" />
-    <meta name="gridSchemesJson" content="@Grids.GetSchemesJson()" />
-    <title>@AppTitleProvider.AppTitle</title>
+    <meta name="gridSchemesJson" content="@Grids.SchemesJson" />
+    <title>@AppSettings.Instance.AppTitle</title>
     @Styles.Render("~/Content/Styles")
 </head>
     <body>

@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Cat.Common.AppSettings;
 using Cat.Domain;
 using Cat.Domain.Entities.Identity;
-using Cat.Web.Infrastructure.Platform;
 using Cat.Web.Infrastructure.Platform.Identity;
 using Cat.Web.Infrastructure.Roles;
 using log4net;

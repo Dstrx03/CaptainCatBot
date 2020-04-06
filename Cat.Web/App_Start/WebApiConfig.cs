@@ -1,5 +1,5 @@
 ﻿using System.Web.Http;
-using Cat.Common.AppSettings;
+using Cat.Common.AppSettings.Providers;
 using Cat.Web.Infrastructure.Platform.WebApi.Attributes;
 
 namespace Cat.Web

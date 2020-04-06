@@ -39,6 +39,9 @@
       <HintPath>..\packages\EntityFramework.6.1.1\lib\net45\EntityFramework.SqlServer.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="log4net, Version=2.0.8.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
+      <HintPath>..\packages\log4net.2.0.8\lib\net45-full\log4net.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Practices.ServiceLocation">
       <HintPath>..\packages\CommonServiceLocator.1.3\lib\portable-net4+sl5+netcore45+wpa81+wp8\Microsoft.Practices.ServiceLocation.dll</HintPath>
     </Reference>
@@ -64,18 +67,23 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AppSettings\AppTitleProvider.cs" />
-    <Compile Include="AppSettings\BaseUrlProvider.cs" />
-    <Compile Include="AppSettings\ServerTimeZoneProvider.cs" />
-    <Compile Include="AppSettings\TelegramBotTokenProvider.cs" />
+    <Compile Include="AppSettings\AppSettings.cs" />
+    <Compile Include="AppSettings\Providers\BaseUrlProvider.cs" />
+    <Compile Include="AppSettings\IAppSettings.cs" />
+    <Compile Include="AppSettings\Providers\ServerTimeZoneProvider.cs" />
+    <Compile Include="AppSettings\Providers\TelegramBotTokenProvider.cs" />
+    <Compile Include="AppSettings\Assemblies\TelegramAppSettings.cs" />
     <Compile Include="Converters\CatTimeSpanConverter.cs" />
+    <Compile Include="Formatters\AppTitleFormatter.cs" />
     <Compile Include="Helpers\MaskDataHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="StructureMap\CommonRegistry.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

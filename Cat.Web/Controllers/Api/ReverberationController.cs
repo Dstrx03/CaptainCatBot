@@ -1,6 +1,6 @@
 ﻿using System.Web.Http;
 using Cat.Business.Services.SystemLogging;
-using Cat.Common.AppSettings;
+using Cat.Common.Formatters;
 using Cat.Common.Helpers;
 using log4net;
 using StructureMap;
@@ -10,18 +10,20 @@ namespace Cat.Web.Controllers.Api
     public class ReverberationController : ApiController
     {
         private readonly IContainer _container;
+        private readonly IAppTitleFormatter _appTitleFormatter;
 
         private static readonly ILog _log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
-        public ReverberationController(IContainer container)
+        public ReverberationController(IContainer container, IAppTitleFormatter appTitleFormatter)
         {
             _container = container;
+            _appTitleFormatter = appTitleFormatter;
         }
 
         [HttpGet]
         public string Refresher()
         {
-            return MaskDataHelper.MoshText(string.Format("'{0}' app Refresher Service endpoint", AppTitleProvider.AppTitleFullInternalFormat));
+            return MaskDataHelper.MoshText(string.Format("'{0}' app Refresher Service endpoint", _appTitleFormatter.AppTitleFullInternalFormat));
         }
 
         [HttpGet]

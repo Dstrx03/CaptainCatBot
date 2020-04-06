@@ -1,71 +1,89 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Cat.Web.Infrastructure.Grids
 {
     public class Grids
     {
-        private static readonly List<GridScheme> _schemes = new List<GridScheme>();
-
         static Grids()
         {
-            AddSchemeUsers();
+            SchemesJson = Newtonsoft.Json.JsonConvert.SerializeObject(GetSchemes());
         }
 
-        public static string GetSchemesJson()
+        public static string SchemesJson { get; }
+
+        #region Grids declaration
+        private static void RegisterGridSchemes(List<GridScheme> schemes)
         {
-            return Newtonsoft.Json.JsonConvert.SerializeObject(_schemes);
+            AddSchemeUsers(schemes);
         }
 
-        private static void AddSchemeUsers()
+        private static void AddSchemeUsers(List<GridScheme> schemes)
         {
-            var scheme = new GridScheme("grid_users");
+            AddScheme("grid_users", schemes, (scheme) =>
+            {
 
-            scheme.Columns.Add(new GridSchemeColumn
-            {
-                ColumnId = "UserName", 
-                Caption = "User Name",
-                Sortable = true,
-                Searchable = true
-            });
-            scheme.Columns.Add(new GridSchemeColumn
-            {
-                ColumnId = "Email",
-                Caption = "Email",
-                Sortable = true,
-                Searchable = true
-            });
-            scheme.Columns.Add(new GridSchemeColumn
-            {
-                ColumnId = "RolesView",
-                Caption = "Roles",
-            });
-            scheme.Columns.Add(new GridSchemeColumn
-            {
-                ColumnId = "Actions", 
-                Caption = "", 
-                Type = CellType.Actions, 
-                Actions = new List<GridSchemeAction>
+                scheme.Columns.Add(new GridSchemeColumn
                 {
-                    new GridSchemeAction
+                    ColumnId = "UserName",
+                    Caption = "User Name",
+                    Sortable = true,
+                    Searchable = true
+                });
+                scheme.Columns.Add(new GridSchemeColumn
+                {
+                    ColumnId = "Email",
+                    Caption = "Email",
+                    Sortable = true,
+                    Searchable = true
+                });
+                scheme.Columns.Add(new GridSchemeColumn
+                {
+                    ColumnId = "RolesView",
+                    Caption = "Roles",
+                });
+                scheme.Columns.Add(new GridSchemeColumn
+                {
+                    ColumnId = "Actions",
+                    Caption = "",
+                    Type = CellType.Actions,
+                    Actions = new List<GridSchemeAction>
                     {
-                        Name = "Edit", 
-                        ButtonIconSet = "fas", 
-                        ButtonIcon = "fa-user-edit",
-                        ButtonColor = "primary",
-                        TooltipText = "Edit user"
-                    }, 
-                    new GridSchemeAction
-                    {
-                        Name = "Remove",
-                        ButtonIconSet = "fas", 
-                        ButtonIcon = "fa-user-slash",
-                        ButtonColor = "primary",
-                        TooltipText = "Remove user"
+                        new GridSchemeAction
+                        {
+                            Name = "Edit",
+                            ButtonIconSet = "fas",
+                            ButtonIcon = "fa-user-edit",
+                            ButtonColor = "primary",
+                            TooltipText = "Edit user"
+                        },
+                        new GridSchemeAction
+                        {
+                            Name = "Remove",
+                            ButtonIconSet = "fas",
+                            ButtonIcon = "fa-user-slash",
+                            ButtonColor = "primary",
+                            TooltipText = "Remove user"
+                        }
                     }
-                }
-            });
+                });
 
-            _schemes.Add(scheme);
+            });
+        }
+        #endregion
+
+        private static void AddScheme(string schemeName, List<GridScheme> schemes, Action<GridScheme> initGridScheme)
+        {
+            var scheme = new GridScheme(schemeName);
+            initGridScheme(scheme);
+            schemes.Add(scheme);
+        }
+
+        private static List<GridScheme> GetSchemes()
+        {
+            var schemes = new List<GridScheme>();
+            RegisterGridSchemes(schemes);
+            return schemes;
         }
     }
 }
