@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using Cat.Domain.Entities.Identity;
 using Cat.Web;
-using Cat.Web.Infrastructure.Platform;
+using Cat.Web.Infrastructure.Platform.Identity;
 using Cat.Web.Infrastructure.Platform.WebApi;
 using Cat.Web.Infrastructure.Roles;
 using Cat.Web.Infrastructure.Roles.Attributes;

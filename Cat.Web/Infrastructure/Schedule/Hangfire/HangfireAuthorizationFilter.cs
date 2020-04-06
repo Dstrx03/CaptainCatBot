@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Cat.Web.Infrastructure.Platform;
+using Cat.Web.Infrastructure.Platform.Identity;
 using Cat.Web.Infrastructure.Roles;
 using Hangfire.Dashboard;
 using Microsoft.AspNet.Identity;

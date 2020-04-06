@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
-using Cat.Web.Infrastructure.Platform;
+using Cat.Web.Infrastructure.Platform.Identity;
 using Cat.Web.Infrastructure.Roles;
 using Cat.Web.Models;
 using Cat.Web.Models.Identity;

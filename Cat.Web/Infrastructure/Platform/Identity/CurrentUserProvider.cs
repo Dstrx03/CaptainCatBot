@@ -2,12 +2,11 @@
 using System.Net.Http;
 using System.Threading.Tasks;
 using Cat.Domain.Entities.Identity;
-using Cat.Web.Infrastructure.Platform.Identity;
 using log4net;
 using Microsoft.AspNet.Identity;
 using Microsoft.Owin;
 
-namespace Cat.Web.Infrastructure.Platform
+namespace Cat.Web.Infrastructure.Platform.Identity
 {
     public class CurrentUserProvider : IdentityUtilsProvider
     {
