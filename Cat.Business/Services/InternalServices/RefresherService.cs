@@ -23,6 +23,8 @@ namespace Cat.Business.Services.InternalServices
 
     public class RefresherService : IRefresherService
     {
+        private const string CachedWorkName = "RefresherService.Refresh";
+
         private static readonly HttpClient _client;
 
         private static AppDbContext _currDbContext;
@@ -48,7 +50,14 @@ namespace Cat.Business.Services.InternalServices
 
         public static void RunRefresher(IContainer container)
         {
-            //get curent settings
+            InitSettings(container);
+            if (CheckCachedWork()) return;
+            CacheWork(container, RegisterWork());
+        }
+
+        #region RunRefresher() private methods
+        private static void InitSettings(IContainer container)
+        {
             if (_currDbContext != null) _currDbContext.Dispose();
             _currDbContext = new AppDbContext();
             if (_currContainer != null) _currContainer.Dispose();
@@ -61,59 +70,40 @@ namespace Cat.Business.Services.InternalServices
             _refresherService = _currContainer.GetInstance<IRefresherService>();
             _loggingService = SystemLoggingServiceFactory.CreateService("RefresherService", _currContainer);
             _settings = _refresherService.GetSettings();
+        }
 
-            //return if worker is already running
-            Action cachedWork = HttpContext.Current.Cache["Refresh"] as Action;
-            if (cachedWork is Action)
+        private static bool CheckCachedWork()
+        {
+            Timer cachedWork = HttpContext.Current.Cache[CachedWorkName] as Timer;
+            var isCached = cachedWork is Timer;
+            var message = isCached ? 
+                string.Format("Update Refresher settings. Enabled: {0}, interval: every {1} minutes, call url: '{2}'", _settings.IsEnabled, _settings.IntervalMinutes, _callUrl) : 
+                string.Format("Register Refresher instance. Enabled: {0}, interval: every {1} minutes, call url: '{2}'", _settings.IsEnabled, _settings.IntervalMinutes, _callUrl);
+
+            _loggingService.AddEntry(message);
+            _log.Debug(message);
+
+            return isCached;
+        }
+
+        private static Timer RegisterWork()
+        {
+            var startTime = DateTime.Now;
+            var workCallback = new TimerCallback(obj =>
             {
-                var updateSvcMsg = string.Format("Update Refresher settings. Enabled: {0}, interval: every {1} minutes, call url: '{2}'", _settings.IsEnabled, _settings.IntervalMinutes, _callUrl);
-                _loggingService.AddEntry(updateSvcMsg);
-                _log.Debug(updateSvcMsg);
-                return;
-            }
-            else
-            {
-                var registerSvcMsg = string.Format("Register Refresher instance. Enabled: {0}, interval: every {1} minutes, call url: '{2}'", _settings.IsEnabled, _settings.IntervalMinutes, _callUrl);
-                _loggingService.AddEntry(registerSvcMsg);
-                _log.Debug(registerSvcMsg);
-            }
+                var deltaTime = DateTime.Now - startTime;
+                if (deltaTime.TotalSeconds < 60 * _settings.IntervalMinutes) return;
+                startTime = startTime.AddMinutes(_settings.IntervalMinutes);
+                if (!_settings.IsEnabled) return;
+                Refresh();
+            });
+            return new Timer(workCallback, null, 0, 200);
+        }
 
-            //get the worker
-            Action work = () =>
-            {
-                while (true)
-                {
-                    var startTime = DateTime.Now;
-                    while (true)
-                    {
-                        Thread.Sleep(200);
-                        var deltaTime = DateTime.Now - startTime;
-                        if (deltaTime.TotalSeconds >= 60 * _settings.IntervalMinutes && _settings.IsEnabled) break;
-                    }
-
-                    _log.DebugFormat("Refresh job started, calling url: '{0}'", _callUrl);
-
-                    try
-                    {
-                        var result = Task.Run<HttpResponseMessage>(async () => await _client.GetAsync(_callUrl)).Result;
-                        var resultString = Task.Run<string>(async () => await result.Content.ReadAsStringAsync()).Result;
-                        var successMsg = string.Format("Refresh job completed successfully (url: '{0}', status: {1}{2}, content: {3})", _callUrl, (int)result.StatusCode, result.StatusCode, resultString);
-                        _loggingService.AddEntry(successMsg);
-                        _log.Debug(successMsg);
-                    }
-                    catch (Exception ex)
-                    {
-                        var errorMsg = string.Format("Refresh job error (url: '{0}'): {1}", _callUrl, ex);
-                        _loggingService.AddEntry(errorMsg);
-                        _log.Error(errorMsg);
-                    }
-                }
-            };
-            work.BeginInvoke(null, null);
-
-            //add this job to the cache
+        private static void CacheWork(IContainer container, Timer work)
+        {
             HttpContext.Current.Cache.Add(
-                "Refresh",
+                CachedWorkName,
                 work,
                 null,
                 Cache.NoAbsoluteExpiration,
@@ -122,6 +112,26 @@ namespace Cat.Business.Services.InternalServices
                 (s, o, r) => { RunRefresher(container); }
             );
         }
+
+        private static void Refresh()
+        {
+            _log.DebugFormat("Refresh job started, calling url: '{0}'", _callUrl);
+            try
+            {
+                var result = Task.Run<HttpResponseMessage>(async () => await _client.GetAsync(_callUrl)).Result;
+                var resultString = Task.Run<string>(async () => await result.Content.ReadAsStringAsync()).Result;
+                var successMsg = string.Format("Refresh job completed successfully (url: '{0}', status: {1}{2}, content: {3})", _callUrl, (int)result.StatusCode, result.StatusCode, resultString);
+                _loggingService.AddEntry(successMsg);
+                _log.Debug(successMsg);
+            }
+            catch (Exception ex)
+            {
+                var errorMsg = string.Format("Refresh job error (url: '{0}'): {1}", _callUrl, ex);
+                _loggingService.AddEntry(errorMsg);
+                _log.Error(errorMsg);
+            }
+        }
+        #endregion
 
 
 

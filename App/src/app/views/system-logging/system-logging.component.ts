@@ -133,7 +133,7 @@ export class SystemLoggingSettingsForm {
       minWidth: '63vw',
       data: {
         descriptor: this.systemLoggingSettings.Descriptor,
-        name: `(descriptor:${this.systemLoggingSettings.Descriptor})`
+        name: `Descriptor:${this.systemLoggingSettings.Descriptor}`
       }
     });
   }
