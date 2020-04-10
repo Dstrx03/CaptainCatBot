@@ -1,4 +1,5 @@
-﻿using System.Web.Http;
+﻿using System.Threading.Tasks;
+using System.Web.Http;
 using Cat.Business.Services.InternalServices;
 using Cat.Web.App_Start;
 using Cat.Web.Infrastructure.Roles;
@@ -19,29 +20,29 @@ namespace Cat.Web.Controllers.Api
         }
 
         [HttpGet]
-        public RefresherSettings RefresherGetSettings()
+        public async Task<RefresherSettings> RefresherGetSettings()
         {
-            return _refresherService.GetSettings();
+            return await _refresherService.GetSettingsAsync();
         }
 
         [HttpPost]
-        public RefresherSettings RefresherSaveSettings([FromBody] RefresherSettings settings)
+        public async Task<RefresherSettings> RefresherSaveSettings([FromBody] RefresherSettings settings)
         {
-            var settingsResult = _refresherService.SaveSettings(settings);
+            var settingsResult = await _refresherService.SaveSettingsAsync(settings);
             RefresherConfig.Register();
             return settingsResult;
         }
 
         [HttpGet]
-        public ATriggerSettings ATriggerGetSettings()
+        public async Task<ATriggerSettings> ATriggerGetSettings()
         {
-            return _atriggerService.GetSettings();
+            return await _atriggerService.GetSettingsAsync();
         }
 
         [HttpPost]
-        public ATriggerSettings ATriggerSaveSettings([FromBody] ATriggerSettings settings)
+        public async Task<ATriggerSettings> ATriggerSaveSettings([FromBody] ATriggerSettings settings)
         {
-            var settingsResult = _atriggerService.SaveSettings(settings);
+            var settingsResult = await _atriggerService.SaveSettingsAsync(settings);
             return settingsResult;
         }
     }

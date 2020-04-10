@@ -10,13 +10,18 @@ namespace Cat.Web.Infrastructure.Schedule
         public static void Register()
         {
             AddRecurring<CleanUpSystemLogTask>("0 */6 * * *");
-            AddRecurring<CheckWebhookTask>("*/10 * * * *");
-            AddRecurring<ProcessSubscriptionsTask>("0 */1 * * *");
+            AddAsyncRecurring<CheckWebhookTask>("*/10 * * * *");
+            AddAsyncRecurring<ProcessSubscriptionsTask>("0 */1 * * *");
         }
 
         private static void AddRecurring<T>(string cronExpression) where T : IScheduledTask
         {
-            RecurringJob.AddOrUpdate<ScheduledTask<T>>(x => x.Execute(), cronExpression);
+            RecurringJob.AddOrUpdate<ScheduledTask<T>> (x => x.Execute(), cronExpression);
+        }
+
+        private static void AddAsyncRecurring<T>(string cronExpression) where T : IScheduledAsyncTask
+        {
+            RecurringJob.AddOrUpdate<ScheduledAsyncTask<T>>(x => x.ExecuteAsync(), cronExpression);
         }
     }
 }

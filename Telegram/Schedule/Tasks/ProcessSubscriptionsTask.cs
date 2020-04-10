@@ -1,12 +1,14 @@
 ﻿using System;
+using System.Data.Entity;
 using System.Linq;
+using System.Threading.Tasks;
 using Cat.Business.Schedule.Tasks;
 using Cat.Domain.Repositories;
 using log4net;
 
 namespace Telegram.Schedule.Tasks
 {
-    public class ProcessSubscriptionsTask : IScheduledTask
+    public class ProcessSubscriptionsTask : IScheduledAsyncTask
     {
         private readonly ISystemValuesRespository _systemValuesRepo;
 
@@ -17,12 +19,11 @@ namespace Telegram.Schedule.Tasks
             _systemValuesRepo = systemValuesRepo;
         }
 
-        public void Execute()
+        public async Task ExecuteAsync()
         {
-
-            var chatIds = _systemValuesRepo.GetAll()
+            var chatIds = await _systemValuesRepo.GetAll()
                 .Where(x => x.DataDescriptor.Contains("SubscriptionChatId_"))
-                .ToList();
+                .ToListAsync();
 
             foreach (var cId in chatIds)
             {     
@@ -30,7 +31,7 @@ namespace Telegram.Schedule.Tasks
                 {
                     _log.DebugFormat("Found chat id: '{0}'", cId.Data);
                     var chatId = Convert.ToInt64(cId.Data);
-                    TelegramBot.Client.SendTextMessageAsync(chatId, "meow!");
+                    await TelegramBot.Client.SendTextMessageAsync(chatId, "meow!");
                 }
                 catch (Exception e)
                 {

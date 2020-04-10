@@ -1,9 +1,10 @@
-﻿using Cat.Business.Schedule.Tasks;
+﻿using System.Threading.Tasks;
+using Cat.Business.Schedule.Tasks;
 using log4net;
 
 namespace Telegram.Schedule.Tasks
 {
-    public class CheckWebhookTask : IScheduledTask
+    public class CheckWebhookTask : IScheduledAsyncTask
     {
         private readonly ITelegramService _telegramService;
 
@@ -14,9 +15,9 @@ namespace Telegram.Schedule.Tasks
             _telegramService = telegramService;
         }
 
-        public void Execute()
+        public async Task ExecuteAsync()
         {
-            _telegramService.CheckWebhook();
+            await _telegramService.CheckWebhookAsync();
         }
     }
 }

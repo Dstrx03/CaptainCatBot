@@ -9,6 +9,7 @@ using System.Web.Routing;
 using Cat.Business.Services.InternalServices;
 using Cat.Common.AppSettings;
 using Cat.Common.AppSettings.Providers;
+using Cat.Common.Helpers;
 using Cat.Domain;
 using Cat.Web.App_Start;
 using log4net;
@@ -48,7 +49,7 @@ namespace Cat.Web
 
         #region Framework native methods
 
-        protected void Application_Start()
+        protected async void Application_Start()
         {
             _log.Debug("Application started...");
 
@@ -59,21 +60,22 @@ namespace Cat.Web
             BundleConfig.RegisterBundles(BundleTable.Bundles);
             GlobalHost.HubPipeline.RequireAuthentication();
             RefresherConfig.Register();
-            TelegramBotConfig.Register();
+            await TelegramBotConfig.RegisterAsync();
         }
 
         protected void Application_End(object sender, EventArgs e)
         {
             _log.Debug("Application is forced to stop...");
 
-            ATriggerService.CallATrigger(
-                StructuremapMvc.StructureMapDependencyScope.Container.GetNestedContainer(), 
-                BaseUrlProvider.HttpBaseUrl, 
-                AppSettings.Instance.ATriggerApiKey, 
-                AppSettings.Instance.ATriggerApiSecret);
-            TelegramBotConfig.Unregister();
+            AsyncHelper.RunSync(() => ATriggerService.CallATriggerAsync(StructuremapMvc.StructureMapDependencyScope.Container.GetNestedContainer(), 
+                BaseUrlProvider.HttpBaseUrl, AppSettings.Instance.ATriggerApiKey, AppSettings.Instance.ATriggerApiSecret));
+            AsyncHelper.RunSync(TelegramBotConfig.UnregisterAsync);
 
             _log.Debug("Application stopped.");
+
+            // When application terminates it's better to wait synchronously for completion of async tasks. 
+            // Using async/await pattern here may cause background threads to terminate before they complete execution.
+            // TODO: Check performance.
         }
 
         protected void Application_BeginRequest(Object sender, EventArgs e)

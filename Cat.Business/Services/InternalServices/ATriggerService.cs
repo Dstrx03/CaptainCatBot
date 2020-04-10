@@ -6,7 +6,6 @@ using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Cat.Business.Services.SystemLogging;
 using Cat.Common.AppSettings;
-using Cat.Common.AppSettings.Providers;
 using Cat.Domain;
 using Cat.Domain.Entities.SystemValues;
 using log4net;
@@ -17,22 +16,25 @@ namespace Cat.Business.Services.InternalServices
     public interface IATriggerService
     {
         ATriggerSettings GetSettings();
+        Task<ATriggerSettings> GetSettingsAsync();
         ATriggerSettings SaveSettings(ATriggerSettings settings);
+        Task<ATriggerSettings> SaveSettingsAsync(ATriggerSettings settings);
     }
 
     public class ATriggerService : IATriggerService
     {
+        private const string SettingsIsEnabledName = "ATrigger.IsEnabled";
+        private const string SettingsTimeSliceMinutesName = "ATrigger.TimeSliceMinutes";
+
+        private const bool SettingsIsEnabledDefault = false;
+        private const int SettingsTimeSliceMinutesDefault = 1;
+
         private readonly ISystemValuesManager _valuesManager;
 
         private static readonly HttpClient _client;
 
-        private static AppDbContext _currDbContext;
-        private static IContainer _currContainer;
-
         private static IATriggerService _atriggerService;
         private static ISystemLoggingServiceBase _loggingService;
-
-        private static ATriggerSettings _settings;
 
         private static readonly ILog _log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
@@ -43,56 +45,57 @@ namespace Cat.Business.Services.InternalServices
             _client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
         }
 
-        public static void CallATrigger(IContainer container, string baseUrl, string apiKey, string apiSecret)
+        public static async Task CallATriggerAsync(IContainer container, string baseUrl, string apiKey, string apiSecret)
         {
             //get curent settings
-            _currDbContext = new AppDbContext();
-            _currContainer = container;
-            _currContainer.Configure(x =>
+            var currDbContext = new AppDbContext();
+            var currContainer = container;
+            currContainer.Configure(x =>
             {
-                x.For<AppDbContext>().Use(_currDbContext);
-                x.For<DbContext>().Use(_currDbContext);
+                x.For<AppDbContext>().Use(currDbContext);
+                x.For<DbContext>().Use(currDbContext);
             });
-            _atriggerService = _currContainer.GetInstance<IATriggerService>();
-            _loggingService = SystemLoggingServiceFactory.CreateService("ATriggerService", _currContainer);
-            _settings = _atriggerService.GetSettings();
+            _atriggerService = currContainer.GetInstance<IATriggerService>();
+            _loggingService = SystemLoggingServiceFactory.CreateService("ATriggerService", currContainer);
+            var settings = await _atriggerService.GetSettingsAsync();
 
             var message = string.Format("From '{0}' app; started call at {1} UTC", AppSettings.Instance.AppTitleFormatter.AppTitleFullInternalFormat, DateTime.UtcNow);
             var urlCallback = string.Format("{0}api/v1/Reverberation/ATrigger?message={1}", baseUrl, message);
 
-            var initCallMsg = string.Format("Initializing ATrigger request. Enabled: {0}, callback url: '{1}', callback after {2} minute(s)", _settings.IsEnabled, urlCallback, _settings.TimeSliceMinutes);
-            _loggingService.AddEntry(initCallMsg);
+            var initCallMsg = string.Format("Initializing ATrigger request. Enabled: {0}, callback url: '{1}', callback after {2} minute(s)", settings.IsEnabled, urlCallback, settings.TimeSliceMinutes);
+            await _loggingService.AddEntryAsync(initCallMsg);
             _log.Debug(initCallMsg);
 
             var requestUri = string.Format(
                 "https://api.atrigger.com/v1/tasks/create?key={0}&secret={1}&timeSlice={2}minute&count=1&tag_application=start_application&url={3}",
-                apiKey, apiSecret, _settings.TimeSliceMinutes, urlCallback);
+                apiKey, apiSecret, settings.TimeSliceMinutes, urlCallback);
 
             try
             {
-                if (!_settings.IsEnabled)
+                if (!settings.IsEnabled)
                 {
                     var disabledMsg = "Request is ignored due ATrigger requests disabled";
-                    _loggingService.AddEntry(disabledMsg);
+                    await _loggingService.AddEntryAsync(disabledMsg);
                     _log.Debug(disabledMsg);
                     return;
                 }
-                var result = Task.Run(async () => await _client.GetAsync(requestUri)).Result;
-                var resultStr = Task.Run(async () => await result.Content.ReadAsStringAsync()).Result;
+
+                var result = await _client.GetAsync(requestUri);
+                var resultStr = await result.Content.ReadAsStringAsync();
                 var successMsg = string.Format("ATrigger request result {0}{1}: {2}", (int)result.StatusCode, result.StatusCode, resultStr);
-                _loggingService.AddEntry(successMsg);
+                await _loggingService.AddEntryAsync(successMsg);
                 _log.Debug(successMsg);
             }
             catch (Exception ex)
             {
                 var errorMsg = string.Format("ATrigger request error: {0}", ex);
-                _loggingService.AddEntry(errorMsg);
+                await _loggingService.AddEntryAsync(errorMsg);
                 _log.Error(errorMsg);
             }
             finally
             {
-                _currDbContext.Dispose();
-                _currContainer.Dispose();
+                currDbContext.Dispose();
+                currContainer.Dispose();
             }
         }
 
@@ -105,34 +108,86 @@ namespace Cat.Business.Services.InternalServices
 
         public ATriggerSettings GetSettings()
         {
-            var isEnabled = _valuesManager.Get("ATrigger.IsEnabled");
-            if (isEnabled == null)
-            {
-                isEnabled = false;
-                _valuesManager.Set(isEnabled, "ATrigger.IsEnabled", SystemValueType.Boolean);
-            }
+            return CreateATriggerSettings(GetIsEnabled(), GetTimeSliceMinutes());
+        }
 
-            var timeSliceMinutes = _valuesManager.Get("ATrigger.TimeSliceMinutes");
-            if (timeSliceMinutes == null)
-            {
-                timeSliceMinutes = 1;
-                _valuesManager.Set(timeSliceMinutes, "ATrigger.TimeSliceMinutes", SystemValueType.Int);
-            }
-
-            return new ATriggerSettings
-            {
-                IsEnabled = (bool)isEnabled,
-                TimeSliceMinutes = (int)timeSliceMinutes
-            };
+        public async Task<ATriggerSettings> GetSettingsAsync()
+        {
+            return CreateATriggerSettings(await GetIsEnabledAsync(), await GetTimeSliceMinutesAsync());
         }
 
         public ATriggerSettings SaveSettings(ATriggerSettings settings)
         {
-            _valuesManager.Set(settings.IsEnabled, "ATrigger.IsEnabled", SystemValueType.Boolean);
-            _valuesManager.Set(settings.TimeSliceMinutes, "ATrigger.TimeSliceMinutes", SystemValueType.Int);
+            _valuesManager.Set(settings.IsEnabled, SettingsIsEnabledName, SystemValueType.Boolean);
+            _valuesManager.Set(settings.TimeSliceMinutes, SettingsTimeSliceMinutesName, SystemValueType.Int);
 
             return settings;
         }
 
+        public async Task<ATriggerSettings> SaveSettingsAsync(ATriggerSettings settings)
+        {
+            await _valuesManager.SetAsync(settings.IsEnabled, SettingsIsEnabledName, SystemValueType.Boolean);
+            await _valuesManager.SetAsync(settings.TimeSliceMinutes, SettingsTimeSliceMinutesName, SystemValueType.Int);
+
+            return settings;
+        }
+
+
+
+        #region Private methods
+
+        private bool GetIsEnabled()
+        {
+            var isEnabled = _valuesManager.Get(SettingsIsEnabledName);
+            if (isEnabled == null)
+            {
+                isEnabled = SettingsIsEnabledDefault;
+                _valuesManager.Set(isEnabled, SettingsIsEnabledName, SystemValueType.Boolean);
+            }
+            return (bool)isEnabled;
+        }
+
+        private async Task<bool> GetIsEnabledAsync()
+        {
+            var isEnabled = await _valuesManager.GetAsync(SettingsIsEnabledName);
+            if (isEnabled == null)
+            {
+                isEnabled = SettingsIsEnabledDefault;
+                await _valuesManager.SetAsync(isEnabled, SettingsIsEnabledName, SystemValueType.Boolean);
+            }
+            return (bool)isEnabled;
+        }
+
+        private int GetTimeSliceMinutes()
+        {
+            var timeSliceMinutes = _valuesManager.Get(SettingsTimeSliceMinutesName);
+            if (timeSliceMinutes == null)
+            {
+                timeSliceMinutes = SettingsTimeSliceMinutesDefault;
+                _valuesManager.Set(timeSliceMinutes, SettingsTimeSliceMinutesName, SystemValueType.Int);
+            }
+            return (int) timeSliceMinutes;
+        }
+
+        private async Task<int> GetTimeSliceMinutesAsync()
+        {
+            var timeSliceMinutes = await _valuesManager.GetAsync(SettingsTimeSliceMinutesName);
+            if (timeSliceMinutes == null)
+            {
+                timeSliceMinutes = SettingsTimeSliceMinutesDefault;
+                await _valuesManager.SetAsync(timeSliceMinutes, SettingsTimeSliceMinutesName, SystemValueType.Int);
+            }
+            return (int)timeSliceMinutes;
+        }
+
+        private ATriggerSettings CreateATriggerSettings(bool isEnabled, int timeSliceMinutes)
+        {
+            return new ATriggerSettings
+            {
+                IsEnabled = isEnabled,
+                TimeSliceMinutes = timeSliceMinutes
+            };
+        }
+        #endregion
     }
 }

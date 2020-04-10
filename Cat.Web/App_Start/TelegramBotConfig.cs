@@ -1,5 +1,6 @@
 ﻿using System.Data.Entity;
 using System.Net;
+using System.Threading.Tasks;
 using Cat.Business.Services.SystemLogging;
 using Cat.Common.AppSettings;
 using Cat.Common.AppSettings.Providers;
@@ -11,7 +12,7 @@ namespace Cat.Web
 {
     public static class TelegramBotConfig
     {
-        public static void Register()
+        public static async Task RegisterAsync()
         {
             using (var dbContext = new AppDbContext())
             {
@@ -38,13 +39,13 @@ namespace Cat.Web
                      */
                     ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
 
-                    TelegramBot.RegisterClient(TelegramBotTokenProvider.Token, loggingService);
-                    TelegramBot.RegisterWebhook(AppSettings.InstanceTelegram.WebhookUrl, AppSettings.InstanceTelegram.NeedPublicCert, loggingService);
+                    await TelegramBot.RegisterClientAsync(TelegramBotTokenProvider.Token, loggingService);
+                    await TelegramBot.RegisterWebhookAsync(AppSettings.InstanceTelegram.WebhookUrl, AppSettings.InstanceTelegram.NeedPublicCert, loggingService);
                 }
             }
         }
 
-        public static void Unregister()
+        public static async Task UnregisterAsync()
         {
             using (var dbContext = new AppDbContext())
             {
@@ -58,7 +59,7 @@ namespace Cat.Web
 
                     var loggingService = SystemLoggingServiceFactory.CreateService("TelegramBot", container);
 
-                    TelegramBot.UnregisterWebhook(loggingService);
+                    await TelegramBot.UnregisterWebhookAsync(loggingService);
                     TelegramBot.UnregisterClient(loggingService);
                 }
             }

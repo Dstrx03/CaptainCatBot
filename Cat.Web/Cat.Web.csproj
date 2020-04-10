@@ -270,7 +270,9 @@
     <Compile Include="Infrastructure\Roles\AppRolesRegistry.cs" />
     <Compile Include="Infrastructure\Roles\Attributes\AppAuthorizeAttribute.cs" />
     <Compile Include="Infrastructure\Schedule\Hangfire\HangfireAuthorizationFilter.cs" />
+    <Compile Include="Infrastructure\Schedule\Tasks\ScheduledAsyncTask.cs" />
     <Compile Include="Infrastructure\Schedule\Tasks\ScheduledTask.cs" />
+    <Compile Include="Infrastructure\Schedule\Tasks\ScheduledTaskBase.cs" />
     <Compile Include="Infrastructure\Schedule\ScheduledTasksRegistry.cs" />
     <Compile Include="Models\Identity\LoginViewModel.cs" />
     <Compile Include="Models\Identity\AuthInfo.cs" />

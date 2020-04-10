@@ -23,7 +23,7 @@ namespace Telegram
 
         TelegramStatusViewModel GetTelegramStatusInfo();
 
-        void CheckWebhook();
+        Task CheckWebhookAsync();
 
         Task ProcessUpdate(Update update);
     }
@@ -100,32 +100,32 @@ namespace Telegram
             return result;
         }
 
-        public void CheckWebhook()
+        public async Task CheckWebhookAsync()
         {
             var checkMsg = "Checking webhook registry...";
-            _loggingService.AddEntry(checkMsg);
+            await _loggingService.AddEntryAsync(checkMsg);
             _log.Debug(checkMsg);
 
-            TelegramBot.UpdateWebhookInfo(_loggingService);
+            await TelegramBot.UpdateWebhookInfoAsync(_loggingService);
 
             if (TelegramBot.CurrentWebhookInfo == null)
             {
                 var errorMsg = "Cannot check webhook registry due current webhook info is null";
-                _loggingService.AddEntry(errorMsg);
+                await _loggingService.AddEntryAsync(errorMsg);
                 _log.Error(errorMsg);
             }
             else if (GetWebhookStatus() != TelegramServiceStatus.Ok)
             {
                 var needToRegisterMsg = string.Format("Actual webhook url: '{0}', the app webhook url: '{1}'. Registering webhook...", TelegramBot.CurrentWebhookInfo.Url, _telegramAppSettings.WebhookUrl);
-                _loggingService.AddEntry(needToRegisterMsg);
+                await _loggingService.AddEntryAsync(needToRegisterMsg);
                 _log.Debug(needToRegisterMsg);
 
-                TelegramBot.RegisterWebhook(_telegramAppSettings.WebhookUrl, _telegramAppSettings.NeedPublicCert, _loggingService);
+                await TelegramBot.RegisterWebhookAsync(_telegramAppSettings.WebhookUrl, _telegramAppSettings.NeedPublicCert, _loggingService);
             }
             else
             {
                 var okMsg = string.Format("Actual webhook url: '{0}', the app webhook url: '{1}'. Webhook is registered to this app", TelegramBot.CurrentWebhookInfo.Url, _telegramAppSettings.WebhookUrl);
-                _loggingService.AddEntry(okMsg);
+                await _loggingService.AddEntryAsync(okMsg);
                 _log.Debug(okMsg);
             }
         }

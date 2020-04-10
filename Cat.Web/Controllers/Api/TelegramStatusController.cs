@@ -1,4 +1,5 @@
-﻿using System.Web.Http;
+﻿using System.Threading.Tasks;
+using System.Web.Http;
 using Cat.Business.Services.SystemLogging;
 using Cat.Common.AppSettings;
 using Cat.Common.AppSettings.Providers;
@@ -35,9 +36,9 @@ namespace Cat.Web.Controllers.Api
         }
 
         [HttpPost]
-        public void RegisterClient()
+        public async Task RegisterClient()
         {
-            TelegramBot.RegisterClient(TelegramBotTokenProvider.Token, _loggingService);
+            await TelegramBot.RegisterClientAsync(TelegramBotTokenProvider.Token, _loggingService);
         }
 
         [HttpPost]
@@ -47,27 +48,27 @@ namespace Cat.Web.Controllers.Api
         }
 
         [HttpPost]
-        public void RegisterWebhook()
+        public async Task RegisterWebhook()
         {
-            TelegramBot.RegisterWebhook(AppSettings.InstanceTelegram.WebhookUrl, AppSettings.InstanceTelegram.NeedPublicCert, _loggingService);
+            await TelegramBot.RegisterWebhookAsync(AppSettings.InstanceTelegram.WebhookUrl, AppSettings.InstanceTelegram.NeedPublicCert, _loggingService);
         }
 
         [HttpPost]
-        public void UnregisterWebhook()
+        public async Task UnregisterWebhook()
         {
-            TelegramBot.UnregisterWebhook(_loggingService);
+            await TelegramBot.UnregisterWebhookAsync(_loggingService);
         }
 
         [HttpPost]
-        public void CheckWebhook()
+        public async Task CheckWebhook()
         {
-            _telegramService.CheckWebhook();
+            await _telegramService.CheckWebhookAsync();
         }
 
         [HttpPost]
-        public WebhookInfo UpdateWebhook()
+        public async Task<WebhookInfo> UpdateWebhook()
         {
-            return TelegramBot.UpdateWebhookInfo(_loggingService);
+            return await TelegramBot.UpdateWebhookInfoAsync(_loggingService);
         }
 
     }

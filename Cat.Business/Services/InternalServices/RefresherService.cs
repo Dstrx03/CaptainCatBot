@@ -18,12 +18,20 @@ namespace Cat.Business.Services.InternalServices
     public interface IRefresherService
     {
         RefresherSettings GetSettings();
+        Task<RefresherSettings> GetSettingsAsync();
         RefresherSettings SaveSettings(RefresherSettings settings);
+        Task<RefresherSettings> SaveSettingsAsync(RefresherSettings settings);
     }
 
     public class RefresherService : IRefresherService
     {
         private const string CachedWorkName = "RefresherService.Refresh";
+
+        private const string SettingsIsEnabledName = "Refresher.IsEnabled";
+        private const string SettingsIntervalMinutesName = "Refresher.IntervalMinutes";
+
+        private const bool SettingsIsEnabledDefault = false;
+        private const int SettingsIntervalMinutesDefault = 15;
 
         private static readonly HttpClient _client;
 
@@ -89,13 +97,13 @@ namespace Cat.Business.Services.InternalServices
         private static Timer RegisterWork()
         {
             var startTime = DateTime.Now;
-            var workCallback = new TimerCallback(obj =>
+            var workCallback = new TimerCallback(async obj =>
             {
                 var deltaTime = DateTime.Now - startTime;
                 if (deltaTime.TotalSeconds < 60 * _settings.IntervalMinutes) return;
                 startTime = startTime.AddMinutes(_settings.IntervalMinutes);
                 if (!_settings.IsEnabled) return;
-                Refresh();
+                await RefreshAsync();
             });
             return new Timer(workCallback, null, 0, 200);
         }
@@ -113,21 +121,21 @@ namespace Cat.Business.Services.InternalServices
             );
         }
 
-        private static void Refresh()
+        private static async Task RefreshAsync()
         {
             _log.DebugFormat("Refresh job started, calling url: '{0}'", _callUrl);
             try
             {
-                var result = Task.Run<HttpResponseMessage>(async () => await _client.GetAsync(_callUrl)).Result;
-                var resultString = Task.Run<string>(async () => await result.Content.ReadAsStringAsync()).Result;
+                var result = await _client.GetAsync(_callUrl);
+                var resultString = await result.Content.ReadAsStringAsync();
                 var successMsg = string.Format("Refresh job completed successfully (url: '{0}', status: {1}{2}, content: {3})", _callUrl, (int)result.StatusCode, result.StatusCode, resultString);
-                _loggingService.AddEntry(successMsg);
+                await _loggingService.AddEntryAsync(successMsg);
                 _log.Debug(successMsg);
             }
             catch (Exception ex)
             {
                 var errorMsg = string.Format("Refresh job error (url: '{0}'): {1}", _callUrl, ex);
-                _loggingService.AddEntry(errorMsg);
+                await _loggingService.AddEntryAsync(errorMsg);
                 _log.Error(errorMsg);
             }
         }
@@ -142,33 +150,85 @@ namespace Cat.Business.Services.InternalServices
 
         public RefresherSettings GetSettings()
         {
-            var isEnabled = _valuesManager.Get("Refresher.IsEnabled");
-            if (isEnabled == null)
-            {
-                isEnabled = false;
-                _valuesManager.Set(isEnabled, "Refresher.IsEnabled", SystemValueType.Boolean);
-            }
+            return CreateRefresherSettings(GetIsEnabled(), GetIntervalMinutes());
+        }
 
-            var intervalMinutes = _valuesManager.Get("Refresher.IntervalMinutes");
-            if (intervalMinutes == null)
-            {
-                intervalMinutes = 15;
-                _valuesManager.Set(intervalMinutes, "Refresher.IntervalMinutes", SystemValueType.Int);
-            }
-
-            return new RefresherSettings
-            {
-                IsEnabled = (bool)isEnabled, 
-                IntervalMinutes = (int)intervalMinutes
-            };
+        public async Task<RefresherSettings> GetSettingsAsync()
+        {
+            return CreateRefresherSettings(await GetIsEnabledAsync(), await GetIntervalMinutesAsync());
         }
 
         public RefresherSettings SaveSettings(RefresherSettings settings)
         {
-            _valuesManager.Set(settings.IsEnabled, "Refresher.IsEnabled", SystemValueType.Boolean);
-            _valuesManager.Set(settings.IntervalMinutes, "Refresher.IntervalMinutes", SystemValueType.Int);
+            _valuesManager.Set(settings.IsEnabled, SettingsIsEnabledName, SystemValueType.Boolean);
+            _valuesManager.Set(settings.IntervalMinutes, SettingsIntervalMinutesName, SystemValueType.Int);
 
             return settings;
         }
+
+        public async Task<RefresherSettings> SaveSettingsAsync(RefresherSettings settings)
+        {
+            await _valuesManager.SetAsync(settings.IsEnabled, SettingsIsEnabledName, SystemValueType.Boolean);
+            await _valuesManager.SetAsync(settings.IntervalMinutes, SettingsIntervalMinutesName, SystemValueType.Int);
+
+            return settings;
+        }
+
+
+
+        #region Private methods
+        private bool GetIsEnabled()
+        {
+            var isEnabled = _valuesManager.Get(SettingsIsEnabledName);
+            if (isEnabled == null)
+            {
+                isEnabled = SettingsIsEnabledDefault;
+                _valuesManager.Set(isEnabled, SettingsIsEnabledName, SystemValueType.Boolean);
+            }
+            return (bool)isEnabled;
+        }
+
+        private async Task<bool> GetIsEnabledAsync()
+        {
+            var isEnabled = await _valuesManager.GetAsync(SettingsIsEnabledName);
+            if (isEnabled == null)
+            {
+                isEnabled = SettingsIsEnabledDefault;
+                await _valuesManager.SetAsync(isEnabled, SettingsIsEnabledName, SystemValueType.Boolean);
+            }
+            return (bool)isEnabled;
+        }
+
+        private int GetIntervalMinutes()
+        {
+            var intervalMinutes = _valuesManager.Get(SettingsIntervalMinutesName);
+            if (intervalMinutes == null)
+            {
+                intervalMinutes = SettingsIntervalMinutesDefault;
+                _valuesManager.Set(intervalMinutes, SettingsIntervalMinutesName, SystemValueType.Int);
+            }
+            return (int) intervalMinutes;
+        }
+
+        private async Task<int> GetIntervalMinutesAsync()
+        {
+            var intervalMinutes = await _valuesManager.GetAsync(SettingsIntervalMinutesName);
+            if (intervalMinutes == null)
+            {
+                intervalMinutes = SettingsIntervalMinutesDefault;
+                await _valuesManager.SetAsync(intervalMinutes, SettingsIntervalMinutesName, SystemValueType.Int);
+            }
+            return (int)intervalMinutes;
+        }
+
+        private RefresherSettings CreateRefresherSettings(bool isEnabled, int intervalMinutes)
+        {
+            return new RefresherSettings
+            {
+                IsEnabled = isEnabled,
+                IntervalMinutes = intervalMinutes
+            };
+        }
+        #endregion
     }
 }

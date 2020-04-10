@@ -91,7 +91,7 @@ namespace Cat.Business.Services.SystemLogging
         {
             var query = await _logEntriesRepo.GetNextEntriesAsync(_descriptor, lastEntryId, count);
             var entries = await query.ToListAsync();
-            return new SystemLogEntriesPackage(entries, IsLastPackage(entries));
+            return new SystemLogEntriesPackage(entries, await IsLastPackageAsync(entries));
         }
 
         private bool IsLastPackage(List<SystemLogEntry> entries)
@@ -101,6 +101,19 @@ namespace Cat.Business.Services.SystemLogging
                 .Where(x => x.EntryDescriptor == _descriptor)
                 .OrderBy(x => x.EntryDate)
                 .FirstOrDefault();
+
+            if (lastEntry == null || lastEntryTotal == null) return true;
+            if (lastEntry.Id == lastEntryTotal.Id) return true;
+            return false;
+        }
+
+        private async Task<bool> IsLastPackageAsync(List<SystemLogEntry> entries)
+        {
+            var lastEntry = entries.LastOrDefault();
+            var lastEntryTotal = await _logEntriesRepo.GetAll()
+                .Where(x => x.EntryDescriptor == _descriptor)
+                .OrderBy(x => x.EntryDate)
+                .FirstOrDefaultAsync();
 
             if (lastEntry == null || lastEntryTotal == null) return true;
             if (lastEntry.Id == lastEntryTotal.Id) return true;

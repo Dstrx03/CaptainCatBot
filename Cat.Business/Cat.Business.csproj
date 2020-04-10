@@ -100,6 +100,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Schedule\Tasks\CleanUpSystemLogTask.cs" />
+    <Compile Include="Schedule\Tasks\IScheduledAsyncTask.cs" />
     <Compile Include="Services\InternalServices\ATriggerService.cs" />
     <Compile Include="Services\InternalServices\ATriggerSettings.cs" />
     <Compile Include="Services\InternalServices\RefresherSettings.cs" />

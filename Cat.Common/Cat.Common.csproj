@@ -75,6 +75,7 @@
     <Compile Include="AppSettings\Assemblies\TelegramAppSettings.cs" />
     <Compile Include="Converters\CatTimeSpanConverter.cs" />
     <Compile Include="Formatters\AppTitleFormatter.cs" />
+    <Compile Include="Helpers\AsyncHelper.cs" />
     <Compile Include="Helpers\MaskDataHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="StructureMap\CommonRegistry.cs" />
