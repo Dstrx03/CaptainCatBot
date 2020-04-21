@@ -7,6 +7,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Caching;
+using Cat.Business.Services.InternalServices.Settings;
+using Cat.Business.Services.InternalServices.Settings.SettingsModel;
 using Cat.Business.Services.SystemLogging;
 using Cat.Common.AppSettings.Providers;
 using Cat.Domain;
@@ -15,36 +17,20 @@ using StructureMap;
 
 namespace Cat.Business.Services.InternalServices
 {
-    public interface IRefresherService
-    {
-        RefresherSettings GetSettings();
-        Task<RefresherSettings> GetSettingsAsync();
-        RefresherSettings SaveSettings(RefresherSettings settings);
-        Task<RefresherSettings> SaveSettingsAsync(RefresherSettings settings);
-    }
-
-    public class RefresherService : IRefresherService
+    public class RefresherService
     {
         private const string CachedWorkName = "RefresherService.Refresh";
-
-        private const string SettingsIsEnabledName = "Refresher.IsEnabled";
-        private const string SettingsIntervalMinutesName = "Refresher.IntervalMinutes";
-
-        private const bool SettingsIsEnabledDefault = false;
-        private const int SettingsIntervalMinutesDefault = 15;
 
         private static readonly HttpClient _client;
 
         private static AppDbContext _currDbContext;
         private static IContainer _currContainer;
 
-        private static IRefresherService _refresherService;
+        private static RefresherSettingsManager _settingsManager;
         private static ISystemLoggingServiceBase _loggingService;
 
         private static RefresherSettings _settings;
         private static readonly string _callUrl;
-
-        private readonly ISystemValuesManager _valuesManager;
 
         private static readonly ILog _log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
@@ -75,9 +61,9 @@ namespace Cat.Business.Services.InternalServices
                 x.For<AppDbContext>().Use(_currDbContext);
                 x.For<DbContext>().Use(_currDbContext);
             });
-            _refresherService = _currContainer.GetInstance<IRefresherService>();
+            _settingsManager = _currContainer.GetInstance<RefresherSettingsManager>();
             _loggingService = SystemLoggingServiceFactory.CreateService("RefresherService", _currContainer);
-            _settings = _refresherService.GetSettings();
+            _settings = _settingsManager.GetSettings();
         }
 
         private static bool CheckCachedWork()
@@ -138,96 +124,6 @@ namespace Cat.Business.Services.InternalServices
                 await _loggingService.AddEntryAsync(errorMsg);
                 _log.Error(errorMsg);
             }
-        }
-        #endregion
-
-
-
-        public RefresherService(ISystemValuesManager valuesManager)
-        {
-            _valuesManager = valuesManager;
-        }
-
-        public RefresherSettings GetSettings()
-        {
-            return CreateRefresherSettings(GetIsEnabled(), GetIntervalMinutes());
-        }
-
-        public async Task<RefresherSettings> GetSettingsAsync()
-        {
-            return CreateRefresherSettings(await GetIsEnabledAsync(), await GetIntervalMinutesAsync());
-        }
-
-        public RefresherSettings SaveSettings(RefresherSettings settings)
-        {
-            _valuesManager.Set(settings.IsEnabled, SettingsIsEnabledName, SystemValueType.Boolean);
-            _valuesManager.Set(settings.IntervalMinutes, SettingsIntervalMinutesName, SystemValueType.Int);
-
-            return settings;
-        }
-
-        public async Task<RefresherSettings> SaveSettingsAsync(RefresherSettings settings)
-        {
-            await _valuesManager.SetAsync(settings.IsEnabled, SettingsIsEnabledName, SystemValueType.Boolean);
-            await _valuesManager.SetAsync(settings.IntervalMinutes, SettingsIntervalMinutesName, SystemValueType.Int);
-
-            return settings;
-        }
-
-
-
-        #region Private methods
-        private bool GetIsEnabled()
-        {
-            var isEnabled = _valuesManager.Get(SettingsIsEnabledName);
-            if (isEnabled == null)
-            {
-                isEnabled = SettingsIsEnabledDefault;
-                _valuesManager.Set(isEnabled, SettingsIsEnabledName, SystemValueType.Boolean);
-            }
-            return (bool)isEnabled;
-        }
-
-        private async Task<bool> GetIsEnabledAsync()
-        {
-            var isEnabled = await _valuesManager.GetAsync(SettingsIsEnabledName);
-            if (isEnabled == null)
-            {
-                isEnabled = SettingsIsEnabledDefault;
-                await _valuesManager.SetAsync(isEnabled, SettingsIsEnabledName, SystemValueType.Boolean);
-            }
-            return (bool)isEnabled;
-        }
-
-        private int GetIntervalMinutes()
-        {
-            var intervalMinutes = _valuesManager.Get(SettingsIntervalMinutesName);
-            if (intervalMinutes == null)
-            {
-                intervalMinutes = SettingsIntervalMinutesDefault;
-                _valuesManager.Set(intervalMinutes, SettingsIntervalMinutesName, SystemValueType.Int);
-            }
-            return (int) intervalMinutes;
-        }
-
-        private async Task<int> GetIntervalMinutesAsync()
-        {
-            var intervalMinutes = await _valuesManager.GetAsync(SettingsIntervalMinutesName);
-            if (intervalMinutes == null)
-            {
-                intervalMinutes = SettingsIntervalMinutesDefault;
-                await _valuesManager.SetAsync(intervalMinutes, SettingsIntervalMinutesName, SystemValueType.Int);
-            }
-            return (int)intervalMinutes;
-        }
-
-        private RefresherSettings CreateRefresherSettings(bool isEnabled, int intervalMinutes)
-        {
-            return new RefresherSettings
-            {
-                IsEnabled = isEnabled,
-                IntervalMinutes = intervalMinutes
-            };
         }
         #endregion
     }

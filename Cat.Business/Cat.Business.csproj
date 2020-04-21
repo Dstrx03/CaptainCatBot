@@ -102,8 +102,12 @@
     <Compile Include="Schedule\Tasks\CleanUpSystemLogTask.cs" />
     <Compile Include="Schedule\Tasks\IScheduledAsyncTask.cs" />
     <Compile Include="Services\InternalServices\ATriggerService.cs" />
-    <Compile Include="Services\InternalServices\ATriggerSettings.cs" />
-    <Compile Include="Services\InternalServices\RefresherSettings.cs" />
+    <Compile Include="Services\InternalServices\Settings\ATriggerSettingsManager.cs" />
+    <Compile Include="Services\InternalServices\Settings\InternalServicesSettingsManager.cs" />
+    <Compile Include="Services\InternalServices\Settings\RefresherSettingsManager.cs" />
+    <Compile Include="Services\InternalServices\Settings\SettingsModel\ATriggerSettings.cs" />
+    <Compile Include="Services\InternalServices\Settings\SettingsModel\InternalServicesSettings.cs" />
+    <Compile Include="Services\InternalServices\Settings\SettingsModel\RefresherSettings.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\InternalServices\RefresherService.cs" />
     <Compile Include="Services\SystemLogging\Settings\SettingsBuilder\FromSettingsSettingsBuilder.cs" />

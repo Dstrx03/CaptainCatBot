@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using System.Web.Http;
-using Cat.Business.Services.InternalServices;
+using Cat.Business.Services.InternalServices.Settings;
+using Cat.Business.Services.InternalServices.Settings.SettingsModel;
 using Cat.Web.App_Start;
 using Cat.Web.Infrastructure.Roles;
 using Cat.Web.Infrastructure.Roles.Attributes;
@@ -10,25 +11,25 @@ namespace Cat.Web.Controllers.Api
     [AppAuthorize(AppRole.Admin)]
     public class InternalServicesController : ApiController
     {
-        private readonly IRefresherService _refresherService;
-        private readonly IATriggerService _atriggerService;
+        private readonly RefresherSettingsManager _refresherSettingsManager;
+        private readonly ATriggerSettingsManager _atriggerSettingsManager;
 
-        public InternalServicesController(IRefresherService refresherManager, IATriggerService atriggerService)
+        public InternalServicesController(RefresherSettingsManager refresherSettingsManager, ATriggerSettingsManager atriggerSettingsManager)
         {
-            _refresherService = refresherManager;
-            _atriggerService = atriggerService;
+            _refresherSettingsManager = refresherSettingsManager;
+            _atriggerSettingsManager = atriggerSettingsManager;
         }
 
         [HttpGet]
         public async Task<RefresherSettings> RefresherGetSettings()
         {
-            return await _refresherService.GetSettingsAsync();
+            return await _refresherSettingsManager.GetSettingsAsync();
         }
 
         [HttpPost]
         public async Task<RefresherSettings> RefresherSaveSettings([FromBody] RefresherSettings settings)
         {
-            var settingsResult = await _refresherService.SaveSettingsAsync(settings);
+            var settingsResult = await _refresherSettingsManager.SaveSettingsAsync(settings);
             RefresherConfig.Register();
             return settingsResult;
         }
@@ -36,14 +37,13 @@ namespace Cat.Web.Controllers.Api
         [HttpGet]
         public async Task<ATriggerSettings> ATriggerGetSettings()
         {
-            return await _atriggerService.GetSettingsAsync();
+            return await _atriggerSettingsManager.GetSettingsAsync();
         }
 
         [HttpPost]
         public async Task<ATriggerSettings> ATriggerSaveSettings([FromBody] ATriggerSettings settings)
         {
-            var settingsResult = await _atriggerService.SaveSettingsAsync(settings);
-            return settingsResult;
+            return await _atriggerSettingsManager.SaveSettingsAsync(settings);
         }
     }
 }
