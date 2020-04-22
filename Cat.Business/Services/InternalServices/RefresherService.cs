@@ -1,5 +1,4 @@
-﻿using Cat.Domain.Entities.SystemValues;
-using System;
+﻿using System;
 using System.Data.Entity;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -22,15 +21,14 @@ namespace Cat.Business.Services.InternalServices
         private const string CachedWorkName = "RefresherService.Refresh";
 
         private static readonly HttpClient _client;
+        private static readonly string _callUrl;
 
         private static AppDbContext _currDbContext;
         private static IContainer _currContainer;
+        private static RefresherSettings _settings;
 
         private static RefresherSettingsManager _settingsManager;
         private static ISystemLoggingServiceBase _loggingService;
-
-        private static RefresherSettings _settings;
-        private static readonly string _callUrl;
 
         private static readonly ILog _log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 

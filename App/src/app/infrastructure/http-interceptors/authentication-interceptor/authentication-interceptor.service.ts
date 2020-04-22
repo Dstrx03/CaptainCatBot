@@ -5,6 +5,7 @@ import { catchError, switchMap } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { IdentityService } from 'src/app/services/identity/identity.service';
 import { MatDialog } from '@angular/material/dialog';
+import { AppRoutes } from '../../navigation/models/appRoutes';
 
 @Injectable({
   providedIn: 'root'
@@ -18,7 +19,7 @@ export class AuthenticationInterceptor implements HttpInterceptor {
       catchError((err: HttpErrorResponse) => {
         if (err.status == 401) {
           return this.identitySvc.getAuthInfo().pipe(switchMap(() => {
-            return from(this.router.navigate(['Login'])).pipe(switchMap(() => {
+            return from(this.router.navigate([AppRoutes.Login.getRouterLink()])).pipe(switchMap(() => {
               this.matDialog.closeAll();
               return throwError(err);
             }));

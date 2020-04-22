@@ -6,7 +6,10 @@ import { ThemeService } from 'src/app/infrastructure/theme/theme.service';
 import { AppToolbarMenuItem, AppToolbarMenuComponent } from '../app-toolbar-menu/app-toolbar-menu.component';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmDialogComponent } from '../dialogs/confirm-dialog/confirm-dialog.component';
-import { tap, mergeMap } from 'rxjs/operators';
+import { tap } from 'rxjs/operators';
+import { AppMenu } from 'src/app/infrastructure/navigation/models/appMenu';
+import { MenuItemsService } from 'src/app/infrastructure/navigation/menu-items/menu-items.service';
+import { AppRoutes } from 'src/app/infrastructure/navigation/models/appRoutes';
 
 @Component({
   selector: 'app-toolbar-controls',
@@ -16,6 +19,8 @@ import { tap, mergeMap } from 'rxjs/operators';
 export class AppToolbarControlsComponent implements OnInit {
 
   authInfo: AuthInfo;
+  appMenu: AppMenu;
+  appRoutes = AppRoutes;
   isDarkMode: boolean;
 
   darkModeMenuItem = AppToolbarMenuComponent.BuildTemplateMenuItem("Dark Mode", "far fa-moon", "tmpltDarkMode");
@@ -39,7 +44,7 @@ export class AppToolbarControlsComponent implements OnInit {
         useAgent: true,
         agent: identitySvc.logOff().pipe(
           tap(signedOut => {
-            if (signedOut) { router.navigateByUrl('Login'); }
+            if (signedOut) { router.navigateByUrl(AppRoutes.Login.getRouterLink()); }
           })
         )
       }
@@ -50,7 +55,9 @@ export class AppToolbarControlsComponent implements OnInit {
     this.themeSvc.toggleThemeMode();
   }
 
-  constructor(private identitySvc: IdentityService, private router: Router, private themeSvc: ThemeService) { }
+  constructor(private identitySvc: IdentityService, private menuItemsSvc: MenuItemsService, private router: Router, private themeSvc: ThemeService) { 
+    this.appMenu = new AppMenu();
+  }
 
   onCurrentIsDarkModeUpdate(isDarkMode: boolean) {
     this.isDarkMode = isDarkMode;
@@ -61,6 +68,8 @@ export class AppToolbarControlsComponent implements OnInit {
   ngOnInit() {
     this.identitySvc.currentAuthInfo()
       .subscribe(currentAuthInfo => this.authInfo = currentAuthInfo);
+    this.menuItemsSvc.currentAppMenu()
+      .subscribe(currentAppMenu => this.appMenu = currentAppMenu);
     this.themeSvc.currentIsDarkMode()
       .subscribe(currentIsDarkMode => this.onCurrentIsDarkModeUpdate(currentIsDarkMode));
   }

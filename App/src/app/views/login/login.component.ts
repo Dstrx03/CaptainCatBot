@@ -7,6 +7,7 @@ import { FormControlHelper } from 'src/app/infrastructure/helpers/form-control-h
 import { MatSnackBar } from '@angular/material';
 import { GlobalService } from 'src/app/infrastructure/global.service';
 import { AppMatSpinnerButtonComponent } from 'src/app/controls/app-mat-spinner-button/app-mat-spinner-button.component';
+import { AppRoutes } from 'src/app/infrastructure/navigation/models/appRoutes';
 
 @Component({
   selector: 'app-login',
@@ -40,7 +41,7 @@ export class LoginComponent implements OnInit {
           case 0:
             if (this.loginFailSnackbar !== undefined)
               this.loginFailSnackbar.dismiss();
-            this.router.navigateByUrl('Dashboard');
+            this.router.navigateByUrl(AppRoutes.Dashboard.getRouterLink());
             break;
           case 1:
           case 2:

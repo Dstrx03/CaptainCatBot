@@ -1,7 +1,7 @@
 import { NgModule, APP_INITIALIZER, Renderer2 } from '@angular/core';
 import { AppLoadService } from './app-load.service';
 import { IdentityService } from 'src/app/services/identity/identity.service';
-import { MenuItemsService } from '../navigation/menu/menu-items.service';
+import { MenuItemsService } from '../navigation/menu-items/menu-items.service';
 import { ThemeService } from '../theme/theme.service';
 
 export function load(appLoadService: AppLoadService) {

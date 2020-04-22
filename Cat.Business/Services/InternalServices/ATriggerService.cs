@@ -5,7 +5,6 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Cat.Business.Services.InternalServices.Settings;
-using Cat.Business.Services.InternalServices.Settings.SettingsModel;
 using Cat.Business.Services.SystemLogging;
 using Cat.Common.AppSettings;
 using Cat.Domain;

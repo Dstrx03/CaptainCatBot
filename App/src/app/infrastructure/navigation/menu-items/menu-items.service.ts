@@ -2,7 +2,8 @@ import { Injectable } from '@angular/core';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { Router, NavigationEnd } from '@angular/router';
 import { AuthInfo } from '../../../models/authInfo';
-import { AppMenuItem, AppMenu } from './models/appMenu';
+import { AppMenuItem, AppMenu, AppMenuItemsRegistry } from '../models/appMenu';
+import { AppRoutes } from '../models/appRoutes';
 
 @Injectable({
   providedIn: 'root'
@@ -24,22 +25,19 @@ export class MenuItemsService {
 
   updateMenuItems(authInfo: AuthInfo) {
     let appMenu = this.appMenu.getValue();
-    appMenu.menuItems = this.generateMenuItemsLevel(AppMenu.ItemsAppSet, authInfo);
+    appMenu.menuItems = this.generateMenuItemsLevel(AppMenuItemsRegistry.AppMenuItemsSet, authInfo);
     this.updateUrl(appMenu, this.currentUrl);
   }
 
   private updateUrl(appMenu: AppMenu, url: string) {
     this.clearActivatedRouteTree(appMenu.menuItems);
-    if (url !== '/'){
+    if (!this.checkNonItemActivatedRoute(appMenu, url)) {
       let urlSplitted = url.split('/');
       for (let i = 0; i < urlSplitted.length; i++) {
         let path = urlSplitted[i];
         if (path.length === 0) continue;
         this.applyActivatedRoute(appMenu.menuItems, path)
       }
-      appMenu.isActivatedHomeRoute = false;
-    } else {
-      appMenu.isActivatedHomeRoute = true;
     }
     this.completeActivatedRouteTree(appMenu.menuItems);
     this.currentUrl = url;
@@ -109,6 +107,19 @@ export class MenuItemsService {
       if (i.IsActivatedRoute === undefined) i.IsActivatedRoute = false; 
       if (i.Children !== undefined) this.completeActivatedRouteTree(i.Children);
     });
+  }
+
+  private checkNonItemActivatedRoute(appMenu: AppMenu, url: string): boolean {
+    appMenu.nonItemActivatedRouteId = null;
+
+    if (url === AppRoutes.Home.getFullRelativePath()) {
+      appMenu.nonItemActivatedRouteId = AppRoutes.Home.Id;
+    } 
+    if (url === AppRoutes.Login.getFullRelativePath()) {
+      appMenu.nonItemActivatedRouteId = AppRoutes.Login.Id;
+    }
+
+    return appMenu.nonItemActivatedRouteId !== null;
   }
 
 }

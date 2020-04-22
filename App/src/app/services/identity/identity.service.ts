@@ -7,7 +7,7 @@ import { catchError, map, tap, mergeMap } from 'rxjs/operators';
 import { LoginViewModel } from '../../models/loginViewModel';
 import { LoginResult } from '../../models/loginResult';
 import { AuthInfo } from '../../models/authInfo';
-import { MenuItemsService } from 'src/app/infrastructure/navigation/menu/menu-items.service';
+import { MenuItemsService } from 'src/app/infrastructure/navigation/menu-items/menu-items.service';
 
 @Injectable({
   providedIn: 'root'

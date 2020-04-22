@@ -1,10 +1,10 @@
 import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { AppRoutes } from './menu/models/appRoutes';
+import { AppRoutesRegistry } from './models/appRoutesRegistry';
 
 @NgModule({
   declarations: [],
-  imports: [ RouterModule.forRoot(AppRoutes.RoutesAppSet, {useHash: true}) ],
+  imports: [ RouterModule.forRoot(AppRoutesRegistry.AppRoutesSet, {useHash: true}) ],
   exports: [ RouterModule ]
 })
 export class AppRoutingModule {}

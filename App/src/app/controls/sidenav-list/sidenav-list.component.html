@@ -1,6 +1,6 @@
 <mat-nav-list>
-  <a mat-list-item routerLink="" (click)="onSidenavClose()"
-    [ngClass]="{'accent-color sidenav-list-item-active': appMenu.isActivatedHomeRoute}" [attr.tabindex]="-1">
+  <a mat-list-item [routerLink]="appRoutes.Home.getRouterLink()" (click)="onSidenavClose()"
+    [ngClass]="{'accent-color sidenav-list-item-active': appMenu.isItemActivatedRoute(appRoutes.Home)}" [attr.tabindex]="-1">
     <span class="sidenav-list-item-caption">Home</span>
     <span class="sidenav-list-item-spacer"></span>
     <mat-icon fontSet="fas" fontIcon="fa-chevron-down" [style.visibility]="'hidden'"></mat-icon>
@@ -27,7 +27,7 @@
       </a>
       <mat-menu #menu="matMenu" xPosition="after">
         <ng-container *ngFor="let itemChild of item.Children">
-          <button mat-menu-item *ngIf="!itemChild.IsHref" [routerLink]="item.Path + '/' + itemChild.Path" (click)="onSidenavClose()"
+          <button mat-menu-item *ngIf="!itemChild.IsHref" [routerLink]="appRoutes.getRouterLink(itemChild)" (click)="onSidenavClose()"
             [ngClass]="{'accent-color sidenav-list-item-active': itemChild.IsActivatedRoute}">
             <div class="sidenav-list-item-container">
               <span class="sidenav-list-item-caption">{{itemChild.Caption}}</span>

@@ -1,27 +1,27 @@
 <mat-toolbar [color]="getToolbarColor()">
-    <div class="d-md-none">
+    <div class="header-button-container d-md-none">
       <button mat-button (click)="onToggleSidenav()" *ngIf="appMenu.menuItems.length > 0">
-          <mat-icon fontSet="fas" fontIcon="fa-bars"></mat-icon>
-          <span>{{globalSvc.appTitle}}</span>
+        <mat-icon fontSet="fas" fontIcon="fa-bars"></mat-icon>
+        <span *ngIf="!appMenu.isItemActivatedRoute(appRoutes.Home)">{{globalSvc.appTitle}}</span>
+        <strong *ngIf="appMenu.isItemActivatedRoute(appRoutes.Home)">{{globalSvc.appTitle}}</strong>
       </button>
-      <button mat-button routerLink="" *ngIf="appMenu.menuItems.length === 0">
-        <span>{{globalSvc.appTitle}}</span>
+      <button mat-button [routerLink]="appRoutes.Home.getRouterLink()" *ngIf="appMenu.menuItems.length === 0">
+        <span *ngIf="!appMenu.isItemActivatedRoute(appRoutes.Home)">{{globalSvc.appTitle}}</span>
+        <strong *ngIf="appMenu.isItemActivatedRoute(appRoutes.Home)">{{globalSvc.appTitle}}</strong>
     </button>
   </div>
-  <div class="d-none d-md-block">
-      <button mat-button routerLink="" *ngIf="!appMenu.isActivatedHomeRoute">
-        <strong>{{globalSvc.appTitle}}</strong>
-      </button>
-      <button mat-raised-button routerLink="" *ngIf="appMenu.isActivatedHomeRoute">
-        <strong>{{globalSvc.appTitle}}</strong>
+  <div class="header-button-container d-none d-md-block">
+      <button mat-button [routerLink]="appRoutes.Home.getRouterLink()">
+        <span *ngIf="!appMenu.isItemActivatedRoute(appRoutes.Home)">{{globalSvc.appTitle}}</span>
+        <strong *ngIf="appMenu.isItemActivatedRoute(appRoutes.Home)">{{globalSvc.appTitle}}</strong>
       </button>
   </div>
   <span class="flex-space">
   </span>
-  <div class="d-none d-md-block">
+  <div class="header-button-container d-none d-md-block">
     <ng-container *ngFor="let item of appMenu.menuItems">
-        <button mat-button *ngIf="!item.IsHref && !item.IsActivatedRoute" [routerLink]="getRouterLink(item)">{{item.Caption}}</button>
-        <button mat-raised-button *ngIf="!item.IsHref && item.IsActivatedRoute" [routerLink]="getRouterLink(item)">{{item.Caption}}</button>
+        <button mat-button *ngIf="!item.IsHref && !item.IsActivatedRoute" [routerLink]="appRoutes.getRouterLink(item)">{{item.Caption}}</button>
+        <button mat-raised-button *ngIf="!item.IsHref && item.IsActivatedRoute">{{item.Caption}}</button>
         <a mat-button *ngIf="item.IsHref" [href]="item.Path">{{item.Caption}}</a>
     </ng-container>
   </div>

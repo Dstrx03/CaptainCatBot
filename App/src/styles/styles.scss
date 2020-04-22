@@ -60,3 +60,9 @@ input.form-field-number {
 .stick-pack :not(:last-child){
     margin-bottom: 0;
 }
+
+.header-button-container > button,
+.header-button-container > a {
+    margin-left: 2px !important;
+    margin-right: 2px !important;
+}

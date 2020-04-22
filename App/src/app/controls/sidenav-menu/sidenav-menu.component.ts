@@ -1,6 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { AppMenu } from 'src/app/infrastructure/navigation/menu/models/appMenu';
-import { MenuItemsService } from 'src/app/infrastructure/navigation/menu/menu-items.service';
+import { AppMenu } from 'src/app/infrastructure/navigation/models/appMenu';
+import { MenuItemsService } from 'src/app/infrastructure/navigation/menu-items/menu-items.service';
 
 @Component({
   selector: 'app-sidenav-menu',

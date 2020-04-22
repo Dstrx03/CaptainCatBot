@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { AppRoutes } from 'src/app/infrastructure/navigation/models/appRoutes';
 
 @Component({
   selector: 'app-system',
@@ -6,6 +7,8 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./system.component.scss']
 })
 export class SystemComponent implements OnInit {
+
+  appRoutes = AppRoutes;
 
   constructor() { }
 

@@ -14,8 +14,8 @@ namespace Cat.Business.Services.SystemLogging
 
         public override TimeSpan DefaultCleanThreshold()
         {
-            // 1 week
-            return TimeSpan.FromDays(7);
+            // 3 days
+            return TimeSpan.FromDays(3);
         }
 
         protected override IHubContext HubContext()

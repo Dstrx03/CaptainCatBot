@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { IdentityService } from '../../../services/identity/identity.service';
 import { AuthInfo } from '../../../models/authInfo';
 import { GlobalService } from '../../global.service';
+import { AppRoutes } from '../models/appRoutes';
 
 @Injectable({
     providedIn: 'root'
@@ -35,7 +36,7 @@ export class CanActivateAuthGuard implements CanActivate {
     }
 
     protected applyCanActivate(state: RouterStateSnapshot, canActivate: boolean) : boolean {
-        if (!canActivate) this.router.navigate(['Login']);
+        if (!canActivate) this.router.navigate([AppRoutes.Login.getRouterLink()]);
         return canActivate;
     }
 

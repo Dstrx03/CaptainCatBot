@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { AppRoles } from 'src/app/infrastructure/navigation/menu/models/appRoles';
+import { AppRoles } from 'src/app/infrastructure/navigation/models/appRoles';
 import { AuthInfo } from 'src/app/models/authInfo';
 import { IdentityService } from 'src/app/services/identity/identity.service';
 

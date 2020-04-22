@@ -1,6 +1,20 @@
-<button mat-icon-button [matMenuTriggerFor]="menuPersonalization">
-  <mat-icon fontSet="fas" fontIcon="fa-th"></mat-icon>
-</button>
+<div class="header-button-container">
+  <button mat-icon-button [matMenuTriggerFor]="menuPersonalization">
+    <mat-icon fontSet="fas" fontIcon="fa-th"></mat-icon>
+  </button>
+  <button mat-icon-button [matMenuTriggerFor]="menuAuth" *ngIf="authInfo.IsAuthenticated">
+    <mat-icon fontSet="fas" fontIcon="fa-user-circle"></mat-icon>
+  </button>
+  <button mat-stroked-button color="primary" [routerLink]="appRoutes.Login.getRouterLink()" *ngIf="!authInfo.IsAuthenticated && !appMenu.isItemActivatedRoute(appRoutes.Login)">
+    <mat-icon fontSet="fas" fontIcon="fa-user-circle"></mat-icon>
+    <span>Log in</span>
+  </button>
+  <button mat-button *ngIf="!authInfo.IsAuthenticated && appMenu.isItemActivatedRoute(appRoutes.Login)">
+    <mat-icon fontSet="fas" fontIcon="fa-user-circle"></mat-icon>
+    <strong>Log in</strong>
+  </button>
+</div>
+
 <mat-menu #menuPersonalization="matMenu" xPosition="before" class="app-toolbar-menu-panel">
   <ng-template matMenuContent>
     <app-toolbar-menu [menuItems]="menuPersonalizationItems">
@@ -37,9 +51,6 @@
   </ng-template>
 </mat-menu>
 
-<button mat-icon-button [matMenuTriggerFor]="menuAuth" *ngIf="authInfo.IsAuthenticated">
-  <mat-icon fontSet="fas" fontIcon="fa-user-circle"></mat-icon>
-</button>
 <mat-menu #menuAuth="matMenu" xPosition="before" class="app-toolbar-menu-panel">
   <ng-template matMenuContent>
     <app-toolbar-menu [menuItems]="menuAuthItems">
@@ -54,8 +65,3 @@
     </app-toolbar-menu>
   </ng-template>
 </mat-menu>
-
-<button mat-stroked-button color="primary" routerLink="Login" *ngIf="!authInfo.IsAuthenticated">
-  <mat-icon fontSet="fas" fontIcon="fa-user-circle"></mat-icon>
-  <span>Log in</span>
-</button>

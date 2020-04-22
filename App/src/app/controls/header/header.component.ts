@@ -1,9 +1,10 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { IdentityService } from '../../services/identity/identity.service';
 import { AuthInfo } from 'src/app/models/authInfo';
-import { AppMenu, AppMenuItem } from 'src/app/infrastructure/navigation/menu/models/appMenu';
+import { AppMenu, AppMenuItem } from 'src/app/infrastructure/navigation/models/appMenu';
 import { GlobalService } from 'src/app/infrastructure/global.service';
-import { MenuItemsService } from 'src/app/infrastructure/navigation/menu/menu-items.service';
+import { MenuItemsService } from 'src/app/infrastructure/navigation/menu-items/menu-items.service';
+import { AppRoutes } from 'src/app/infrastructure/navigation/models/appRoutes';
 
 @Component({
   selector: 'app-header',
@@ -16,6 +17,7 @@ export class HeaderComponent implements OnInit {
 
   authInfo: AuthInfo;
   appMenu: AppMenu;
+  appRoutes = AppRoutes;
 
   constructor(private identitySvc: IdentityService, private menuItemsSvc: MenuItemsService, public globalSvc: GlobalService) { 
     this.appMenu = new AppMenu();
@@ -27,10 +29,6 @@ export class HeaderComponent implements OnInit {
 
   getToolbarColor() {
     return this.authInfo.IsAuthenticated ? 'primary' : null;
-  }
-
-  getRouterLink(item: AppMenuItem): string{
-    return (item.Children === undefined) ? item.Path : item.Path + '/' + item.Children[0].Path;
   }
 
   ngOnInit() {

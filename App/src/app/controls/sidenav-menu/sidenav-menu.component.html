@@ -4,7 +4,7 @@
       <div class="row" *ngFor="let item of appMenu.menuItems">           
         <div class="col sidenav-menu-item">
           <button mat-button *ngIf="!item.IsHref && !item.IsActivatedRoute" [routerLink]="item.Path" class="text-right">{{item.Caption}}</button>
-          <button mat-raised-button *ngIf="!item.IsHref && item.IsActivatedRoute" [routerLink]="item.Path" class="text-right">{{item.Caption}}</button>
+          <button mat-raised-button *ngIf="!item.IsHref && item.IsActivatedRoute" class="text-right">{{item.Caption}}</button>
           <a mat-button *ngIf="item.IsHref" [href]="item.Path" class="text-right">{{item.Caption}}</a>
         </div>
       </div>
