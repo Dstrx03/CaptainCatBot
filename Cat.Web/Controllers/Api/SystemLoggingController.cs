@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.ModelBinding;
 using Cat.Business.Services.SystemLogging;
+using Cat.Business.Services.SystemLogging.Factory;
 using Cat.Business.Services.SystemLogging.Settings;
 using Cat.Business.Services.SystemLogging.Settings.SettingsModel;
 using Cat.Domain.Entities.SystemLog;

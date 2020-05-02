@@ -3,6 +3,7 @@ using System.Net;
 using System.Threading.Tasks;
 using Cat.Business.Services;
 using Cat.Business.Services.SystemLogging;
+using Cat.Business.Services.SystemLogging.Factory;
 using Cat.Common.AppSettings.Assemblies;
 using Cat.Common.Helpers;
 using Cat.Domain.Entities.SystemValues;
@@ -40,7 +41,7 @@ namespace Telegram
         {
             _telegramAppSettings = telegramAppSettings;
             _sysyemValues = sysyemValues;
-            _loggingService = SystemLoggingServiceFactory.CreateService("TelegramBot", container);
+            _loggingService = SystemLoggingServiceFactory.CreateService(ServiceType.TelegramBot, container);
         }
 
         public TelegramServiceStatus GetClientStatus()

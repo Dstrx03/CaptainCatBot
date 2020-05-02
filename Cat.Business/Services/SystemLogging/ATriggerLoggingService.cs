@@ -1,4 +1,5 @@
 ﻿using System;
+using Cat.Business.Services.SystemLogging.Factory;
 using Cat.Domain.Repositories;
 using Microsoft.AspNet.SignalR;
 
@@ -8,7 +9,7 @@ namespace Cat.Business.Services.SystemLogging
     public class ATriggerLoggingService : SystemLoggingServiceBase
     {
         public ATriggerLoggingService(ISystemLogEntriesRespository logEntriesRepo)
-            : base(logEntriesRepo, "ATrigger Logging Service", "ATriggerService")
+            : base(logEntriesRepo, "ATrigger Logging Service", SystemLoggingServiceFactory.ATriggerServiceDescriptor)
         {
         }
 

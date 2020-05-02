@@ -9,6 +9,7 @@ using System.Web.Caching;
 using Cat.Business.Services.InternalServices.Settings;
 using Cat.Business.Services.InternalServices.Settings.SettingsModel;
 using Cat.Business.Services.SystemLogging;
+using Cat.Business.Services.SystemLogging.Factory;
 using Cat.Common.AppSettings.Providers;
 using Cat.Domain;
 using log4net;
@@ -60,7 +61,7 @@ namespace Cat.Business.Services.InternalServices
                 x.For<DbContext>().Use(_currDbContext);
             });
             _settingsManager = _currContainer.GetInstance<RefresherSettingsManager>();
-            _loggingService = SystemLoggingServiceFactory.CreateService("RefresherService", _currContainer);
+            _loggingService = SystemLoggingServiceFactory.CreateService(ServiceType.Refresher, _currContainer);
             _settings = _settingsManager.GetSettings();
         }
 

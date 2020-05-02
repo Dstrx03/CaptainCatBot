@@ -1,4 +1,5 @@
 ﻿using System;
+using Cat.Business.Services.SystemLogging.Factory;
 using Cat.Domain.Repositories;
 using Microsoft.AspNet.SignalR;
 
@@ -8,7 +9,7 @@ namespace Cat.Business.Services.SystemLogging
     public class TelegramBotLoggingService : SystemLoggingServiceBase
     {
         public TelegramBotLoggingService(ISystemLogEntriesRespository logEntriesRepo)
-            : base(logEntriesRepo, "Telegram Bot Logging Service", "TelegramBot")
+            : base(logEntriesRepo, "Telegram Bot Logging Service", SystemLoggingServiceFactory.TelegramBotDescriptor)
         {
         }
 

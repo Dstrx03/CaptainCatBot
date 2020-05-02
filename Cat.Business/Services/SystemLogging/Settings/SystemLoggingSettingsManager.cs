@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Cat.Business.Services.SystemLogging.Factory;
 using Cat.Business.Services.SystemLogging.Settings.SettingsBuilder;
 using Cat.Business.Services.SystemLogging.Settings.SettingsModel;
 using Cat.Domain.Entities.SystemValues;

@@ -1,5 +1,6 @@
 ﻿using System.Web.Http;
 using Cat.Business.Services.SystemLogging;
+using Cat.Business.Services.SystemLogging.Factory;
 using Cat.Common.Formatters;
 using Cat.Common.Helpers;
 using log4net;
@@ -29,7 +30,7 @@ namespace Cat.Web.Controllers.Api
         [HttpGet]
         public void ATrigger(string message)
         {
-            var loggingService = SystemLoggingServiceFactory.CreateService("ATriggerService", _container);
+            var loggingService = SystemLoggingServiceFactory.CreateService(ServiceType.ATrigger, _container);
             var reverbMsg = string.Format("Received request on ATrigger Service endpoint, message: '{0}'", message);
             loggingService.AddEntry(reverbMsg);
             _log.Debug(reverbMsg);

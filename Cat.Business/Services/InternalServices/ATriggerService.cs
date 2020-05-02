@@ -6,6 +6,7 @@ using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Cat.Business.Services.InternalServices.Settings;
 using Cat.Business.Services.SystemLogging;
+using Cat.Business.Services.SystemLogging.Factory;
 using Cat.Common.AppSettings;
 using Cat.Domain;
 using log4net;
@@ -41,7 +42,7 @@ namespace Cat.Business.Services.InternalServices
                 x.For<DbContext>().Use(currDbContext);
             });
             _settingsManager = currContainer.GetInstance<ATriggerSettingsManager>();
-            _loggingService = SystemLoggingServiceFactory.CreateService("ATriggerService", currContainer);
+            _loggingService = SystemLoggingServiceFactory.CreateService(ServiceType.ATrigger, currContainer);
             var settings = await _settingsManager.GetSettingsAsync();
 
             var message = string.Format("From '{0}' app; started call at {1} UTC", AppSettings.Instance.AppTitleFormatter.AppTitleFullInternalFormat, DateTime.UtcNow);

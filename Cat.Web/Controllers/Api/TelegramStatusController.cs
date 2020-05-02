@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using System.Web.Http;
 using Cat.Business.Services.SystemLogging;
+using Cat.Business.Services.SystemLogging.Factory;
 using Cat.Common.AppSettings;
 using Cat.Common.AppSettings.Providers;
 using Cat.Web.Infrastructure.Roles;
@@ -26,7 +27,7 @@ namespace Cat.Web.Controllers.Api
         {
             _telegramService = telegramService;
             _container = container;
-            _loggingService = SystemLoggingServiceFactory.CreateService("TelegramBot", container);
+            _loggingService = SystemLoggingServiceFactory.CreateService(ServiceType.TelegramBot, container);
         }
 
         [HttpGet]

@@ -2,6 +2,7 @@
 using System.Net;
 using System.Threading.Tasks;
 using Cat.Business.Services.SystemLogging;
+using Cat.Business.Services.SystemLogging.Factory;
 using Cat.Common.AppSettings;
 using Cat.Common.AppSettings.Providers;
 using Cat.Domain;
@@ -24,7 +25,7 @@ namespace Cat.Web
                         x.For<DbContext>().Use(dbContext);
                     });
 
-                    var loggingService = SystemLoggingServiceFactory.CreateService("TelegramBot", container);
+                    var loggingService = SystemLoggingServiceFactory.CreateService(ServiceType.TelegramBot, container);
 
                     /*
                      * From 6 Feb 2020 (approx.) Telegram disabled security protocols older than TLS v1.2.
@@ -57,7 +58,7 @@ namespace Cat.Web
                         x.For<DbContext>().Use(dbContext);
                     });
 
-                    var loggingService = SystemLoggingServiceFactory.CreateService("TelegramBot", container);
+                    var loggingService = SystemLoggingServiceFactory.CreateService(ServiceType.TelegramBot, container);
 
                     await TelegramBot.UnregisterWebhookAsync(loggingService);
                     TelegramBot.UnregisterClient(loggingService);
