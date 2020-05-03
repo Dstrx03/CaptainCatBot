@@ -58,8 +58,11 @@ namespace Telegram
         {
             if (TelegramBot.CurrentWebhookInfo == null) 
                 return TelegramServiceStatus.Unknown;
-            else if (TelegramBot.CurrentWebhookInfo.Url == _telegramAppSettings.WebhookUrl) 
-                return TelegramServiceStatus.Ok;
+            else if (TelegramBot.CurrentWebhookInfo.Url == _telegramAppSettings.WebhookUrl && 
+                     string.IsNullOrEmpty(TelegramBot.CurrentWebhookInfo.LastErrorMessage) && TelegramBot.CurrentWebhookInfo.LastErrorDate == DateTime.MinValue) 
+                return  TelegramServiceStatus.Ok;
+            else if (TelegramBot.CurrentWebhookInfo.Url == _telegramAppSettings.WebhookUrl)
+                return TelegramServiceStatus.InternalError;
             else 
                 return TelegramServiceStatus.Error;
         }

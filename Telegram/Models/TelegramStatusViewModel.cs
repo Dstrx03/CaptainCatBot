@@ -35,6 +35,7 @@ namespace Telegram.Models
         Stopped = 1,
         Running = 2,
         Ok = 3,
-        Error = 4
+        Error = 4,
+        InternalError = 5
     }
 }

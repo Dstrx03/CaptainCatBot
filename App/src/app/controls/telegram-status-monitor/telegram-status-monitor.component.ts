@@ -43,10 +43,11 @@ export class TelegramStatusMonitorComponent implements OnInit, OnDestroy {
   }
 
   getTelSvcStatusClass(status: number) {
-    switch(status){
+    switch(status) {
       case 0: 
       case 1:
-      case 4: return "warn-color";
+      case 4: 
+      case 5: return "warn-color";
       case 2:
       case 3: return "accent-color";
       default:

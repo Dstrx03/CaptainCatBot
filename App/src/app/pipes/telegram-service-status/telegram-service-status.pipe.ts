@@ -11,6 +11,7 @@ export class TelegramServiceStatusPipe implements PipeTransform {
       case 2: return "Running";
       case 3: return "Ok";
       case 4: return "Error";
+      case 5: return "Error (Internal)";
       case 0: 
       default:
         return "Unknown";
