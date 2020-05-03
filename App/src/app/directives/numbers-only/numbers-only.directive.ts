@@ -20,6 +20,7 @@ export class NumbersOnlyDirective {
     'Copy',
     'Paste'
   ];
+  private functionKeys = ['F1', 'F2', 'F3', 'F4', 'F5', 'F6', 'F7', 'F8', 'F9', 'F10', 'F11', 'F12'];
   @Input() decimal ? = false;
   @Input() decimalSeparator ? = '.';
   inputElement: HTMLInputElement;
@@ -30,8 +31,10 @@ export class NumbersOnlyDirective {
 
   @HostListener('keydown', ['$event'])
   onKeyDown(e: KeyboardEvent) {
+    console.log("key=" + e.key);
     if (
       this.navigationKeys.indexOf(e.key) > -1 || // Allow: navigation keys: backspace, delete, arrows etc.
+      this.functionKeys.indexOf(e.key) > -1 || // Allow: function keys: F1, F5, F12 etc.
       (e.key === 'a' && e.ctrlKey === true) || // Allow: Ctrl+A
       (e.key === 'c' && e.ctrlKey === true) || // Allow: Ctrl+C
       (e.key === 'v' && e.ctrlKey === true) || // Allow: Ctrl+V

@@ -41,7 +41,7 @@
               <div class="col-4 col-md-3 col-lg-2">
                 <mat-form-field>
                   <mat-label>Cleanup Task Threshold</mat-label>
-                  <input matInput type="text" appNumbersOnly class="text-right" autocomplete="off" 
+                  <input matInput class="text-right" type="text" appNumbersOnly inputmode="numeric" pattern="[0-9]*" autocomplete="off" 
                     [formControl]="settingsForm.valueFormControl" [(ngModel)]="settingsForm.cleanThreshold.value">
                   <mat-error *ngIf="settingsForm.valueFormControl.invalid">
                     <span [innerHTML]="settingsForm.controlHelper.errorMessage(settingsForm.valueFormControl)"></span>
