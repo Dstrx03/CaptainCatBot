@@ -28,10 +28,9 @@
           <mat-label>Password</mat-label>
           <input matInput [(ngModel)]="user.Password" [formControl]="passwordFormControl" [required]="data.addMode" 
             [type]="passwordHide ? 'password' : 'text'" (ngModelChange)="confirmPassword = undefined">
-          <mat-icon matSuffix fontSet="far" [fontIcon]="passwordHide ? 'fa-eye-slash' : 'fa-eye'" 
-            class="text-center" (mousedown)="passwordHide = false" (mouseup)="passwordHide = true" 
-            (mouseleave)="passwordHide = true">
-          </mat-icon>
+          <app-holddown-action-icon matSuffix fontSet="far" fontIconActive="fa-eye-slash" fontIcon="fa-eye" 
+            [isActive]="passwordHide" (onActivate)="passwordHide = false" (onDeactivate)="passwordHide = true">
+          </app-holddown-action-icon>
           <mat-error *ngIf="passwordFormControl.invalid">
             <span [innerHTML]="formControlHelper.errorMessage(passwordFormControl)"></span>
           </mat-error>
@@ -42,10 +41,9 @@
           <mat-label>Confirm Password</mat-label>
           <input matInput [(ngModel)]="confirmPassword" [formControl]="confirmPasswordFormControl" 
             [required]="confirmPasswordRequired()" [type]="passwordHide ? 'password' : 'text'">
-          <mat-icon matSuffix fontSet="far" [fontIcon]="passwordHide ? 'fa-eye-slash' : 'fa-eye'" 
-            class="text-center" (mousedown)="passwordHide = false" (mouseup)="passwordHide = true" 
-            (mouseleave)="passwordHide = true">
-          </mat-icon>
+          <app-holddown-action-icon matSuffix fontSet="far" fontIconActive="fa-eye-slash" fontIcon="fa-eye" 
+            [isActive]="passwordHide" (onActivate)="passwordHide = false" (onDeactivate)="passwordHide = true">
+          </app-holddown-action-icon>
           <mat-error *ngIf="confirmPasswordFormControl.invalid">
             <span [innerHTML]="formControlHelper.errorMessage(confirmPasswordFormControl)"></span>
           </mat-error>
@@ -57,11 +55,10 @@
         <mat-form-field>
           <mat-label>Old Password</mat-label>
           <input matInput [(ngModel)]="user.OldPassword" [formControl]="oldPasswordFormControl"
-            [required]="confirmPasswordRequired()" [type]="oldPasswordHide ? 'password' : 'text'"> 
-          <mat-icon matSuffix fontSet="far" [fontIcon]="oldPasswordHide ? 'fa-eye-slash' : 'fa-eye'" 
-            class="text-center" (mousedown)="oldPasswordHide = false" (mouseup)="oldPasswordHide = true" 
-            (mouseleave)="oldPasswordHide = true">
-          </mat-icon>
+            [required]="confirmPasswordRequired()" [type]="oldPasswordHide ? 'password' : 'text'">
+          <app-holddown-action-icon matSuffix fontSet="far" fontIconActive="fa-eye-slash" fontIcon="fa-eye" 
+            [isActive]="oldPasswordHide" (onActivate)="oldPasswordHide = false" (onDeactivate)="oldPasswordHide = true">
+          </app-holddown-action-icon> 
           <mat-error *ngIf="oldPasswordFormControl.invalid">
             <span [innerHTML]="formControlHelper.errorMessage(oldPasswordFormControl)"></span>
           </mat-error>

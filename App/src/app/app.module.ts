@@ -64,6 +64,7 @@ import { AppMatSpinnerButtonComponent } from './controls/app-mat-spinner-button/
 import { AppToolbarControlsComponent } from './controls/app-toolbar-controls/app-toolbar-controls.component';
 import { AppToolbarMenuComponent } from './controls/app-toolbar-menu/app-toolbar-menu.component';
 import { TemplatesRegistryDirective } from './infrastructure/templates/templates-registry/templates-registry.directive';
+import { HolddownActionIconComponent } from './controls/holddown-action-icon/holddown-action-icon.component';
 
 @NgModule({
   declarations: [
@@ -97,7 +98,8 @@ import { TemplatesRegistryDirective } from './infrastructure/templates/templates
     DashIfEmptyPipe,
     MomentDatePipe,
     AppToolbarMenuComponent,
-    TemplatesRegistryDirective
+    TemplatesRegistryDirective,
+    HolddownActionIconComponent
   ],
   entryComponents: [
     ConfirmDialogComponent,
