@@ -165,7 +165,7 @@
   </div>
   <div class="row">
     <div class="col">
-      <app-form-value captionClass="col-4 col-md-3 col-lg-2" [caption]="l.caption" *ngFor="let l of cvData.portfolio.links">
+      <app-form-value [captionTextRight]="false" captionClass="col-4 col-md-3 col-lg-2" [caption]="l.caption" *ngFor="let l of cvData.portfolio.links">
         <a [href]="l.href" target="_blank">{{l.href}}</a>
       </app-form-value>
     </div>
