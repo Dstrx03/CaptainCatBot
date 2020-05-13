@@ -35,6 +35,12 @@ input.form-field-number {
     margin-left: 0;
 }
 
+.header-button-container > button,
+.header-button-container > a {
+    margin-left: 2px !important;
+    margin-right: 2px !important;
+}
+
 .app-spacer-top.regular {
     height: $app-spacer-top-regular;
 }
@@ -51,7 +57,6 @@ input.form-field-number {
 .app-toolbar-menu-panel {
     max-width: unset !important;
 }
-
 .app-toolbar-menu-template-text {
     white-space: initial;
     line-height: initial;
@@ -59,10 +64,4 @@ input.form-field-number {
 
 .stick-pack :not(:last-child){
     margin-bottom: 0;
-}
-
-.header-button-container > button,
-.header-button-container > a {
-    margin-left: 2px !important;
-    margin-right: 2px !important;
 }

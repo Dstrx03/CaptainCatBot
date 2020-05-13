@@ -20,11 +20,6 @@ export class AppLoadService {
     return this.initAuthInfo();
   }
 
-  private initAuthInfo(): Promise<any> {
-    this.identitySvc = this.injector.get(IdentityService);
-    return this.identitySvc.getAuthInfo().toPromise();
-  }
-
   private initUserPreferences(): void {
     this.userPreferencesSvc = this.injector.get(UserPreferencesService);
     this.userPreferencesSvc.initUserPreferences();
@@ -34,4 +29,10 @@ export class AppLoadService {
     this.themeSvc = this.injector.get(ThemeService);
     this.themeSvc.initTheme();
   }
+
+  private initAuthInfo(): Promise<any> {
+    this.identitySvc = this.injector.get(IdentityService);
+    return this.identitySvc.getAuthInfo().toPromise();
+  }
+
 }

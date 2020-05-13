@@ -1,9 +1,12 @@
-import { AppMenuItem } from './appMenu';
+import { AppMenuItem, AppMenu } from './appMenu';
+import { AppRoles } from './appRoles';
 
 export class AppRoutesItem {
   Id: string;
   Path: string;
   IsHref: boolean;
+  RequiredAuth: boolean;
+  RequiredRoles: string[];
   Parent?: AppRoutesItem;
 
   getRouterLink(): string {
@@ -23,98 +26,114 @@ export class AppRoutesItem {
 }
 
 export class AppRoutes {
-  static readonly Home: AppRoutesItem = {
+
+  // Had to hardcode relations between Angular's routes and application menu items. Unfortunately due Angular's decorators constraints 
+  // it's impossible to wire up routes and menu items through runtime generation of routes (AppRoutesRegistry.AppRoutesSet) and 
+  // menu items (AppMenuItemsRegistry.AppMenuItemsSet) from some abstract structure (AppRoutes class members, for example). 
+  // TODO: Create a tool that generate AppRoutesRegistry.AppRoutesSet & AppMenuItemsRegistry.AppMenuItemsSet code from abstract structure.
+  
+  static readonly Home: AppRoutesItem = <AppRoutesItem>{
     Id: 'home', 
     Path: '', 
     IsHref: false, 
-    getRouterLink: AppRoutesItem.prototype.getRouterLink,
-    getFullRelativePath: AppRoutesItem.prototype.getFullRelativePath,
-    getRouterLinkRecursive: AppRoutesItem.prototype.getRouterLinkRecursive
+    RequiredAuth: false,
+    RequiredRoles: []
   };
-  static readonly Login: AppRoutesItem = {
+  static readonly Login: AppRoutesItem = <AppRoutesItem>{
     Id: 'login', 
     Path: 'Login', 
     IsHref: false, 
-    getRouterLink: AppRoutesItem.prototype.getRouterLink,
-    getFullRelativePath: AppRoutesItem.prototype.getFullRelativePath,
-    getRouterLinkRecursive: AppRoutesItem.prototype.getRouterLinkRecursive
+    RequiredAuth: false,
+    RequiredRoles: []
   };
-  static readonly Dashboard: AppRoutesItem = {
+  static readonly Dashboard: AppRoutesItem = <AppRoutesItem>{
     Id: 'dashboard', 
     Path: 'Dashboard', 
     IsHref: false, 
-    getRouterLink: AppRoutesItem.prototype.getRouterLink,
-    getFullRelativePath: AppRoutesItem.prototype.getFullRelativePath,
-    getRouterLinkRecursive: AppRoutesItem.prototype.getRouterLinkRecursive
+    RequiredAuth: true,
+    RequiredRoles: []
   };
-  static readonly Telegram: AppRoutesItem = {
+  static readonly Telegram: AppRoutesItem = <AppRoutesItem>{
     Id: 'telegram', 
     Path: 'Telegram', 
     IsHref: false, 
-    getRouterLink: AppRoutesItem.prototype.getRouterLink,
-    getFullRelativePath: AppRoutesItem.prototype.getFullRelativePath,
-    getRouterLinkRecursive: AppRoutesItem.prototype.getRouterLinkRecursive
+    RequiredAuth: true,
+    RequiredRoles: []
   };
-  static readonly Status: AppRoutesItem = {
+  static readonly Status: AppRoutesItem = <AppRoutesItem>{
     Id: 'telegram.status', 
     Path: 'Status', 
     IsHref: false, 
-    Parent: AppRoutes.Telegram, 
-    getRouterLink: AppRoutesItem.prototype.getRouterLink,
-    getFullRelativePath: AppRoutesItem.prototype.getFullRelativePath,
-    getRouterLinkRecursive: AppRoutesItem.prototype.getRouterLinkRecursive
+    RequiredAuth: true,
+    RequiredRoles: [AppRoles.Admin],
+    Parent: AppRoutes.Telegram
   };
-  static readonly System: AppRoutesItem = {
+  static readonly System: AppRoutesItem = <AppRoutesItem>{
     Id: 'system', 
     Path: 'System', 
     IsHref: false, 
-    getRouterLink: AppRoutesItem.prototype.getRouterLink,
-    getFullRelativePath: AppRoutesItem.prototype.getFullRelativePath,
-    getRouterLinkRecursive: AppRoutesItem.prototype.getRouterLinkRecursive
+    RequiredAuth: true,
+    RequiredRoles: []
   };
-  static readonly Users: AppRoutesItem = {
+  static readonly Users: AppRoutesItem = <AppRoutesItem>{
     Id: 'system.users', 
     Path: 'Users', 
     IsHref: false, 
-    Parent: AppRoutes.System, 
-    getRouterLink: AppRoutesItem.prototype.getRouterLink,
-    getFullRelativePath: AppRoutesItem.prototype.getFullRelativePath,
-    getRouterLinkRecursive: AppRoutesItem.prototype.getRouterLinkRecursive
+    RequiredAuth: true,
+    RequiredRoles: [AppRoles.Admin],
+    Parent: AppRoutes.System
   };
-  static readonly InternalServices: AppRoutesItem = {
+  static readonly InternalServices: AppRoutesItem = <AppRoutesItem>{
     Id: 'system.internal_services', 
     Path: 'InternalServices', 
     IsHref: false, 
-    Parent: AppRoutes.System, 
-    getRouterLink: AppRoutesItem.prototype.getRouterLink,
-    getFullRelativePath: AppRoutesItem.prototype.getFullRelativePath,
-    getRouterLinkRecursive: AppRoutesItem.prototype.getRouterLinkRecursive
+    RequiredAuth: true,
+    RequiredRoles: [AppRoles.Admin],
+    Parent: AppRoutes.System
   };
-  static readonly SystemLogging: AppRoutesItem = {
+  static readonly SystemLogging: AppRoutesItem = <AppRoutesItem>{
     Id: 'system.system_logging', 
     Path: 'SystemLogging', 
     IsHref: false,  
-    Parent: AppRoutes.System, 
-    getRouterLink: AppRoutesItem.prototype.getRouterLink,
-    getFullRelativePath: AppRoutesItem.prototype.getFullRelativePath,
-    getRouterLinkRecursive: AppRoutesItem.prototype.getRouterLinkRecursive
+    RequiredAuth: true,
+    RequiredRoles: [AppRoles.Admin],
+    Parent: AppRoutes.System
   };
-  static readonly HangfireDashboard: AppRoutesItem = {
+  static readonly HangfireDashboard: AppRoutesItem = <AppRoutesItem>{
     Id: 'system.hangfire', 
     Path: '../../hangfire', 
     IsHref: true, 
-    Parent: AppRoutes.System, 
-    getRouterLink: AppRoutesItem.prototype.getRouterLink,
-    getFullRelativePath: AppRoutesItem.prototype.getFullRelativePath,
-    getRouterLinkRecursive: AppRoutesItem.prototype.getRouterLinkRecursive
+    RequiredAuth: true,
+    RequiredRoles: [AppRoles.Admin],
+    Parent: AppRoutes.System
   };
 
-  static getRouterLink(item: AppMenuItem): string {
-    let routerLink = null;
+  // ====== Static functions ======  
+  static initMembersFunctions(): void {
     Object.keys(this).forEach(key => {
       let appRoutesItem = this[key] as AppRoutesItem;
-      if (appRoutesItem !== null && appRoutesItem !== undefined && appRoutesItem.Id === item.Id) routerLink = appRoutesItem.getRouterLink(); 
+      if (!(appRoutesItem instanceof Function)) {
+        appRoutesItem.getRouterLink = AppRoutesItem.prototype.getRouterLink;
+        appRoutesItem.getFullRelativePath = AppRoutesItem.prototype.getFullRelativePath;
+        appRoutesItem.getRouterLinkRecursive = AppRoutesItem.prototype.getRouterLinkRecursive;
+      }
     });
-    return routerLink;
+  }
+
+  static findById(id: string): AppRoutesItem {
+    let keys = Object.keys(this);
+    for (let i = 0; i < keys.length; i++){
+      let appRoutesItem = this[keys[i]] as AppRoutesItem;
+      if (!(appRoutesItem instanceof Function) && appRoutesItem.Id === id) return appRoutesItem; 
+    }
+    return null;
+  }
+
+  static getRouterLink(item: AppMenuItem): string {
+    let appRoutesItem = this.findById(item.Id);
+    if (appRoutesItem !== null) return appRoutesItem.getRouterLink();
+    return null;
   }
 }
+
+AppRoutes.initMembersFunctions();
