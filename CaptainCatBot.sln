@@ -1,19 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.31101.0
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30225.117
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cat.Web", "Cat.Web\Cat.Web.csproj", "{CF913F26-DE83-4C3F-BC1D-E4EF3CD75D43}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cat.Domain", "Cat.Domain\Cat.Domain.csproj", "{E895F43B-E493-4776-A11A-E3C4F980E009}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cat.Business", "Cat.Business\Cat.Business.csproj", "{438FEC96-CFF3-41E6-A2B7-BACC226157F7}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Integrations", "Integrations", "{374601C0-5530-48AD-9A8B-6E52116771DF}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Telegram", "Telegram\Telegram.csproj", "{075DB1E4-8388-4345-AB13-07240FA0758F}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cat.Common", "Cat.Common\Cat.Common.csproj", "{3ED72387-40A4-4F9B-879E-AAD92D92837D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CaptainCatBot", "CaptainCatBot\CaptainCatBot.csproj", "{C49EAEB1-BAA7-42B3-AEDB-B7A4B06B3D49}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,31 +11,15 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{CF913F26-DE83-4C3F-BC1D-E4EF3CD75D43}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{CF913F26-DE83-4C3F-BC1D-E4EF3CD75D43}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{CF913F26-DE83-4C3F-BC1D-E4EF3CD75D43}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{CF913F26-DE83-4C3F-BC1D-E4EF3CD75D43}.Release|Any CPU.Build.0 = Release|Any CPU
-		{E895F43B-E493-4776-A11A-E3C4F980E009}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E895F43B-E493-4776-A11A-E3C4F980E009}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E895F43B-E493-4776-A11A-E3C4F980E009}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E895F43B-E493-4776-A11A-E3C4F980E009}.Release|Any CPU.Build.0 = Release|Any CPU
-		{438FEC96-CFF3-41E6-A2B7-BACC226157F7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{438FEC96-CFF3-41E6-A2B7-BACC226157F7}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{438FEC96-CFF3-41E6-A2B7-BACC226157F7}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{438FEC96-CFF3-41E6-A2B7-BACC226157F7}.Release|Any CPU.Build.0 = Release|Any CPU
-		{075DB1E4-8388-4345-AB13-07240FA0758F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{075DB1E4-8388-4345-AB13-07240FA0758F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{075DB1E4-8388-4345-AB13-07240FA0758F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{075DB1E4-8388-4345-AB13-07240FA0758F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{3ED72387-40A4-4F9B-879E-AAD92D92837D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{3ED72387-40A4-4F9B-879E-AAD92D92837D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{3ED72387-40A4-4F9B-879E-AAD92D92837D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{3ED72387-40A4-4F9B-879E-AAD92D92837D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C49EAEB1-BAA7-42B3-AEDB-B7A4B06B3D49}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C49EAEB1-BAA7-42B3-AEDB-B7A4B06B3D49}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C49EAEB1-BAA7-42B3-AEDB-B7A4B06B3D49}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C49EAEB1-BAA7-42B3-AEDB-B7A4B06B3D49}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
-	GlobalSection(NestedProjects) = preSolution
-		{075DB1E4-8388-4345-AB13-07240FA0758F} = {374601C0-5530-48AD-9A8B-6E52116771DF}
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {18F74DD8-2B73-4AD8-9E8A-EABB1ABAF325}
 	EndGlobalSection
 EndGlobal
