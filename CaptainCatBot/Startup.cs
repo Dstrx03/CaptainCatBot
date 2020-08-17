@@ -1,3 +1,4 @@
+using log4net;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -5,6 +6,7 @@ using Microsoft.AspNetCore.SpaServices.AngularCli;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 
 namespace CaptainCatBot
 {
@@ -29,8 +31,10 @@ namespace CaptainCatBot
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IHostApplicationLifetime applicationLifetime, ILoggerFactory loggerFactory)
         {
+            loggerFactory.AddLog4Net();
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -70,6 +74,12 @@ namespace CaptainCatBot
                     spa.UseAngularCliServer(npmScript: "start");
                 }
             });
+
+            applicationLifetime.ApplicationStarted.Register(() => _log.Debug("App started!"));
+            applicationLifetime.ApplicationStopping.Register(() => _log.Debug("App stopping..."));
+            applicationLifetime.ApplicationStopped.Register(() => _log.Debug("App stopped!"));
         }
+
+        private static readonly ILog _log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
     }
 }

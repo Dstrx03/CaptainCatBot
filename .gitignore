@@ -207,3 +207,5 @@ FakesAssemblies/
 # =========================
 # Project Specific Files
 # =========================
+
+CaptainCatBot/log4net.config
