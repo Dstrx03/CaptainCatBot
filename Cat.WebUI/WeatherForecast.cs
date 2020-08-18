@@ -1,6 +1,6 @@
 using System;
 
-namespace CaptainCatBot
+namespace Cat.WebUI
 {
     public class WeatherForecast
     {

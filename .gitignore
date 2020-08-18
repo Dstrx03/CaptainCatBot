@@ -203,9 +203,3 @@ FakesAssemblies/
 
 #Visual Studio .vs folder
 .vs/
-
-# =========================
-# Project Specific Files
-# =========================
-
-CaptainCatBot/log4net.config

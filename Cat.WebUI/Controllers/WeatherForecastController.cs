@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
-namespace CaptainCatBot.Controllers
+namespace Cat.WebUI.Controllers
 {
     [ApiController]
     [Route("[controller]")]
