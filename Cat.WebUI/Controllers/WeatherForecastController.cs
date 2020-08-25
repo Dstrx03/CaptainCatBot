@@ -25,6 +25,14 @@ namespace Cat.WebUI.Controllers
         [HttpGet]
         public IEnumerable<WeatherForecast> Get()
         {
+
+            _logger.LogTrace("Weather Forecast (TRACE)");
+            _logger.LogDebug("Weather Forecast (DEBUG)");
+            _logger.LogInformation("Weather Forecast (INFO)");
+            _logger.LogWarning("Weather Forecast (WARN)");
+            _logger.LogError("Weather Forecast (ERROR)");
+            _logger.LogCritical("Weather Forecast (CRITICAL)");
+
             var rng = new Random();
             return Enumerable.Range(1, 5).Select(index => new WeatherForecast
             {

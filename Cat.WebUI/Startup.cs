@@ -1,4 +1,4 @@
-using log4net;
+using Cat.Infrastructure;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.SpaServices.AngularCli;
@@ -21,7 +21,10 @@ namespace Cat.WebUI
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddInfrastructure();
+
             services.AddControllersWithViews();
+
             // In production, the Angular files will be served from this directory
             services.AddSpaStaticFiles(configuration =>
             {
@@ -32,7 +35,7 @@ namespace Cat.WebUI
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IHostApplicationLifetime applicationLifetime, ILoggerFactory loggerFactory)
         {
-            loggerFactory.AddLog4Net();
+            loggerFactory.AddLogging();
 
             if (env.IsDevelopment())
             {
@@ -74,11 +77,15 @@ namespace Cat.WebUI
                 }
             });
 
-            applicationLifetime.ApplicationStarted.Register(() => _log.Debug("App started!"));
-            applicationLifetime.ApplicationStopping.Register(() => _log.Debug("App stopping..."));
-            applicationLifetime.ApplicationStopped.Register(() => _log.Debug("App stopped!"));
-        }
 
-        private static readonly ILog _log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+            // todo: think about appropriate place for code below
+            var logger = loggerFactory.CreateLogger(typeof(Startup));
+            applicationLifetime.ApplicationStarted.Register(() => logger.LogInformation("Cat started!"));
+            applicationLifetime.ApplicationStopping.Register(() => logger.LogInformation("Cat stopping..."));
+            applicationLifetime.ApplicationStopped.Register(() => logger.LogInformation("Cat stopped!"));
+            // todo: =============================================
+
+
+        }
     }
 }
