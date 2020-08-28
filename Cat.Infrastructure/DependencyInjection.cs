@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Cat.Application;
+using Cat.Domain;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
 namespace Cat.Infrastructure
@@ -7,6 +9,13 @@ namespace Cat.Infrastructure
     {
         public static IServiceCollection AddInfrastructure(this IServiceCollection services)
         {
+            // todo: use Lamar/StructureMap with default conventions
+            services.AddTransient(typeof(FakeBotApiSender), typeof(FakeBotApiSender));
+            services.AddTransient(typeof(BotUpdateProcessor), typeof(BotUpdateProcessor));
+            // todo: ==================================
+
+            services.AddTransient(typeof(IBotUpdateContextFactory<FakeBotUpdate>), typeof(FakeBotUpdateContextFactory));
+
             return services;
         }
 
