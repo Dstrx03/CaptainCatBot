@@ -23,7 +23,7 @@ namespace Cat.Infrastructure
 
         private void FakeSend(string method, params KeyValuePair<string, object>[] args)
         {
-            _logger.LogInformation($"[{method}] {string.Join(", ", args.Select(x => $"{x.Key}:'{x.Value}'"))}");
+            _logger.LogDebug($"Fake Bot API Sender [{method}] {string.Join(", ", args.Select(x => $"{x.Key}:'{x.Value}'"))}");
         }
 
         private KeyValuePair<string, object> Arg(string argumentName, object argument)

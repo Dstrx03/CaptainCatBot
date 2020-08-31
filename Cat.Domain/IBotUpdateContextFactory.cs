@@ -1,8 +1,8 @@
 ﻿
 namespace Cat.Domain
 {
-    public interface IBotUpdateContextFactory<T>
+    public interface IBotUpdateContextFactory<TUpdate>
     {
-        BotUpdateContext CreateContext(T update);
+        BotUpdateContext CreateContext(TUpdate update);
     }
 }

@@ -1,5 +1,7 @@
 using Cat.Application;
 using Cat.Infrastructure;
+using Cat.WebUI.BotApiEndpoints;
+using Cat.WebUI.Middleware;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.SpaServices.AngularCli;
@@ -24,6 +26,10 @@ namespace Cat.WebUI
         {
             services.AddApplication();
             services.AddInfrastructure();
+
+            // todo: DI with Lamar/StructureMap
+            services.AddSingleton(typeof(BotApiEndpointBase), typeof(FakeBotApiEndpoint));
+            // todo: ==========================
 
             services.AddControllersWithViews();
 
@@ -56,6 +62,8 @@ namespace Cat.WebUI
             {
                 app.UseSpaStaticFiles();
             }
+
+            app.UseMiddleware<BotApiEndpointRoutingMiddleware>();
 
             app.UseRouting();
 
