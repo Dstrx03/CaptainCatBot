@@ -5,21 +5,21 @@ namespace Cat.WebUI.BotApiEndpoints
     public abstract class BotApiEndpointBase : IBotApiEndpoint
     {
         protected bool _isRegistered;
-        private string _botApiEndpointRoute;
+        private string _botApiEndpointPath;
 
-        protected BotApiEndpointBase(string controllerRouteTemplate, string controllerName)
+        protected BotApiEndpointBase(string controllerPathTemplate, string controllerName)
         {
             _isRegistered = false;
-            ControllerRoute = controllerRouteTemplate.Replace("[controller]", controllerName.Replace("Controller", string.Empty)).ToLower();
-            EndpointRoute = null;
+            ControllerPath = controllerPathTemplate.Replace("[controller]", controllerName.Replace("Controller", string.Empty)).ToLower();
+            EndpointPath = null;
         }
 
-        public string ControllerRoute { get; }
+        public string ControllerPath { get; }
 
-        public string EndpointRoute
+        public string EndpointPath
         {
-            get => _botApiEndpointRoute;
-            protected set => _botApiEndpointRoute = value?.ToLower();
+            get => _botApiEndpointPath;
+            protected set => _botApiEndpointPath = value?.ToLower();
         }
 
         public virtual void RegisterEndpoint()

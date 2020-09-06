@@ -27,17 +27,17 @@ namespace Cat.WebUI.Middleware
         {
             var path = context.Request.Path.ToUriComponent().ToLower();
 
-            var matchesControllerRoute = _botApiEndpointsCollection.FirstOrDefault(x => x.ControllerRoute == path);
+            var matchesControllerRoute = _botApiEndpointsCollection.FirstOrDefault(x => x.ControllerPath == path);
             if (matchesControllerRoute != null)
             {
                 context.Response.StatusCode = 405;
                 return;
             }
 
-            var matchesEndpointRoute = _botApiEndpointsCollection.FirstOrDefault(x => x.GetStatus() == true && x.EndpointRoute == path);
+            var matchesEndpointRoute = _botApiEndpointsCollection.FirstOrDefault(x => x.GetStatus() == true && x.EndpointPath == path);
             if (matchesEndpointRoute != null)
             {
-                context.Request.Path = matchesEndpointRoute.ControllerRoute;
+                context.Request.Path = matchesEndpointRoute.ControllerPath;
             }
 
             await _next.Invoke(context);

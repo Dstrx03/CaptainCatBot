@@ -9,7 +9,7 @@ namespace Cat.WebUI.BotApiEndpoints
     {
         private readonly ILogger<FakeBotApiEndpoint> _logger;
 
-        public FakeBotApiEndpoint(ILogger<FakeBotApiEndpoint> logger) : base(FakeBotApiEndpointController.RouteTemplateUpdate, typeof(FakeBotApiEndpointController).Name)
+        public FakeBotApiEndpoint(ILogger<FakeBotApiEndpoint> logger) : base(FakeBotApiEndpointController.PathTemplateUpdate, typeof(FakeBotApiEndpointController).Name)
         {
             _logger = logger;
             InitFakeEndpointRoute();
@@ -42,8 +42,8 @@ namespace Cat.WebUI.BotApiEndpoints
                 builder.Append(random.Next(0, 2) == 0 ? ((char)random.Next(offset, offset + lettersOffset)).ToString() : random.Next(10).ToString());
             }
 
-            EndpointRoute = builder.ToString();
-            _logger.LogDebug($"Fake Bot API Endpoint route: '{EndpointRoute}'");
+            EndpointPath = builder.ToString();
+            _logger.LogDebug($"Fake Bot API Endpoint route: '{EndpointPath}'");
         }
     }
 }

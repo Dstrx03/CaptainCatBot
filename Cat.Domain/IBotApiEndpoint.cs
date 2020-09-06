@@ -5,6 +5,7 @@ namespace Cat.Domain
     {
         void RegisterEndpoint();
         void UnregisterEndpoint();
+        // todo: EnpointPath property?
         bool GetStatus(); // todo: use enum?
     }
 }
