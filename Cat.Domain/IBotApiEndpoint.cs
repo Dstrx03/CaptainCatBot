@@ -1,11 +1,10 @@
 ﻿
 namespace Cat.Domain
 {
-    public interface IBotApiEndpoint
+    public interface IBotApiEndpoint : IBotApiComponent
     {
         void RegisterEndpoint();
         void UnregisterEndpoint();
-        // todo: EnpointPath property?
-        bool GetStatus(); // todo: use enum?
+        // todo: ControllerPath, EnpointPath properties?
     }
 }

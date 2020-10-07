@@ -8,7 +8,7 @@ namespace Cat.WebUI.Controllers
     [Route("api/[controller]")]
     public abstract class BotApiEndpointControllerBase<TUpdate> : MediatorController
     {
-        public const string PathTemplateUpdate = "/api/[controller]/update";
+        public const string PathTemplateUpdate = "/api/[controller]/Update";
 
         [Route("update")]
         [HttpPost]

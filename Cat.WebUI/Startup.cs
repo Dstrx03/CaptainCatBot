@@ -1,4 +1,6 @@
+using System;
 using Cat.Application;
+using Cat.Domain;
 using Cat.Infrastructure;
 using Cat.WebUI.BotApiEndpoints;
 using Cat.WebUI.Middleware;
@@ -24,11 +26,12 @@ namespace Cat.WebUI
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddDomain();
             services.AddApplication();
             services.AddInfrastructure();
 
-            // todo: DI with Lamar/StructureMap
-            services.AddSingleton(typeof(BotApiEndpointBase), typeof(FakeBotApiEndpoint));
+            // todo: use Lamar/StructureMap with default conventions, lifetimes etc.
+            services.AddSingleton<BotApiEndpointBase, FakeBotApiEndpoint>();
             // todo: ==========================
 
             services.AddControllersWithViews();
@@ -89,13 +92,14 @@ namespace Cat.WebUI
 
 
             // todo: think about appropriate place for code below
-            var logger = loggerFactory.CreateLogger(typeof(Startup));
+            var logger = loggerFactory.CreateLogger(typeof(Startup)); // todo: proper logger injection
             applicationLifetime.ApplicationStarted.Register(() => logger.LogInformation("Cat started!"));
             applicationLifetime.ApplicationStopping.Register(() => logger.LogInformation("Cat stopping..."));
             applicationLifetime.ApplicationStopped.Register(() => logger.LogInformation("Cat stopped!"));
             // todo: =============================================
 
-
+            // todo: uncaught exceptions handling
+            // todo: once again, think about exceptions handling in Fake Bot API Components (unlikely, exceptions only on invalid client state)
         }
     }
 }

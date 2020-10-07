@@ -9,12 +9,13 @@ namespace Cat.Infrastructure
     {
         public static IServiceCollection AddInfrastructure(this IServiceCollection services)
         {
-            // todo: use Lamar/StructureMap with default conventions
-            services.AddTransient(typeof(FakeBotApiSender), typeof(FakeBotApiSender));
-            services.AddTransient(typeof(BotUpdateProcessor), typeof(BotUpdateProcessor));
+            // todo: use Lamar/StructureMap with default conventions, lifetimes etc.
+            services.AddTransient<IBotUpdateContextFactory<FakeBotUpdate>, FakeBotUpdateContextFactory>();
+            services.AddTransient<FakeBotApiSender>();
+            services.AddSingleton<FakeBotApiClient>();
+            services.AddSingleton<FakeBotApiWebhook>();
+            services.AddSingleton<FakeBotApiPoller>();
             // todo: ==================================
-
-            services.AddTransient(typeof(IBotUpdateContextFactory<FakeBotUpdate>), typeof(FakeBotUpdateContextFactory));
 
             return services;
         }

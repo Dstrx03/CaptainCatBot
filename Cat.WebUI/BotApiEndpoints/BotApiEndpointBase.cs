@@ -1,37 +1,31 @@
-﻿using Cat.Domain;
+﻿using System.Collections.Generic;
+using Cat.Domain;
 
 namespace Cat.WebUI.BotApiEndpoints
 {
-    public abstract class BotApiEndpointBase : IBotApiEndpoint
+    public abstract class BotApiEndpointBase : BotApiComponentBase, IBotApiEndpoint
     {
-        protected bool _isRegistered;
-        private string _botApiEndpointPath;
-
-        protected BotApiEndpointBase(string controllerPathTemplate, string controllerName)
-        {
-            _isRegistered = false;
-            ControllerPath = controllerPathTemplate.Replace("[controller]", controllerName.Replace("Controller", string.Empty)).ToLower();
-            EndpointPath = null;
-        }
-
-        public string ControllerPath { get; }
-
-        public string EndpointPath
-        {
-            get => _botApiEndpointPath;
-            protected set => _botApiEndpointPath = value?.ToLower();
-        }
-
         public virtual void RegisterEndpoint()
         {
-            _isRegistered = true;
+            ComponentState = BotApiComponentState.CreateRegistered();
         }
 
         public virtual void UnregisterEndpoint()
         {
-            _isRegistered = false;
+            ComponentState = BotApiComponentState.CreateUnregistered();
         }
 
-        public virtual bool GetStatus() => _isRegistered;
+        public IEnumerable<BotApiEndpointPath?> Paths { get; private set; } // todo: maybe better names BotApiEndpointPath/Paths ???
+
+        protected void SetPaths(IEnumerable<BotApiEndpointPath?> paths)
+        {
+            if (paths != null) Paths = paths;
+        }
+
+        protected BotApiEndpointPath? CreatePath(string controllerPathTemplate, string controllerName, string endpointPath)
+        {
+            var controllerPath = controllerPathTemplate.Replace("[controller]", controllerName.Replace("Controller", string.Empty));
+            return new BotApiEndpointPath(controllerPath, endpointPath);
+        }
     }
 }
