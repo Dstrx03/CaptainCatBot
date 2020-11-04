@@ -1,4 +1,7 @@
-﻿using Cat.WebUI.Controllers;
+﻿using System;
+using System.Collections.Generic;
+using Cat.WebUI.Controllers;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
 namespace Cat.WebUI.BotApiEndpoints
@@ -7,13 +10,13 @@ namespace Cat.WebUI.BotApiEndpoints
     {
         private readonly ILogger<FakeBotApiEndpoint> _logger;
 
-        public FakeBotApiEndpoint(ILogger<FakeBotApiEndpoint> logger)
+        private FakeBotApiEndpoint(BotApiEndpointRoutingService botApiEndpointRoutingService, ILogger<FakeBotApiEndpoint> logger) : base(botApiEndpointRoutingService)
         {
             _logger = logger;
-            SetPaths(new[]
+            SetRoutingPaths(new List<(string, string, string)>
             {
                 // todo: remove hardcoded EnpointPath value, it should be taken from specialized component with URL/path/route composition/management responsibility
-                CreatePath(FakeBotApiEndpointController.PathTemplateUpdate, typeof(FakeBotApiEndpointController).Name, "/FakeBotApiEndpoint")
+                (FakeBotApiEndpointController.PathTemplateUpdate, typeof(FakeBotApiEndpointController).Name, "/FakeBotApiEndpoint")
             });
         }
 
@@ -28,28 +31,15 @@ namespace Cat.WebUI.BotApiEndpoints
             base.UnregisterEndpoint();
             _logger.LogDebug("TODO log unregistered"); // todo: apply single text format convention for all Fake Bot API components log messages
         }
-    }
 
-
-
-
-    // todo: move to separate component with URL composition/management responsibility
-    /*private void InitFakeEndpointRoute()
-    {
-        var random = new Random(Guid.NewGuid().GetHashCode());
-        var builder = new StringBuilder("/FakeBotApiEndpoint_");
-
-        var length = random.Next(8, 17);
-
-        var offset = (int)'a';
-        var lettersOffset = 26;
-
-        for (var i = 0; i < length; i++)
+        public class Factory : BotApiEndpointBase.FactoryBase<FakeBotApiEndpoint>
         {
-            builder.Append(random.Next(0, 2) == 0 ? ((char)random.Next(offset, offset + lettersOffset)).ToString() : random.Next(10).ToString());
+            protected override FakeBotApiEndpoint CreateInstance(IServiceProvider serviceProvider)
+            {
+                var botApiEndpointRoutingService = serviceProvider.GetRequiredService<BotApiEndpointRoutingService>();
+                var logger = serviceProvider.GetRequiredService<ILogger<FakeBotApiEndpoint>>();
+                return new FakeBotApiEndpoint(botApiEndpointRoutingService, logger);
+            }
         }
-
-        EndpointPath = builder.ToString();
-        _logger.LogDebug($"Fake Bot API Endpoint route: '{EndpointPath}'");
-    }*/
+    }
 }

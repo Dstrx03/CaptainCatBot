@@ -1,14 +1,14 @@
 ﻿
 namespace Cat.WebUI.BotApiEndpoints
 {
-    public struct BotApiEndpointPath
+    public struct BotApiEndpointRoutingPath
     {
-        public BotApiEndpointPath(string controllerPath, string endpointPath)
+        public BotApiEndpointRoutingPath(string controllerPath, string endpointPath)
         {
             ControllerPath = controllerPath;
             EndpointPath = endpointPath;
-            ControllerPathNormalized = controllerPath.ToLower(); // todo: ToLowerInvariant()?
-            EndpointPathNormalized = endpointPath.ToLower();
+            ControllerPathNormalized = controllerPath.ToUpperInvariant();
+            EndpointPathNormalized = endpointPath.ToUpperInvariant();
         }
 
         public string ControllerPath { get; }

@@ -194,7 +194,7 @@ namespace Cat.Infrastructure
 
         private string RandomUpdateMessage()
         {
-            var messages = DummyText.Split("$sentence$", StringSplitOptions.RemoveEmptyEntries).Select(x => x.Trim()).ToArray();
+            var messages = DummyText.Split("$sentence$", StringSplitOptions.RemoveEmptyEntries).Select(_ => _.Trim()).ToArray();
             return messages[_random.Next(0, messages.Length)];
         }
 

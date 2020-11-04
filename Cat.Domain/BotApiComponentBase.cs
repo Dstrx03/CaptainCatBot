@@ -5,7 +5,7 @@ namespace Cat.Domain
     {
         protected BotApiComponentBase()
         {
-            InitComponentState();
+            InitComponentState(); // todo: remove, make workaround
         }
 
         protected virtual void InitComponentState()

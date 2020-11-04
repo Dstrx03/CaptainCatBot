@@ -1,10 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using Cat.Domain;
 using Cat.Infrastructure;
 using Cat.WebUI.BotApiEndpoints;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 
@@ -13,15 +12,18 @@ namespace Cat.WebUI.Middleware
     public class BotApiEndpointRoutingMiddleware
     {
         private readonly RequestDelegate _next;
-        private readonly IEnumerable<BotApiEndpointBase> _botApiEndpoints;
+        private readonly BotApiEndpointRoutingService _botApiEndpointRoutingService;
 
-        public BotApiEndpointRoutingMiddleware(RequestDelegate next, IEnumerable<BotApiEndpointBase> botApiEndpoints, 
+        private readonly List<BotApiEndpointBase> _botApiEndpoints;
+
+        public BotApiEndpointRoutingMiddleware(RequestDelegate next, BotApiEndpointRoutingService botApiEndpointRoutingService/*TODO: REMOVE!*/, IEnumerable<BotApiEndpointBase> botApiEndpoints, /*TODO: REMOVE!*/
             /*TODO: REMOVE!*/ FakeBotApiClient fakeClient, FakeBotApiWebhook fakeWebhook, FakeBotApiPoller fakePoller, ILogger<BotApiEndpointRoutingMiddleware> logger/*TODO: REMOVE!*/)
         {
             _next = next;
-            _botApiEndpoints = botApiEndpoints;
+            _botApiEndpointRoutingService = botApiEndpointRoutingService;
 
             // todo: move registration of endpoints to IBotApiComponentsManager
+            _botApiEndpoints = botApiEndpoints.ToList();
             fakeClient.RegisterClientAsync().Wait();
             foreach (var botApiEndpoint in _botApiEndpoints)
             {
@@ -41,22 +43,15 @@ namespace Cat.WebUI.Middleware
         {
             var pathNormalized = GetNormalizedRequestPath(context);
 
-            var matchesControllerRoute = _botApiEndpoints
-                .SelectMany(x => x.Paths)
-                .Any(x => x?.ControllerPathNormalized == pathNormalized);
-            if (matchesControllerRoute)
+            if (_botApiEndpointRoutingService.IsControllerPath(pathNormalized))
             {
-                context.Response.StatusCode = 405;
+                context.Response.StatusCode = 405; // todo: graceful handling
                 return;
             }
 
-            var endpointRoute = _botApiEndpoints
-                .Where(BotApiComponentState.IsRegistered)
-                .SelectMany(x => x.Paths)
-                .FirstOrDefault(x => x?.EndpointPathNormalized == pathNormalized);
-            if (endpointRoute.HasValue)
+            if (_botApiEndpointRoutingService.IsEndpointPath(pathNormalized, out var controllerPath))
             {
-                context.Request.Path = endpointRoute.Value.ControllerPath;
+                context.Request.Path = controllerPath;
             }
 
             await _next(context);
@@ -64,9 +59,18 @@ namespace Cat.WebUI.Middleware
 
         private string GetNormalizedRequestPath(HttpContext context)
         {
-            // todo: string operations optimization & overall BotApiEndpointRoutingMiddleware optimization
-            var path = context.Request.Path.ToUriComponent().ToLower(); // todo: ToLowerInvariant()?
+            var path = context.Request.Path.ToUriComponent().ToUpperInvariant();
             return path.EndsWith('/') && path.Length > 1 ? path.Substring(0, path.Length - 1) : path;
+        }
+    }
+
+    public static class BotApiEndpointRoutingMiddlewareExtensions // todo: appropriate place and name for this class
+    {
+        public static IApplicationBuilder UseBotApiEndpointRouting(this IApplicationBuilder app)
+        {
+            app.UseMiddleware<BotApiEndpointRoutingMiddleware>();
+            app.UseRouting();
+            return app;
         }
     }
 }

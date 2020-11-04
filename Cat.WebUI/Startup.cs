@@ -31,7 +31,8 @@ namespace Cat.WebUI
             services.AddInfrastructure();
 
             // todo: use Lamar/StructureMap with default conventions, lifetimes etc.
-            services.AddSingleton<BotApiEndpointBase, FakeBotApiEndpoint>();
+            services.AddSingleton<BotApiEndpointBase, FakeBotApiEndpoint>(new FakeBotApiEndpoint.Factory().Create);
+            services.AddSingleton<BotApiEndpointRoutingService>();
             // todo: ==========================
 
             services.AddControllersWithViews();
@@ -46,7 +47,7 @@ namespace Cat.WebUI
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IHostApplicationLifetime applicationLifetime, ILoggerFactory loggerFactory)
         {
-            loggerFactory.AddLogging();
+            loggerFactory.AddLogging(); // todo: maybe there are better place for Logging registration?
 
             if (env.IsDevelopment())
             {
@@ -66,9 +67,7 @@ namespace Cat.WebUI
                 app.UseSpaStaticFiles();
             }
 
-            app.UseMiddleware<BotApiEndpointRoutingMiddleware>();
-
-            app.UseRouting();
+            app.UseBotApiEndpointRouting();
 
             app.UseEndpoints(endpoints =>
             {
