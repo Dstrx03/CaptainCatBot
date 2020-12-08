@@ -15,13 +15,13 @@ namespace Cat.Infrastructure
     {
         public static IServiceCollection AddInfrastructure(this IServiceCollection services)
         {
-            // todo: use Lamar/StructureMap with default conventions, lifetimes etc.
             services.AddTransient<IBotUpdateContextFactory<FakeBotUpdate>, FakeBotUpdateContextFactory>();
+            services.AddTransient<IBotUpdateValidator<FakeBotUpdate>, FakeBotUpdateValidator>();
+
             services.AddTransient<FakeBotApiSender>();
             services.AddSingleton<FakeBotApiClient>();
             services.AddSingleton<FakeBotApiWebhook>();
             services.AddSingleton<FakeBotApiPoller>();
-            // todo: ==================================
 
             return services;
         }

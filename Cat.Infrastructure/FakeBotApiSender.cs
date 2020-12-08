@@ -1,7 +1,7 @@
-﻿using System;
-using System.Threading.Tasks;
-using Cat.Domain;
+﻿using Cat.Domain;
 using Microsoft.Extensions.Logging;
+using System;
+using System.Threading.Tasks;
 
 namespace Cat.Infrastructure
 {
@@ -16,14 +16,21 @@ namespace Cat.Infrastructure
             _botApiClient = botApiClient;
         }
 
-        public async Task SendMessageAsync(string message)
-        {
-            _logger.LogDebug($"[SendMessageAsync] '{message}'"); // todo: apply single text format convention for all Fake Bot API components log messages
-            if (BotApiComponentState.IsRegistered(_botApiClient))
-                await _botApiClient.OperationalClient.SendFakeMessageAsync(message);
-            else 
-                _logger.LogDebug("can't invoke [SendMessageAsync], operational client is invalid"); // todo: apply single text format convention for all Fake Bot API components log messages
-        }
+        public Task SendMessageAsync(string message) => HandlingConsumeOperationalClientAsync(_ => _.SendFakeMessageAsync(message), "SendMessageAsync");
 
+        private Task HandlingConsumeOperationalClientAsync(Func<FakeOperationalClient, Task> actionAsync, string operationName) =>
+            _botApiClient.ConsumeOperationalClientAsync(_ =>
+                {
+                    try
+                    {
+                        return actionAsync(_);
+                    }
+                    catch (Exception e)
+                    {
+                        _logger.LogError($"Fake Bot API Sender the [{operationName}] operation failed, an exception has occurred.{Environment.NewLine}{e}");
+                        return Task.CompletedTask;
+                    }
+                },
+                () => _logger.LogError($"Fake Bot API Sender the [{operationName}] operation failed, the Fake Bot API Client ({_botApiClient.ComponentState.FooBar()}) cannot be consumed."));
     }
 }

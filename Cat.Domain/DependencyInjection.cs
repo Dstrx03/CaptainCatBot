@@ -6,9 +6,7 @@ namespace Cat.Domain
     {
         public static IServiceCollection AddDomain(this IServiceCollection services)
         {
-            // todo: use Lamar/StructureMap with default conventions, lifetimes etc.
             services.AddTransient<BotUpdateProcessor>();
-            // todo: ==================================
 
             return services;
         }

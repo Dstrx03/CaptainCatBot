@@ -4,7 +4,7 @@ namespace Cat.Domain
 {
     public class BotUpdateProcessor
     {
-        public async Task ProcessUpdate(BotUpdateContext updateContext)
+        public async Task ProcessUpdateAsync(BotUpdateContext updateContext)
         {
             await updateContext.BotApiSender.SendMessageAsync($"Echo: {updateContext.Message}");
         }

@@ -1,11 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
-using System.Security.Cryptography;
-using System.Text;
-using System.Text.Json;
-using System.Threading;
 using System.Threading.Tasks;
 using Cat.Application;
 using Microsoft.Extensions.Logging;
@@ -14,195 +8,119 @@ namespace Cat.Infrastructure
 {
     public class FakeOperationalClient
     {
-        #region Const fields
+        private readonly Settings _settings;
+        private readonly FakeOperationalClientHelper _helper;
 
-        private const string SecretFakeToken = "0b858ebff3c55c563c4664aa8c3538763c24779b57e2742793e7f3c516156bbc"; // <= SLMX4ga5.t84Q
-        private const string DummyText = @"
-            A meme (/miːm/ MEEM) is an idea, behavior, or style that becomes a fad and spreads by means of imitation from person to person within a culture and often carries symbolic meaning representing a particular phenomenon or theme.$sentence$ 
-            A meme acts as a unit for carrying cultural ideas, symbols, or practices, that can be transmitted from one mind to another through writing, speech, gestures, rituals, or other imitable phenomena with a mimicked theme.$sentence$
-            Supporters of the concept regard memes as cultural analogues to genes in that they self-replicate, mutate, and respond to selective pressures.$sentence$
-            Proponents theorize that memes are a viral phenomenon that may evolve by natural selection in a manner analogous to that of biological evolution.$sentence$
-            Memes do this through the processes of variation, mutation, competition, and inheritance, each of which influences a meme's reproductive success.$sentence$
-            Memes spread through the behavior that they generate in their hosts.$sentence$
-            Memes that propagate less prolifically may become extinct, while others may survive, spread, and (for better or for worse) mutate.$sentence$
-            Memes that replicate most effectively enjoy more success, and some may replicate effectively even when they prove to be detrimental to the welfare of their hosts.$sentence$
-            A field of study called memetics arose in the 1990s to explore the concepts and transmission of memes in terms of an evolutionary model.$sentence$
-            Criticism from a variety of fronts has challenged the notion that academic study can examine memes empirically.$sentence$
-            However, developments in neuroimaging may make empirical study possible.$sentence$
-            Some commentators in the social sciences question the idea that one can meaningfully categorize culture in terms of discrete units, and are especially critical of the biological nature of the theory's underpinnings.$sentence$
-            Others have argued that this use of the term is the result of a misunderstanding of the original proposal.$sentence$
-            The word meme itself is a neologism coined by Richard Dawkins, originating from his 1976 book The Selfish Gene.$sentence$
-            Dawkins's own position is somewhat ambiguous.$sentence$
-            He welcomed N. K. Humphrey's suggestion that ""memes should be considered as living structures, not just metaphorically"" and proposed to regard memes as ""physically residing in the brain.""$sentence$
-            Later, he argued that his original intentions, presumably before his approval of Humphrey's opinion, had been simpler.
-        ";
-
-        #endregion
-
-        private static readonly HttpClient HttpClient = new HttpClient();
-
-        private readonly Random _random = new Random(Guid.NewGuid().GetHashCode());
-        private readonly JsonSerializerOptions _serializerOptions = new JsonSerializerOptions
+        public FakeOperationalClient(Settings settings, FakeOperationalClientHelper helper)
         {
-            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-            WriteIndented = true
-        };
+            _settings = settings ?? new Settings();
+            _helper = helper;
+        }
 
-        private readonly string _fakeToken;
-        private readonly TimeSpan _webhookTimerInterval;
-        private readonly ILogger<FakeOperationalClient> _logger;
-        private readonly Timer _webhookTimer;
-        
-        private string _webhookUrl;
-        private DateTime _lastUpdateApplied;
-        private int _updateTimeoutSeconds;
-
-        public FakeOperationalClient(string fakeToken, TimeSpan webhookTimerInterval, ILogger<FakeOperationalClient> logger)
+        public string Token
         {
-            _fakeToken = fakeToken;
-            _webhookTimerInterval = webhookTimerInterval;
-            _logger = logger;
-            _webhookTimer = new Timer(async s => await PostWebhookUpdatesAsync(), null, Timeout.Infinite, Timeout.Infinite);
-            _lastUpdateApplied = DateTime.Now;
-            _updateTimeoutSeconds = RandomUpdateTimeoutSeconds();
+            get => _settings.Token;
+            set => _settings.Token = value;
+        }
+
+        public bool EmulateRecurrentExceptions
+        {
+            get => _settings.EmulateRecurrentExceptions;
+            set => _settings.EmulateRecurrentExceptions = value;
+        }
+
+        public int RecurrentExceptionDifficultyClass
+        {
+            get => _settings.RecurrentExceptionDifficultyClass;
+            set => _settings.RecurrentExceptionDifficultyClass = value;
         }
 
         public Task<bool> ValidateClientAsync()
         {
-            string hashedFakeToken = null;
-            using (var sha256Hash = SHA256.Create())
+            EmulateFakeRecurrentException();
+            return Task.FromResult(_helper.IsTokenValid(_settings.Token));
+        }
+
+        public Task SendFakeMessageAsync(string message)
+        {
+            CheckClientValidity();
+            var details = FakeBotApiWebhook.FooBar("Fake message details", new (string title, object value)[] // todo: content
             {
-                var bytes = sha256Hash.ComputeHash(Encoding.UTF8.GetBytes(_fakeToken));
-                var builder = new StringBuilder();
-                for (var i = 0; i < bytes.Length; i++)
-                {
-                    builder.Append(bytes[i].ToString("x2"));
-                }
-                hashedFakeToken = builder.ToString();
-            }
-            var tokenIsValid = SecretFakeToken == hashedFakeToken;
-            return Task.FromResult(tokenIsValid);
+                ("Message", message)
+            });
+            _helper.OperationalClientLogger.LogInformation($"Fake Operational Client sending fake message...{Environment.NewLine}{details}");
+            return Task.CompletedTask;
         }
 
-        public async Task SendFakeMessageAsync(string message)
+        public Task SetWebhookAsync(string webhookUrl)
         {
-            await EnsureTokenIsValidAsync();
-            _logger.LogDebug($"[SendFakeMessageAsync] '{message}'"); // todo: apply single text format convention for all Fake Bot API components log messages
+            CheckClientValidity();
+            return _helper.SetWebhookAsync(webhookUrl);
         }
 
-        public async Task SetWebhookAsync(string webhookUrl)
+        public Task<FakeWebhookInfo> GetWebhookInfoAsync()
         {
-            await EnsureTokenIsValidAsync();
-            _webhookUrl = webhookUrl;
-            _webhookTimer.Change(0, (int)_webhookTimerInterval.TotalMilliseconds);
+            CheckClientValidity();
+            return Task.FromResult(_helper.GetWebhookInfo());
         }
 
-        public async Task<FakeWebhookInfo> GetWebhookInfoAsync()
+        public Task DeleteWebhookAsync()
         {
-            await EnsureTokenIsValidAsync();
-            return new FakeWebhookInfo
-            {
-                Url = _webhookUrl, 
-                Date = DateTime.Now
-            };
+            CheckClientValidity();
+            _helper.DeleteWebhook();
+            return Task.CompletedTask;
         }
 
-        public async Task DeleteWebhookAsync()
+        public Task<IEnumerable<FakeBotUpdate>> GetUpdatesAsync()
         {
-            await EnsureTokenIsValidAsync();
-            _webhookUrl = null;
-            _webhookTimer.Change(Timeout.Infinite, Timeout.Infinite);
+            CheckClientValidity();
+            return Task.FromResult(_helper.GenerateRandomUpdates());
         }
 
-        private async Task PostWebhookUpdatesAsync()
+        public Task ConfirmWebhookUrlValidationTokenAsync(string validationToken, string webhookUrl)
         {
-            var updates = await GenerateRandomUpdates();
-            foreach (var update in updates)
-            {
-                var stringContent = new StringContent(JsonSerializer.Serialize(update, _serializerOptions), Encoding.UTF8, "application/json");
-                await HttpClient.PostAsync(_webhookUrl, stringContent);
-            }
+            CheckClientValidity();
+            _helper.ConfirmWebhookUrlValidationToken(validationToken, webhookUrl);
+            return Task.CompletedTask;
         }
 
-        public async Task<IEnumerable<FakeBotUpdate>> GetUpdatesAsync()
+        #region CheckClientValidity
+
+        private void CheckClientValidity()
         {
-            await EnsureTokenIsValidAsync();
-            return await GenerateRandomUpdates();
+            EmulateFakeRecurrentException();
+            CheckFakeTokenValidity();
         }
 
-        private Task<IEnumerable<FakeBotUpdate>> GenerateRandomUpdates()
+        private void EmulateFakeRecurrentException()
         {
-            var updates = new List<FakeBotUpdate>();
-            if ((DateTime.Now - _lastUpdateApplied).TotalSeconds < _updateTimeoutSeconds) 
-                return Task.FromResult<IEnumerable<FakeBotUpdate>>(updates);
-            var updatesCount = RandomUpdatesCount();
-            for (var i = 0; i < updatesCount; i++)
-            {
-                updates.Add(new FakeBotUpdate { Message = RandomUpdateMessage() });
-            }
-            _lastUpdateApplied = DateTime.Now;
-            _updateTimeoutSeconds = RandomUpdateTimeoutSeconds();
-            return Task.FromResult<IEnumerable<FakeBotUpdate>>(updates);
+            if (_settings.EmulateRecurrentExceptions && _helper.RandomBoolean(_settings.RecurrentExceptionDifficultyClass))
+                throw new FakeOperationalClientEmulatedException();
         }
 
-        private int RandomUpdatesCount()
+        private void CheckFakeTokenValidity()
         {
-            var updatesCount = 0;
-
-            var roll = _random.Next(1, 21);
-            if (roll >= 14 && roll <= 18) updatesCount = 1;
-            else if (roll == 19) updatesCount = 2;
-            else if (roll == 20) updatesCount = 3;
-
-            return updatesCount;
+            if (!_helper.IsTokenValid(_settings.Token))
+                throw new InvalidOperationException($"Operation cannot be executed due to the provided token ({_settings.Token.Bar()}) is invalid.");
         }
 
-        private int RandomUpdateTimeoutSeconds()
+        #endregion
+
+        public class Settings
         {
-            var minTimeoutSeconds = 0;
-            var maxTimeoutSeconds = 0;
-
-            var roll = _random.Next(1, 21);
-            if (roll == 1)
-            {
-                minTimeoutSeconds = (int)TimeSpan.FromMinutes(45).TotalSeconds;
-                maxTimeoutSeconds = (int)TimeSpan.FromHours(3).TotalSeconds;
-            }
-            if (roll >= 2 && roll <= 8)
-            {
-                minTimeoutSeconds = (int)TimeSpan.FromMinutes(5).TotalSeconds;
-                maxTimeoutSeconds = (int)TimeSpan.FromMinutes(30).TotalSeconds;
-            }
-            if (roll >= 9 && roll <= 15)
-            {
-                minTimeoutSeconds = 45;
-                maxTimeoutSeconds = (int)TimeSpan.FromMinutes(2).TotalSeconds;
-            }
-            if (roll >= 16 && roll <= 18)
-            {
-                minTimeoutSeconds = 10;
-                maxTimeoutSeconds = 15;
-            }
-            if (roll == 19)
-            {
-                minTimeoutSeconds = 0;
-                maxTimeoutSeconds = 5;
-            }
-
-            return _random.Next(minTimeoutSeconds, maxTimeoutSeconds + 1);
+            public string Token { get; set; } = null;
+            public bool EmulateRecurrentExceptions { get; set; } = false;
+            public int RecurrentExceptionDifficultyClass { get; set; } = 17;
         }
+    }
 
-        private string RandomUpdateMessage()
+    public static class Foo // todo: name & correct place for string extension methods
+    {
+        public static string Bar(this string source) // todo: formatting components
         {
-            var messages = DummyText.Split("$sentence$", StringSplitOptions.RemoveEmptyEntries).Select(_ => _.Trim()).ToArray();
-            return messages[_random.Next(0, messages.Length)];
-        }
-
-        private async Task EnsureTokenIsValidAsync()
-        {
-            // todo: throw random exceptions on public methods calls for debug?
-            if (!await ValidateClientAsync())
-                throw new InvalidOperationException($"TODO token is invalid: '{_fakeToken}'"); // todo: apply single text format convention for all Fake Bot API components log messages
+            if (source == null) return "*null*";
+            if (string.IsNullOrEmpty(source) || string.IsNullOrWhiteSpace(source)) return "*empty*";
+            return source;
         }
     }
 }

@@ -6,12 +6,12 @@ namespace Cat.WebUI.Controllers
     // todo: routing, concrete area for Bot API Endpoint Controllers
     [ApiController]
     [Route("api/[controller]")]
-    public abstract class BotApiEndpointControllerBase<TUpdate> : MediatorController
+    public abstract class BotApiEndpointControllerBase<TUpdate, TUpdateResult> : MediatorController where TUpdateResult : Task
     {
         public const string PathTemplateUpdate = "/api/[controller]/Update";
 
-        [Route("update")]
         [HttpPost]
-        public abstract Task Update(TUpdate update);
+        [Route("update")]
+        public abstract TUpdateResult Update(TUpdate update);
     }
 }

@@ -30,20 +30,20 @@ namespace Cat.WebUI.BotApiEndpoints
         protected void SetRoutingPaths(IEnumerable<(string controllerPathTemplate, string controllerName, string endpointPath)> paths)
         {
             var pathsList = paths?.ToList();
-
-            if (pathsList == null || !pathsList.Any()) 
-                throw new ArgumentException("a1"); // todo: exception message
+            
+            if (pathsList == null || !pathsList.Any())
+                throw new ArgumentNullException(nameof(paths), $"{this.GetType().Name}'s Routing Paths collection cannot be null or empty.");
 
             var routingPathsArrayLength = pathsList.Count;
             var routingPathsArray = new BotApiEndpointRoutingPath[routingPathsArrayLength];
             for (var i = 0; i < routingPathsArrayLength; i++)
             {
                 var (controllerPathTemplate, controllerName, endpointPath) = pathsList[i];
-                routingPathsArray[i] = CreateRoutingPath(controllerPathTemplate, controllerName, endpointPath); ;
+                routingPathsArray[i] = CreateRoutingPath(controllerPathTemplate, controllerName, endpointPath);
             }
-
-            if (!routingPathsArray.IsDistinct() || _botApiEndpointRoutingService.ContainsRoutingPaths(routingPathsArray, this)) 
-                throw new ArgumentException("a2"); // todo: exception message
+            
+            if (!routingPathsArray.IsDistinct() || _botApiEndpointRoutingService.ContainsRoutingPaths(routingPathsArray, this))
+                throw new InvalidOperationException($"{this.GetType().Name}'s Routing Paths collection cannot contain repeating values or values which are already presented in Bot API Endpoint Routing Service.");
 
             RoutingPaths = routingPathsArray; 
             _botApiEndpointRoutingService.Update(this);
@@ -51,13 +51,13 @@ namespace Cat.WebUI.BotApiEndpoints
 
         private BotApiEndpointRoutingPath CreateRoutingPath(string controllerPathTemplate, string controllerName, string endpointPath)
         {
-            if (string.IsNullOrEmpty(controllerPathTemplate) ||
-                string.IsNullOrEmpty(controllerName) ||
-                string.IsNullOrEmpty(endpointPath) ||
-                string.IsNullOrWhiteSpace(controllerPathTemplate) ||
-                string.IsNullOrWhiteSpace(controllerName) ||
-                string.IsNullOrWhiteSpace(endpointPath))
-                throw new ArgumentException("b1"); // todo: exception message
+            if (string.IsNullOrEmpty(controllerPathTemplate) || string.IsNullOrWhiteSpace(controllerPathTemplate))
+                throw new ArgumentNullException(nameof(controllerPathTemplate), $"{this.GetType().Name}'s Routing Path controller path template value cannot be null, empty or whitespace.");
+            if (string.IsNullOrEmpty(controllerName) || string.IsNullOrWhiteSpace(controllerName))
+                throw new ArgumentNullException(nameof(controllerName), $"{this.GetType().Name}'s Routing Path controller name value cannot be null, empty or whitespace.");
+            if (string.IsNullOrEmpty(endpointPath) || string.IsNullOrWhiteSpace(endpointPath))
+                throw new ArgumentNullException(nameof(endpointPath), $"{this.GetType().Name}'s Routing Path endpoint path value cannot be null, empty or whitespace.");
+
             return new BotApiEndpointRoutingPath(ParseControllerPath(controllerPathTemplate, controllerName), endpointPath);
         }
 
@@ -78,9 +78,9 @@ namespace Cat.WebUI.BotApiEndpoints
             private void CheckCreatedInstance(T instance)
             {
                 if (instance == null)
-                    throw new Exception("c1"); // todo: exception type, message
+                    throw new InvalidOperationException($"{typeof(T).Name}'s instance cannot be null.");
                 if (instance.RoutingPaths == null || !instance.RoutingPaths.Any())
-                    throw new Exception("c2"); // todo: exception type, message
+                    throw new InvalidOperationException($"The Routing Paths collection of {typeof(T).Name}'s instance cannot be null or empty.");
             }
         }
     }

@@ -3,16 +3,14 @@ namespace Cat.Domain
 {
     public abstract class BotApiComponentBase : IBotApiComponent
     {
-        protected BotApiComponentBase()
-        {
-            InitComponentState(); // todo: remove, make workaround
-        }
+        private BotApiComponentState _componentState;
 
-        protected virtual void InitComponentState()
-        {
-            ComponentState = BotApiComponentState.CreateUnregistered();
-        }
+        protected virtual BotApiComponentState DefaultComponentState { get; } = BotApiComponentState.CreateUnregistered();
 
-        public BotApiComponentState ComponentState { get; protected set; }
+        public BotApiComponentState ComponentState
+        {
+            get => _componentState ??= DefaultComponentState;
+            protected set => _componentState = value ?? DefaultComponentState;
+        }
     }
 }

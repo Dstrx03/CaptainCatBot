@@ -1,9 +1,10 @@
-using System;
+using System.Collections.Generic;
+using System.Linq;
 using Cat.Application;
 using Cat.Domain;
 using Cat.Infrastructure;
 using Cat.WebUI.BotApiEndpoints;
-using Cat.WebUI.Middleware;
+using Cat.WebUI.Middlewares;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.SpaServices.AngularCli;
@@ -30,7 +31,7 @@ namespace Cat.WebUI
             services.AddApplication();
             services.AddInfrastructure();
 
-            // todo: use Lamar/StructureMap with default conventions, lifetimes etc.
+            // todo: use extension method
             services.AddSingleton<BotApiEndpointBase, FakeBotApiEndpoint>(new FakeBotApiEndpoint.Factory().Create);
             services.AddSingleton<BotApiEndpointRoutingService>();
             // todo: ==========================
@@ -45,7 +46,8 @@ namespace Cat.WebUI
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IHostApplicationLifetime applicationLifetime, ILoggerFactory loggerFactory)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IHostApplicationLifetime applicationLifetime, ILoggerFactory loggerFactory
+        /*TODO: REMOVE!*/, IEnumerable<BotApiEndpointBase> botApiEndpoints, FakeBotApiClient fakeClient, FakeBotApiWebhook fakeWebhook, FakeBotApiPoller fakePoller/*TODO: REMOVE!*/)
         {
             loggerFactory.AddLogging(); // todo: maybe there are better place for Logging registration?
 
@@ -75,7 +77,7 @@ namespace Cat.WebUI
                     name: "default",
                     pattern: "{controller}/{action=Index}/{id?}");
             });
-
+            
             app.UseSpa(spa =>
             {
                 // To learn more about options for serving an Angular SPA from ASP.NET Core,
@@ -89,16 +91,81 @@ namespace Cat.WebUI
                 }
             });
 
-
-            // todo: think about appropriate place for code below
-            var logger = loggerFactory.CreateLogger(typeof(Startup)); // todo: proper logger injection
-            applicationLifetime.ApplicationStarted.Register(() => logger.LogInformation("Cat started!"));
-            applicationLifetime.ApplicationStopping.Register(() => logger.LogInformation("Cat stopping..."));
-            applicationLifetime.ApplicationStopped.Register(() => logger.LogInformation("Cat stopped!"));
-            // todo: =============================================
-
-            // todo: uncaught exceptions handling
-            // todo: once again, think about exceptions handling in Fake Bot API Components (unlikely, exceptions only on invalid client state)
+            applicationLifetime.Foo(loggerFactory.CreateLogger("Foo"), fakeClient, botApiEndpoints.ToList(), fakeWebhook, fakePoller); // todo: position in Configure(...) method
         }
     }
+
+
+    
+    internal static class FooBar // todo: name, location & design
+    {
+        internal static IHostApplicationLifetime Foo(this IHostApplicationLifetime applicationLifetime, 
+            ILogger logger,
+            IBotApiClient<FakeOperationalClient> fakeClient,
+            IList<BotApiEndpointBase> botApiEndpoints,
+            IBotApiRevisableWebhook<FakeWebhookInfo> fakeWebhook,
+            IBotApiPoller fakePoller)
+        {
+            applicationLifetime.ApplicationStarted.Register(() => ApplicationStarted(logger, fakeClient, botApiEndpoints, fakeWebhook, fakePoller));
+            applicationLifetime.ApplicationStopping.Register(() => ApplicationStopping(logger));
+            applicationLifetime.ApplicationStopped.Register(() => ApplicationStopped(logger));
+
+            return applicationLifetime;
+        }
+
+        private static async void ApplicationStarted(ILogger logger,
+            IBotApiClient<FakeOperationalClient> fakeClient, 
+            IList<BotApiEndpointBase> botApiEndpoints, 
+            IBotApiRevisableWebhook<FakeWebhookInfo> fakeWebhook, 
+            IBotApiPoller fakePoller)
+        {
+            logger.LogInformation("Cat started!");
+
+            // todo: ensure all component which may be possibly used in concurrent context are thread safe (FakeBotApiWebhook definitely not thread safe)
+            // todo: move registration of endpoints to IBotApiComponentsManager
+            await fakeClient.RegisterClientAsync();
+            foreach (var botApiEndpoint in botApiEndpoints)
+            {
+                botApiEndpoint.RegisterEndpoint();
+            }
+            await fakeWebhook.RegisterWebhookAsync();
+            fakePoller.RegisterPoller();
+            // todo: ===========================================================
+
+            PrintSmth(logger, fakeClient, botApiEndpoints, fakeWebhook, fakePoller);
+
+            logger.LogInformation("Cat started! (completed)");
+        }
+
+        /*todo: REMOVE*/
+        private static int c = 1;
+        private static void PrintSmth(ILogger logger,
+            IBotApiClient<FakeOperationalClient> fakeClient,
+            IList<BotApiEndpointBase> _botApiEndpoints,
+            IBotApiRevisableWebhook<FakeWebhookInfo> fakeWebhook,
+            IBotApiPoller fakePoller)
+        {
+            logger.LogDebug($"[print start #{c}]*******************************");
+            logger.LogDebug($"client: [{fakeClient.ComponentState.State}] {fakeClient.ComponentState.Description}");
+            logger.LogDebug($"endpoint: [{_botApiEndpoints.First().ComponentState.State}] {_botApiEndpoints.First().ComponentState.Description}");
+            logger.LogDebug($"webhook: [{fakeWebhook.ComponentState.State}] {fakeWebhook.ComponentState.Description} whInfo: '{fakeWebhook.WebhookInfo?.Url}', {fakeWebhook.WebhookInfo?.Date}");
+            logger.LogDebug($"poller: [{fakePoller.ComponentState.State}] {fakePoller.ComponentState.Description}");
+            logger.LogDebug($"*******************************[print end #{c}]");
+            c++;
+        }
+        /*todo: REMOVE*/
+
+        private static void ApplicationStopping(ILogger logger)
+        {
+            logger.LogInformation("Cat stopping...");
+        }
+
+        private static void ApplicationStopped(ILogger logger)
+        {
+            logger.LogInformation("Cat stopped!");
+        }
+    }
+
+
+
 }

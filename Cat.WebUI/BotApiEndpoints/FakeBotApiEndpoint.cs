@@ -23,13 +23,13 @@ namespace Cat.WebUI.BotApiEndpoints
         public override void RegisterEndpoint()
         {
             base.RegisterEndpoint();
-            _logger.LogDebug("TODO log registered"); // todo: apply single text format convention for all Fake Bot API components log messages
+            _logger.LogInformation("Fake Bot API Endpoint registered.");
         }
 
         public override void UnregisterEndpoint()
         {
             base.UnregisterEndpoint();
-            _logger.LogDebug("TODO log unregistered"); // todo: apply single text format convention for all Fake Bot API components log messages
+            _logger.LogInformation("Fake Bot API Endpoint unregistered.");
         }
 
         public class Factory : BotApiEndpointBase.FactoryBase<FakeBotApiEndpoint>

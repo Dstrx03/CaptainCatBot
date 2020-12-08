@@ -5,6 +5,5 @@ namespace Cat.Domain
     {
         void RegisterEndpoint();
         void UnregisterEndpoint();
-        // todo: ControllerPath, EnpointPath properties?
     }
 }

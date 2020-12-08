@@ -7,5 +7,6 @@ namespace Cat.Domain
         Task RegisterClientAsync();
         Task UnregisterClientAsync();
         TOperationalClient OperationalClient { get; }
+        bool CanConsumeOperationalClient { get; }
     }
 }
