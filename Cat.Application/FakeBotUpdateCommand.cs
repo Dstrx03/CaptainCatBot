@@ -2,10 +2,46 @@
 using System.Threading.Tasks;
 using Cat.Domain;
 using MediatR;
+using Microsoft.Extensions.Logging;
 
 namespace Cat.Application
 {
-    public class FakeBotUpdateCommand : IRequest
+    // todo: remove *************************************************************
+    public interface ISomeInterface : IBotUpdateCommand<FakeBotUpdate> { }
+
+    public class SomeUpdate
+    {
+        public string Msg { get; set; }
+    }
+
+    public class SomeCommand : IRequest /*IBotUpdateCommand<SomeUpdate>*/
+    {
+        public SomeCommand(string msg)
+        {
+            Update = new SomeUpdate { Msg = msg };
+        }
+
+        public SomeUpdate Update { get; set; }
+    }
+
+    public class SomeCommandHandler : IRequestHandler<SomeCommand>
+    {
+        private ILogger<SomeCommandHandler> _logger;
+
+        public SomeCommandHandler(ILogger<SomeCommandHandler> logger)
+        {
+            _logger = logger;
+        }
+
+        public Task<Unit> Handle(SomeCommand request, CancellationToken cancellationToken)
+        {
+            _logger.LogTrace($"*** SomeCommandHandler - Msg:{request?.Update.Msg}");
+            return Task.FromResult(Unit.Value);
+        }
+    }
+    // todo: remove *************************************************************
+
+    public class FakeBotUpdateCommand : ISomeInterface /*IBotUpdateCommand<FakeBotUpdate>*/
     {
         public FakeBotUpdateCommand(FakeBotUpdate update)
         {
@@ -15,32 +51,11 @@ namespace Cat.Application
         public FakeBotUpdate Update { get; set; }
     }
 
-    public class FakeBotUpdateCommandHandler : IRequestHandler<FakeBotUpdateCommand>
+    public class FakeBotUpdateCommandHandler : BotUpdateCommandHandlerBase<FakeBotUpdateCommand, FakeBotUpdate>
     {
-        private readonly BotUpdateProcessor _updateProcessor;
-        private readonly IBotUpdateContextFactory<FakeBotUpdate> _updateContextFactory;
-        private readonly IBotUpdateValidator<FakeBotUpdate> _updateValidator;
-
-        public FakeBotUpdateCommandHandler(BotUpdateProcessor updateProcessor, IBotUpdateContextFactory<FakeBotUpdate> updateContextFactory, IBotUpdateValidator<FakeBotUpdate> updateValidator)
+        public FakeBotUpdateCommandHandler(BotUpdateProcessor updateProcessor, IBotUpdateContextFactory<FakeBotUpdate> updateContextFactory) 
+            : base(updateProcessor, updateContextFactory)
         {
-            _updateProcessor = updateProcessor;
-            _updateContextFactory = updateContextFactory;
-            _updateValidator = updateValidator;
-        }
-
-        public async Task<Unit> Handle(FakeBotUpdateCommand request, CancellationToken cancellationToken)
-        {
-            //????????????????????????????????????????????????????????????????
-            if (!await _updateValidator.ValidateUpdateAsync(request.Update))
-            {
-                return Unit.Value;
-            }
-            //????????????????????????????????????????????????????????????????
-
-            // todo: this code is probably will be the same for each implementation of bot update command, move it to abstract class?
-            var updateContext = _updateContextFactory.CreateContext(request.Update);
-            await _updateProcessor.ProcessUpdateAsync(updateContext);
-            return Unit.Value;
         }
     }
 }
