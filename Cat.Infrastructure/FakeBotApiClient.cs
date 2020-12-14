@@ -12,7 +12,7 @@ namespace Cat.Infrastructure
 
         // todo: ============== move to separate fake component/IOptions<>? ==============
         private string _token = "SLMX4ga5.t84Q";
-        private bool _emulateRecurrentExceptions = true;
+        private bool _emulateRecurrentExceptions = /*true*/false;
         private int _recurrentExceptionDifficultyClass = 17;
         private TimeSpan _webhookUpdatesTimerInterval = TimeSpan.FromSeconds(10);
         private bool _emulateConflictingWebhookUrl = false;

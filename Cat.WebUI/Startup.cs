@@ -128,8 +128,8 @@ namespace Cat.WebUI
             {
                 botApiEndpoint.RegisterEndpoint();
             }
-            await fakeWebhook.RegisterWebhookAsync();
-            fakePoller.RegisterPoller();
+            //await fakeWebhook.RegisterWebhookAsync();
+            //fakePoller.RegisterPoller();
             // todo: ===========================================================
 
             PrintSmth(logger, fakeClient, botApiEndpoints, fakeWebhook, fakePoller);
