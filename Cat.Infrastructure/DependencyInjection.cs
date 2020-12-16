@@ -15,6 +15,7 @@ namespace Cat.Infrastructure
     {
         public static IServiceCollection AddInfrastructure(this IServiceCollection services)
         {
+            services.AddTransient<IBotUpdatePreProcessor<FakeBotUpdate>, FakeBotUpdatePreProcessor>();
             services.AddTransient<IBotUpdateContextFactory<FakeBotUpdate>, FakeBotUpdateContextFactory>();
 
             services.AddTransient<FakeBotApiSender>();

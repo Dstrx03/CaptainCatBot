@@ -1,8 +1,8 @@
-﻿using System;
+﻿using Cat.Domain;
+using MediatR;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
-using MediatR;
-using Microsoft.Extensions.Logging;
 
 namespace Cat.Application
 {
@@ -10,18 +10,24 @@ namespace Cat.Application
         where TRequest : IBotUpdateCommand<TUpdate>
     {
         private readonly IServiceProvider _serviceProvider;
-        private readonly ILogger<BotUpdatePipelineBehavior<TRequest, TUpdate>> _logger;
 
-        public BotUpdatePipelineBehavior(IServiceProvider serviceProvider, ILogger<BotUpdatePipelineBehavior<TRequest, TUpdate>> logger)
+        public BotUpdatePipelineBehavior(IServiceProvider serviceProvider)
         {
             _serviceProvider = serviceProvider;
-            _logger = logger;
         }
 
-        public Task<Unit> Handle(TRequest request, CancellationToken cancellationToken, RequestHandlerDelegate<Unit> next)
+        public async Task<Unit> Handle(TRequest request, CancellationToken cancellationToken, RequestHandlerDelegate<Unit> next)
         {
-            _logger.LogTrace($"*** PipelineBehavior - TRequest:{typeof(TRequest).FullName} TUpdate:{typeof(TUpdate).FullName}");
-            return next();
+            // todo: validation?
+
+            var updatePreProcessor = (IBotUpdatePreProcessor<TUpdate>)_serviceProvider.GetService(typeof(IBotUpdatePreProcessor<TUpdate>));
+            if (updatePreProcessor != null && updatePreProcessor.PreProcessingIsRequired(request.Update))
+            {
+                var shortCircuit = await updatePreProcessor.PreProcessUpdateAsync(request.Update);
+                if (shortCircuit) return Unit.Value;
+            }
+
+            return await next();
         }
     }
 }

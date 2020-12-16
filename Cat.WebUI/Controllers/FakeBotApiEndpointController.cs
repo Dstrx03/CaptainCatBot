@@ -5,12 +5,6 @@ namespace Cat.WebUI.Controllers
 {
     public class FakeBotApiEndpointController : BotApiEndpointControllerBase<FakeBotUpdate, Task>
     {
-        //public override async Task Update(FakeBotUpdate update) => await Mediator.Send(new FakeBotUpdateCommand(update));
-
-        public override async Task Update(FakeBotUpdate update) // todo: remove
-        {
-            await Mediator.Send(new FakeBotUpdateCommand(update));
-            await Mediator.Send(new SomeCommand(update.Message));
-        }
+        public override Task Update(FakeBotUpdate update) => Mediator.Send(new FakeBotUpdateCommand(update));
     }
 }

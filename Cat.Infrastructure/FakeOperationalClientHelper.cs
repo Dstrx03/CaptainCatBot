@@ -288,6 +288,11 @@ namespace Cat.Infrastructure
         public void ConfirmWebhookUrlValidationToken(string validationToken, string webhookUrl)
         {
             _webhookUrlValidationTokensDictionary.TryAdd(validationToken, webhookUrl);
+            Task.Run(async () =>
+            {
+                await Task.Delay((int) TimeSpan.FromMinutes(1).TotalMilliseconds); // todo: maybe there is a better alternative to Task.Delay?
+                _webhookUrlValidationTokensDictionary.TryRemove(validationToken, out _);
+            });
         }
 
         private async Task ValidateWebhookUrlAsync(string webhookUrl)
