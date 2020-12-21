@@ -140,11 +140,12 @@ namespace Cat.Infrastructure
         {
             try
             {
-                WebhookInfo = await _botApiClient.ConsumeOperationalClientAsync(_ => _.GetWebhookInfoAsync(), () =>
-                {
-                    nonConsumableClientHandlingAction?.Invoke();
-                    return Task.FromResult<FakeWebhookInfo>(null);
-                });
+                WebhookInfo = await _botApiClient.ConsumeOperationalClientAsync(
+                    _ => _.GetWebhookInfoAsync(), 
+                    () => { 
+                        nonConsumableClientHandlingAction?.Invoke();
+                        return Task.FromResult<FakeWebhookInfo>(null);
+                    });
                 _unknownWebhookInfo = WebhookInfo == null;
             }
             catch (Exception e)
@@ -167,7 +168,7 @@ namespace Cat.Infrastructure
             }
             else if (IsIncorrectInternalState && !BotApiComponentState.IsUnknown(this))
             {
-                var errorMessage = IncorrectInternalStateErrorMessage(messagesConfiguration.initialOperationName);
+                var errorMessage = GetIncorrectInternalStateErrorMessage(messagesConfiguration.initialOperationName);
                 ComponentState = BotApiComponentState.CreateError(errorMessage);
                 _logger.LogError($"{errorMessage}{Environment.NewLine}{InternalStateDetailsMessage()}");
             }
@@ -211,7 +212,7 @@ namespace Cat.Infrastructure
             _logger.LogError(errorMessage);
         }
 
-        private string IncorrectInternalStateErrorMessage(string operationName)
+        private string GetIncorrectInternalStateErrorMessage(string operationName) // todo: name?
         {
             string errorDetails = null;
             if (IsIncorrectWebhookInfoState)
