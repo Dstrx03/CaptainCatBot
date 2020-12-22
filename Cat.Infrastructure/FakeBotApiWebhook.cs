@@ -100,8 +100,8 @@ namespace Cat.Infrastructure
         public async Task UpdateWebhookInfoAsync()
         {
             if (!await ApplyUpdateWebhookInfoAsync(
-                "Fake Bot API Webhook update Webhook Info failed, an exception has occurred", 
-                $"Fake Bot API Webhook update Webhook Info failed, the Fake Bot API Client ({_botApiClient.ComponentState.FooBar()}) cannot be consumed.")) 
+                "Fake Bot API Webhook update Webhook Info failed, an exception has occurred",
+                $"Fake Bot API Webhook update Webhook Info failed, the Fake Bot API Client ({_botApiClient.ComponentState.FooBar()}) cannot be consumed."))
                 return;
 
             ApplyComponentStateUpdate(bypassAppliedNonErrorUpdate: true, ("update Webhook Info", specifyOperationName: true));
@@ -140,12 +140,11 @@ namespace Cat.Infrastructure
         {
             try
             {
-                WebhookInfo = await _botApiClient.ConsumeOperationalClientAsync(
-                    _ => _.GetWebhookInfoAsync(), 
-                    () => { 
-                        nonConsumableClientHandlingAction?.Invoke();
-                        return Task.FromResult<FakeWebhookInfo>(null);
-                    });
+                WebhookInfo = await _botApiClient.ConsumeOperationalClientAsync(_ => _.GetWebhookInfoAsync(), () =>
+                {
+                    nonConsumableClientHandlingAction?.Invoke();
+                    return Task.FromResult<FakeWebhookInfo>(null);
+                });
                 _unknownWebhookInfo = WebhookInfo == null;
             }
             catch (Exception e)
@@ -176,19 +175,19 @@ namespace Cat.Infrastructure
             {
                 if (bypassAppliedNonErrorUpdate && BotApiComponentState.IsRegistered(this)) return;
                 ComponentState = BotApiComponentState.CreateRegistered();
-                var errorMessage = !messagesConfiguration.specifyOperationName ? 
-                    "Fake Bot API Webhook registered." : 
+                var message = !messagesConfiguration.specifyOperationName ?
+                    "Fake Bot API Webhook registered." :
                     $"Fake Bot API Webhook registered by the {messagesConfiguration.initialOperationName} operation.";
-                _logger.LogInformation(errorMessage);
+                _logger.LogInformation(message);
             }
             else if (IsUnregisteredByInternalState)
             {
                 if (bypassAppliedNonErrorUpdate && BotApiComponentState.IsUnregistered(this)) return;
                 ComponentState = BotApiComponentState.CreateUnregistered();
-                var errorMessage = !messagesConfiguration.specifyOperationName ? 
-                    "Fake Bot API Webhook unregistered." : 
+                var message = !messagesConfiguration.specifyOperationName ?
+                    "Fake Bot API Webhook unregistered." :
                     $"Fake Bot API Webhook unregistered by the {messagesConfiguration.initialOperationName} operation.";
-                _logger.LogInformation(errorMessage);
+                _logger.LogInformation(message);
             }
         }
 
@@ -219,9 +218,9 @@ namespace Cat.Infrastructure
                 errorDetails = "The Webhook Info data is incorrect or outdated.";
             else if (PersistentButUrlIsNotArranged)
                 // todo: null/empty formatting implemented in unified logs formatting component
-                errorDetails = $"The mode is persistent while Webhook Info url ({(WebhookInfo != null ? WebhookInfo.Url.Bar() : "*null*")}) do not match the actual webhook url ({_webhookUrl.Bar()}).";
+                errorDetails = $"The mode is persistent while Webhook Info URL ({(WebhookInfo != null ? WebhookInfo.Url.Bar() : "*null*")}) do not match the actual webhook URL ({_webhookUrl.Bar()}).";
             else if (NotPersistentButUrlIsArranged)
-                errorDetails = $"The mode is non-persistent while Webhook Info url ({(WebhookInfo != null ? WebhookInfo.Url.Bar() : "*null*")}) do match the actual webhook url ({_webhookUrl.Bar()}).";
+                errorDetails = $"The mode is non-persistent while Webhook Info URL ({(WebhookInfo != null ? WebhookInfo.Url.Bar() : "*null*")}) do match the actual webhook URL ({_webhookUrl.Bar()}).";
 
             return $"Fake Bot API Webhook {operationName} failed, internal state is incorrect: {errorDetails}";
         }
@@ -231,8 +230,8 @@ namespace Cat.Infrastructure
                 ("Persistent mode", _persistentMode),
                 ("Webhook Info is unknown", _unknownWebhookInfo),
                 ("Webhook Info is null", WebhookInfo == null),
-                ("Webhook url", _webhookUrl.Bar()),
-                ("Webhook Info url", WebhookInfo != null ? WebhookInfo.Url.Bar() : "*null*"),
+                ("Webhook URL", _webhookUrl.Bar()),
+                ("Webhook Info URL", WebhookInfo != null ? WebhookInfo.Url.Bar() : "*null*"),
                 ("...", "*empty*") // todo: null/empty formatting implemented in unified logs formatting component
             });
 

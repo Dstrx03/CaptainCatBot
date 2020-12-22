@@ -112,6 +112,38 @@ namespace Cat.Infrastructure
             set => _settings.ConflictingWebhookUrlDifficultyClass = value;
         }
 
+        #region Helper common methods
+
+        public bool IsTokenValid(string token)
+        {
+            if (string.IsNullOrEmpty(token)) return false;
+            string hashedFakeToken = null;
+            using (var sha256Hash = SHA256.Create())
+            {
+                var bytes = sha256Hash.ComputeHash(Encoding.UTF8.GetBytes(token.Trim()));
+                var builder = new StringBuilder();
+                for (var i = 0; i < bytes.Length; i++)
+                {
+                    builder.Append(bytes[i].ToString("x2"));
+                }
+                hashedFakeToken = builder.ToString();
+            }
+            return SecretFakeToken == hashedFakeToken;
+        }
+
+        public bool RandomBoolean(int difficultyClass)
+        {
+            if (difficultyClass > 20) difficultyClass = 20;
+            if (difficultyClass < 1) difficultyClass = 1;
+            var roll = _random.Next(1, 21);
+            if (roll == 1) return false;
+            return roll >= difficultyClass;
+        }
+
+        #endregion
+
+        #region Webhook
+
         public async Task SetWebhookAsync(string webhookUrl)
         {
             await ValidateWebhookUrlAsync(webhookUrl);
@@ -135,7 +167,9 @@ namespace Cat.Infrastructure
             _webhookUrl = null;
         }
 
-        #region Webhook Updates private methods
+        #endregion
+
+        #region Webhook Updates
 
         private async void HandlePostWebhookUpdatesCallback(object state)
         {
@@ -155,16 +189,16 @@ namespace Cat.Infrastructure
 
         private void ApplyWebhookUpdatesTimerInterval(bool stopWebhookUpdatesTimer = false)
         {
-            if (!stopWebhookUpdatesTimer) _webhookUpdatesTimer.Change(0, (int)_settings.WebhookUpdatesTimerInterval.TotalMilliseconds);
+            if (!stopWebhookUpdatesTimer) _webhookUpdatesTimer.Change(TimeSpan.Zero, WebhookUpdatesTimerInterval);
             else _webhookUpdatesTimer.Change(Timeout.Infinite, Timeout.Infinite);
             _webhookUpdatesTimerIsRunning = !stopWebhookUpdatesTimer;
         }
 
         private bool EmulateFakeConflictingWebhookUrl()
         {
-            if (!_settings.EmulateConflictingWebhookUrl ||
+            if (!EmulateConflictingWebhookUrl ||
                 (DateTime.Now - _lastConflictingWebhookUrlTimeoutReset).TotalSeconds < _conflictingWebhookUrlTimeoutSeconds ||
-                !RandomBoolean(_settings.ConflictingWebhookUrlDifficultyClass))
+                !RandomBoolean(ConflictingWebhookUrlDifficultyClass))
                 return false;
             ApplyWebhookUpdatesTimerInterval(stopWebhookUpdatesTimer: true);
             _webhookUrl = FakeConflictingWebhookUrl;
@@ -178,6 +212,8 @@ namespace Cat.Infrastructure
         }
 
         #endregion
+
+        #region Random Updates
 
         public IEnumerable<FakeBotUpdate> GenerateRandomUpdates()
         {
@@ -194,8 +230,6 @@ namespace Cat.Infrastructure
             RandomUpdatesResetTimeout();
             return updates;
         }
-
-        #region Random Updates private methods
 
         private void RandomUpdatesResetTimeout()
         {
@@ -259,38 +293,19 @@ namespace Cat.Infrastructure
 
         #endregion
 
-        public bool IsTokenValid(string token)
-        {
-            if (string.IsNullOrEmpty(token)) return false;
-            string hashedFakeToken = null;
-            using (var sha256Hash = SHA256.Create())
-            {
-                var bytes = sha256Hash.ComputeHash(Encoding.UTF8.GetBytes(token.Trim()));
-                var builder = new StringBuilder();
-                for (var i = 0; i < bytes.Length; i++)
-                {
-                    builder.Append(bytes[i].ToString("x2"));
-                }
-                hashedFakeToken = builder.ToString();
-            }
-            return SecretFakeToken == hashedFakeToken;
-        }
-
-        public bool RandomBoolean(int difficultyClass)
-        {
-            if (difficultyClass > 20) difficultyClass = 20;
-            if (difficultyClass < 1) difficultyClass = 1;
-            var roll = _random.Next(1, 21);
-            if (roll == 1) return false;
-            return roll >= difficultyClass;
-        }
+        #region Webhook URL validation
 
         public void ConfirmWebhookUrlValidationToken(string validationToken, string webhookUrl)
         {
             _webhookUrlValidationTokensDictionary.TryAdd(validationToken, webhookUrl);
+            EnsureWebhookUrlValidationTokenReleased(validationToken);
+        }
+
+        private void EnsureWebhookUrlValidationTokenReleased(string validationToken)
+        {
             Task.Run(async () =>
             {
-                await Task.Delay((int) TimeSpan.FromMinutes(1).TotalMilliseconds); // todo: maybe there is a better alternative to Task.Delay?
+                await Task.Delay(_webhookUrlValidationTimeout); // todo: maybe there is a better alternative to Task.Delay?
                 _webhookUrlValidationTokensDictionary.TryRemove(validationToken, out _);
             });
         }
@@ -300,35 +315,46 @@ namespace Cat.Infrastructure
             var validationToken = string.Empty;
             try
             {
-                if (string.IsNullOrEmpty(webhookUrl) || string.IsNullOrWhiteSpace(webhookUrl))
-                    throw new ArgumentNullException(nameof(webhookUrl), "Webhook url cannot be null, empty or whitespace.");
-
-                validationToken = Guid.NewGuid().ToString();
-                var validationUpdate = new FakeBotUpdate { ValidationToken = validationToken };
-                HttpResponseMessage response;
-                using (var cts = new CancellationTokenSource((int)_webhookUrlValidationTimeout.TotalMilliseconds))
-                {
-                    response = await HttpClient.PostAsync(webhookUrl, CreateUpdateStringContent(validationUpdate), cts.Token);
-                }
-
-                _webhookUrlValidationTokensDictionary.TryGetValue(validationToken, out var storedWebhookUrl);
-
-                if (response.StatusCode != HttpStatusCode.OK)
-                    throw new InvalidOperationException($"The server responded with an unacceptable status ({response.StatusCode:D} {response.StatusCode:G})."); // todo: HTTP status codes formatting
-                if (storedWebhookUrl == null)
-                    throw new InvalidOperationException($"The validation token ({validationToken.Bar()}) was not confirmed.");
-                if (!string.Equals(storedWebhookUrl, webhookUrl, StringComparison.InvariantCultureIgnoreCase))
-                    throw new InvalidOperationException($"The url ({storedWebhookUrl.Bar()}) provided at confirmation of the validation token do not match the webhook url.");
+                validationToken = await GenerateConfirmedWebhookUrlValidationTokenAsync(webhookUrl);
             }
             catch (Exception e)
             {
-                throw new ArgumentException($"The provided webhook url ({webhookUrl.Bar()}) is invalid.", e);
+                throw new ArgumentException($"The provided webhook URL ({webhookUrl.Bar()}) is invalid.", e);
             }
             finally
-            { 
+            {
                 _webhookUrlValidationTokensDictionary.TryRemove(validationToken, out _);
             }
         }
+
+        private async Task<string> GenerateConfirmedWebhookUrlValidationTokenAsync(string webhookUrl)
+        {
+            if (string.IsNullOrEmpty(webhookUrl) || string.IsNullOrWhiteSpace(webhookUrl))
+                throw new ArgumentNullException(nameof(webhookUrl), "Webhook URL cannot be null, empty or whitespace.");
+
+            var validationToken = Guid.NewGuid().ToString();
+            var confirmationResponse = await RequestWebhookUrlValidationTokenConfirmationAsync(webhookUrl, validationToken);
+
+            _webhookUrlValidationTokensDictionary.TryGetValue(validationToken, out var storedWebhookUrl);
+
+            if (confirmationResponse.StatusCode != HttpStatusCode.OK)
+                throw new InvalidOperationException($"The server responded with an unacceptable status ({confirmationResponse.StatusCode:D} {confirmationResponse.StatusCode:G})."); // todo: HTTP status codes formatting
+            if (storedWebhookUrl == null)
+                throw new InvalidOperationException($"The validation token ({validationToken.Bar()}) was not confirmed.");
+            if (!string.Equals(storedWebhookUrl, webhookUrl, StringComparison.InvariantCultureIgnoreCase))
+                throw new InvalidOperationException($"The URL ({storedWebhookUrl.Bar()}) provided at confirmation of the validation token do not match the webhook URL.");
+
+            return validationToken;
+        }
+
+        private async Task<HttpResponseMessage> RequestWebhookUrlValidationTokenConfirmationAsync(string webhookUrl, string validationToken)
+        {
+            var confirmationRequestUpdate = new FakeBotUpdate { ValidationToken = validationToken };
+            using var cts = new CancellationTokenSource((int)_webhookUrlValidationTimeout.TotalMilliseconds);
+            return await HttpClient.PostAsync(webhookUrl, CreateUpdateStringContent(confirmationRequestUpdate), cts.Token);
+        }
+
+        #endregion
 
         private StringContent CreateUpdateStringContent(FakeBotUpdate update) =>
             new StringContent(JsonSerializer.Serialize(update, _serializerOptions), Encoding.UTF8, "application/json");

@@ -38,7 +38,7 @@ namespace Cat.Infrastructure
         public Task<bool> ValidateClientAsync()
         {
             EmulateFakeRecurrentException();
-            return Task.FromResult(_helper.IsTokenValid(_settings.Token));
+            return Task.FromResult(_helper.IsTokenValid(Token));
         }
 
         public Task SendFakeMessageAsync(string message)
@@ -94,14 +94,14 @@ namespace Cat.Infrastructure
 
         private void EmulateFakeRecurrentException()
         {
-            if (_settings.EmulateRecurrentExceptions && _helper.RandomBoolean(_settings.RecurrentExceptionDifficultyClass))
+            if (EmulateRecurrentExceptions && _helper.RandomBoolean(RecurrentExceptionDifficultyClass))
                 throw new FakeOperationalClientEmulatedException();
         }
 
         private void CheckFakeTokenValidity()
         {
-            if (!_helper.IsTokenValid(_settings.Token))
-                throw new InvalidOperationException($"Operation cannot be executed due to the provided token ({_settings.Token.Bar()}) is invalid.");
+            if (!_helper.IsTokenValid(Token))
+                throw new InvalidOperationException($"Operation cannot be executed due to the provided token ({Token.Bar()}) is invalid.");
         }
 
         #endregion

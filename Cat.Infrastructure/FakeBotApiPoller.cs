@@ -1,11 +1,11 @@
-﻿using System;
-using System.Linq;
+﻿using Cat.Application;
 using Cat.Domain;
+using MediatR;
 using Microsoft.Extensions.Logging;
+using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Cat.Application;
-using MediatR;
 
 namespace Cat.Infrastructure
 {
@@ -32,7 +32,7 @@ namespace Cat.Infrastructure
         {
             if (_botApiClient.CanConsumeOperationalClient)
             {
-                _updatesPollingTimer.Change(0, (int)_timerInterval.TotalMilliseconds);
+                _updatesPollingTimer.Change(TimeSpan.Zero, _timerInterval);
                 ComponentState = BotApiComponentState.CreateRegistered();
                 _logger.LogInformation("Fake Bot API Poller registered.");
             }
@@ -54,7 +54,7 @@ namespace Cat.Infrastructure
         protected override Task SendUpdateCommand(FakeBotUpdate update) =>
             _mediator.Send(new FakeBotUpdateCommand(update));
 
-        private async void HandleUpdatesPollingCallback(object state) => 
+        private async void HandleUpdatesPollingCallback(object state) =>
             await PollUpdatesAsync();
 
         private async Task PollUpdatesAsync()
