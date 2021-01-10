@@ -26,11 +26,12 @@ namespace Cat.Infrastructure
             return services;
         }
 
-        public static ILoggerFactory AddLogging(this ILoggerFactory loggerFactory)
+        public static ILoggingBuilder AddLogging(this ILoggingBuilder builder)
         {
             // todo: decide where to keep log4net.config file
-            loggerFactory.AddLog4Net();
-            return loggerFactory;
+            builder.ClearProviders();
+            builder.AddLog4Net();
+            return builder;
         }
     }
 }

@@ -1,5 +1,5 @@
-﻿using System.Threading.Tasks;
-using Cat.Application;
+﻿using Cat.Application;
+using System.Threading.Tasks;
 
 namespace Cat.WebUI.Controllers
 {

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Cat.Application;
 using Microsoft.Extensions.Logging;
@@ -121,6 +122,13 @@ namespace Cat.Infrastructure
             if (source == null) return "*null*";
             if (string.IsNullOrEmpty(source) || string.IsNullOrWhiteSpace(source)) return "*empty*";
             return source;
+        }
+
+        public static string BarEnumerable<T>(this IEnumerable<T> source)
+        {
+            if (source == null) return "*null*";
+            if (!source.Any()) return "*empty*";
+            return null;
         }
     }
 }

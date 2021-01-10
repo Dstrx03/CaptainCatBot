@@ -1,43 +1,39 @@
-﻿using System.Threading.Tasks;
-using Cat.WebUI.BotApiEndpoints;
+﻿using Cat.WebUI.BotApiEndpointRouting;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
+using System.Threading.Tasks;
 
 namespace Cat.WebUI.Middlewares
 {
     public class BotApiEndpointRoutingMiddleware
     {
         private readonly RequestDelegate _next;
-        private readonly BotApiEndpointRoutingService _botApiEndpointRoutingService;
+        private readonly BotApiEndpointRoutingService _routingService;
+        private readonly BotApiEndpointRoutingPathFormatUtils _routingPathFormatUtils;
 
-        public BotApiEndpointRoutingMiddleware(RequestDelegate next, BotApiEndpointRoutingService botApiEndpointRoutingService)
+        public BotApiEndpointRoutingMiddleware(RequestDelegate next, BotApiEndpointRoutingService routingService, BotApiEndpointRoutingPathFormatUtils routingPathFormatUtils)
         {
             _next = next;
-            _botApiEndpointRoutingService = botApiEndpointRoutingService;
+            _routingService = routingService;
+            _routingPathFormatUtils = routingPathFormatUtils;
         }
 
         public async Task InvokeAsync(HttpContext context)
         {
-            var pathNormalized = GetNormalizedRequestPath(context);
+            var pathNormalized = _routingPathFormatUtils.GetNormalizedRequestPath(context);
 
-            if (_botApiEndpointRoutingService.IsControllerPath(pathNormalized))
+            if (_routingService.IsControllerPath(pathNormalized))
             {
                 context.Response.StatusCode = 405; // todo: graceful handling
                 return;
             }
 
-            if (_botApiEndpointRoutingService.IsEndpointPath(pathNormalized, out var controllerPath))
+            if (_routingService.IsEndpointPath(pathNormalized, out var controllerPath))
             {
                 context.Request.Path = controllerPath;
             }
 
             await _next(context);
-        }
-
-        private string GetNormalizedRequestPath(HttpContext context)
-        {
-            var path = context.Request.Path.ToUriComponent().ToUpperInvariant();
-            return path.EndsWith('/') && path.Length > 1 ? path.Substring(0, path.Length - 1) : path;
         }
     }
 

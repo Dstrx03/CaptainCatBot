@@ -51,7 +51,7 @@ namespace Cat.Infrastructure
 
         #endregion
 
-        private static readonly HttpClient HttpClient = new HttpClient();
+        private static readonly HttpClient HttpClient = new HttpClient(); // todo: try (consider) to use IHttpClientFactory for HttpClients instantiation!
 
         private readonly Random _random = new Random(Guid.NewGuid().GetHashCode());
         private readonly JsonSerializerOptions _serializerOptions = new JsonSerializerOptions

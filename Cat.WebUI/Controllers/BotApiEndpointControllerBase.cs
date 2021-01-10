@@ -1,14 +1,15 @@
-﻿using System.Threading.Tasks;
+﻿using Cat.WebUI.BotApiEndpointRouting;
 using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
 
 namespace Cat.WebUI.Controllers
 {
     // todo: routing, concrete area for Bot API Endpoint Controllers
     [ApiController]
-    [Route("api/[controller]")]
+    [Route(BotApiEndpointRoutingPathFormatUtils.BasePathTemplate)]
     public abstract class BotApiEndpointControllerBase<TUpdate, TUpdateResult> : MediatorController where TUpdateResult : Task
     {
-        public const string PathTemplateUpdate = "/api/[controller]/Update";
+        public const string UpdatePathTemplate = BotApiEndpointRoutingPathFormatUtils.BasePathTemplate + "/Update";
 
         [HttpPost]
         [Route("update")]

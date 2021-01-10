@@ -1,9 +1,7 @@
-using System.Collections.Generic;
-using System.Linq;
 using Cat.Application;
 using Cat.Domain;
 using Cat.Infrastructure;
-using Cat.WebUI.BotApiEndpoints;
+using Cat.WebUI.BotApiEndpointRouting;
 using Cat.WebUI.Middlewares;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -12,6 +10,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Cat.WebUI
 {
@@ -32,8 +32,10 @@ namespace Cat.WebUI
             services.AddInfrastructure();
 
             // todo: use extension method
-            services.AddSingleton<BotApiEndpointBase, FakeBotApiEndpoint>(new FakeBotApiEndpoint.Factory().Create);
             services.AddSingleton<BotApiEndpointRoutingService>();
+            services.AddSingleton<BotApiEndpointRoutingPathFormatUtils>();
+            services.AddTransient<BotApiEndpointRoutingPathFactory>();
+            services.AddSingleton<BotApiEndpointBase, FakeBotApiEndpoint>(new FakeBotApiEndpoint.Factory().Create);
             // todo: ==========================
 
             services.AddControllersWithViews();
@@ -49,8 +51,6 @@ namespace Cat.WebUI
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IHostApplicationLifetime applicationLifetime, ILoggerFactory loggerFactory
         /*TODO: REMOVE!*/, IEnumerable<BotApiEndpointBase> botApiEndpoints, FakeBotApiClient fakeClient, FakeBotApiWebhook fakeWebhook, FakeBotApiPoller fakePoller/*TODO: REMOVE!*/)
         {
-            loggerFactory.AddLogging(); // todo: maybe there are better place for Logging registration?
-
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -77,7 +77,7 @@ namespace Cat.WebUI
                     name: "default",
                     pattern: "{controller}/{action=Index}/{id?}");
             });
-            
+
             app.UseSpa(spa =>
             {
                 // To learn more about options for serving an Angular SPA from ASP.NET Core,
@@ -96,10 +96,10 @@ namespace Cat.WebUI
     }
 
 
-    
+
     internal static class FooBar // todo: name, location & design
     {
-        internal static IHostApplicationLifetime Foo(this IHostApplicationLifetime applicationLifetime, 
+        internal static IHostApplicationLifetime Foo(this IHostApplicationLifetime applicationLifetime,
             ILogger logger,
             IBotApiClient<FakeOperationalClient> fakeClient,
             IList<BotApiEndpointBase> botApiEndpoints,
@@ -114,9 +114,9 @@ namespace Cat.WebUI
         }
 
         private static async void ApplicationStarted(ILogger logger,
-            IBotApiClient<FakeOperationalClient> fakeClient, 
-            IList<BotApiEndpointBase> botApiEndpoints, 
-            IBotApiRevisableWebhook<FakeWebhookInfo> fakeWebhook, 
+            IBotApiClient<FakeOperationalClient> fakeClient,
+            IList<BotApiEndpointBase> botApiEndpoints,
+            IBotApiRevisableWebhook<FakeWebhookInfo> fakeWebhook,
             IBotApiPoller fakePoller)
         {
             logger.LogInformation("Cat started!");

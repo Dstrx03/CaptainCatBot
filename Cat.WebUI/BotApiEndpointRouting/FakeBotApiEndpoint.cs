@@ -1,22 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-using Cat.WebUI.Controllers;
+﻿using Cat.WebUI.Controllers;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using System;
 
-namespace Cat.WebUI.BotApiEndpoints
+namespace Cat.WebUI.BotApiEndpointRouting
 {
     public class FakeBotApiEndpoint : BotApiEndpointBase
     {
         private readonly ILogger<FakeBotApiEndpoint> _logger;
 
-        private FakeBotApiEndpoint(BotApiEndpointRoutingService botApiEndpointRoutingService, ILogger<FakeBotApiEndpoint> logger) : base(botApiEndpointRoutingService)
+        private FakeBotApiEndpoint(IServiceProvider serviceProvider, BotApiEndpointRoutingService routingService, ILogger<FakeBotApiEndpoint> logger) :
+            base(serviceProvider, routingService)
         {
             _logger = logger;
-            SetRoutingPaths(new List<(string, string, string)>
+            SetRoutingPaths(new[]
             {
                 // todo: remove hardcoded EnpointPath value, it should be taken from specialized component with URL/path/route composition/management responsibility
-                (FakeBotApiEndpointController.PathTemplateUpdate, typeof(FakeBotApiEndpointController).Name, "/FakeBotApiEndpoint")
+                (FakeBotApiEndpointController.UpdatePathTemplate, nameof(FakeBotApiEndpointController), "/FakeBotApiEndpoint"),
             });
         }
 
@@ -36,9 +36,9 @@ namespace Cat.WebUI.BotApiEndpoints
         {
             protected override FakeBotApiEndpoint CreateInstance(IServiceProvider serviceProvider)
             {
-                var botApiEndpointRoutingService = serviceProvider.GetRequiredService<BotApiEndpointRoutingService>();
+                var routingService = serviceProvider.GetRequiredService<BotApiEndpointRoutingService>();
                 var logger = serviceProvider.GetRequiredService<ILogger<FakeBotApiEndpoint>>();
-                return new FakeBotApiEndpoint(botApiEndpointRoutingService, logger);
+                return new FakeBotApiEndpoint(serviceProvider, routingService, logger);
             }
         }
     }
