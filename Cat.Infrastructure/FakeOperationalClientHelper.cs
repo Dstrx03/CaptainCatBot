@@ -330,7 +330,7 @@ namespace Cat.Infrastructure
         private async Task<string> GenerateConfirmedWebhookUrlValidationTokenAsync(string webhookUrl)
         {
             if (string.IsNullOrEmpty(webhookUrl) || string.IsNullOrWhiteSpace(webhookUrl))
-                throw new ArgumentNullException(nameof(webhookUrl), "Webhook URL cannot be null, empty or whitespace.");
+                throw new ArgumentException("Webhook URL cannot be null, empty or whitespace.");
 
             var validationToken = Guid.NewGuid().ToString();
             var confirmationResponse = await RequestWebhookUrlValidationTokenConfirmationAsync(webhookUrl, validationToken);

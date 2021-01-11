@@ -66,9 +66,9 @@ namespace Cat.WebUI.BotApiEndpointRouting
             private void CheckCreatedInstance(TBotApiEndpoint instance)
             {
                 if (instance == null)
-                    throw new Exception($"{typeof(TBotApiEndpoint).Name} instance was not provided by the responsible factory.");
+                    throw new InvalidBotApiEndpointException($"{typeof(TBotApiEndpoint).Name} instance was not provided by the responsible factory.");
                 if (instance.RoutingPaths == null || !instance.RoutingPaths.Any())
-                    throw new Exception($"{typeof(TBotApiEndpoint).Name}'s Routing Paths was not correctly set during the creation of the instance (Routing Paths collection is {instance.RoutingPaths.BarEnumerable()}), please use {nameof(instance.SetRoutingPaths)} method to set Routing Paths.");
+                    throw new InvalidBotApiEndpointException($"{typeof(TBotApiEndpoint).Name}'s Routing Paths was not correctly set during the creation of the instance (Routing Paths collection is {instance.RoutingPaths.BarEnumerable()}), please use {nameof(instance.SetRoutingPaths)} method to set Routing Paths.");
             }
         }
     }

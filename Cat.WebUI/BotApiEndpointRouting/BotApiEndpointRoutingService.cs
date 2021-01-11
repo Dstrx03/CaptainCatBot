@@ -75,9 +75,9 @@ namespace Cat.WebUI.BotApiEndpointRouting
         private void CheckBotApiEndpointRoutingPathsConsistency(BotApiEndpointBase botApiEndpoint)
         {
             if (botApiEndpoint == null)
-                throw new Exception($"{nameof(botApiEndpoint)} parameter cannot be null."); // todo: ArgumentNullException without a message here is a nice fit?
+                throw new ArgumentNullException(nameof(botApiEndpoint));
             if (botApiEndpoint.RoutingPaths == null || !botApiEndpoint.RoutingPaths.Any())
-                throw new Exception($"{botApiEndpoint.GetType().Name}'s Routing Paths collection cannot be null or empty.");
+                throw new InvalidBotApiEndpointException($"{botApiEndpoint.GetType().Name}'s Routing Paths collection cannot be null or empty.");
 
             var processedEndpointPathsSet = new HashSet<string>();
             var processedControllerPathsSet = new HashSet<string>();
@@ -92,29 +92,29 @@ namespace Cat.WebUI.BotApiEndpointRouting
         private void CheckRoutingPathValuesFormat(BotApiEndpointRoutingPath routingPath, BotApiEndpointBase botApiEndpoint)
         {
             if (!RoutingPathValuesAreNotNull(routingPath))
-                throw new Exception($"{botApiEndpoint.GetType().Name}'s Routing Path cannot have values that is null ({routingPath.Details()}).");
+                throw new InvalidBotApiEndpointRoutingPathException($"{botApiEndpoint.GetType().Name}'s Routing Path cannot have values that is null ({routingPath.Details()}).");
 
             if (!_routingPathFormatUtils.ControllerPathIsInCorrectFormat(routingPath.ControllerPath))
-                throw new Exception($"{botApiEndpoint.GetType().Name}'s Controller Path is not in a correct format ({routingPath.ControllerPath}).");
+                throw new InvalidBotApiEndpointRoutingPathFormatException($"{botApiEndpoint.GetType().Name}'s Controller Path is not in a correct format ({routingPath.ControllerPath}).");
             if (!_routingPathFormatUtils.EndpointPathIsInCorrectFormat(routingPath.EndpointPath))
-                throw new Exception($"{botApiEndpoint.GetType().Name}'s Endpoint Path is not in a correct format ({routingPath.EndpointPath}).");
+                throw new InvalidBotApiEndpointRoutingPathFormatException($"{botApiEndpoint.GetType().Name}'s Endpoint Path is not in a correct format ({routingPath.EndpointPath}).");
 
             if (!RoutingPathValuesAreNormalized(routingPath))
-                throw new Exception($"{botApiEndpoint.GetType().Name}'s Routing Path have values that is not normalized ({routingPath.Details()}).");
+                throw new InvalidBotApiEndpointRoutingPathFormatException($"{botApiEndpoint.GetType().Name}'s Routing Path have values that is not normalized ({routingPath.Details()}).");
         }
 
         private void CheckEndpointPathsIsDistinct(BotApiEndpointRoutingPath routingPath, HashSet<string> processedEndpointPathsSet, BotApiEndpointBase botApiEndpoint)
         {
             var endpointPathsIsDistinct = processedEndpointPathsSet.Add(routingPath.EndpointPathNormalized);
             if (!endpointPathsIsDistinct)
-                throw new Exception($"{botApiEndpoint.GetType().Name}'s Routing Paths collection cannot contain repeating Endpoint Paths ({routingPath.EndpointPath}).");
+                throw new InvalidBotApiEndpointRoutingPathException($"{botApiEndpoint.GetType().Name}'s Routing Paths collection cannot contain repeating Endpoint Paths ({routingPath.EndpointPath}).");
         }
 
         private void CheckControllerPathIsConsumable(BotApiEndpointRoutingPath routingPath, HashSet<string> processedControllerPathsSet, BotApiEndpointBase botApiEndpoint)
         {
             if (processedControllerPathsSet.Add(routingPath.ControllerPathNormalized) &&
                 !_routingPathFormatUtils.ControllerPathMatchesConsumableControllerActionRoute(routingPath.ControllerPathNormalized))
-                throw new Exception($"{botApiEndpoint.GetType().Name}'s Controller Path ({routingPath.ControllerPath}) do not match any consumable controller action route.");
+                throw new InvalidBotApiEndpointRoutingPathException($"{botApiEndpoint.GetType().Name}'s Controller Path ({routingPath.ControllerPath}) do not match any consumable controller action route.");
         }
 
         private void CheckBotApiEndpointRoutingPathsIsNotPresentedByOtherEndpoint(BotApiEndpointBase botApiEndpoint)
@@ -124,10 +124,10 @@ namespace Cat.WebUI.BotApiEndpointRouting
             {
                 if (processedControllerPathsSet.Add(routingPath.ControllerPathNormalized) &&
                     ControllerPathIsAlreadyPresentedByOtherEndpoint(routingPath.ControllerPathNormalized, botApiEndpoint))
-                    throw new Exception($"{botApiEndpoint.GetType().Name}'s Routing Paths collection cannot contain Controller Path ({routingPath.ControllerPath}) that is already presented by other endpoint.");
+                    throw new InvalidBotApiEndpointRoutingPathException($"{botApiEndpoint.GetType().Name}'s Routing Paths collection cannot contain Controller Path ({routingPath.ControllerPath}) that is already presented by other endpoint.");
 
                 if (EndpointPathIsAlreadyPresentedByOtherEndpoint(routingPath.EndpointPathNormalized, botApiEndpoint))
-                    throw new Exception($"{botApiEndpoint.GetType().Name}'s Routing Paths collection cannot contain Endpoint Path ({routingPath.EndpointPath}) that is already presented by other endpoint.");
+                    throw new InvalidBotApiEndpointRoutingPathException($"{botApiEndpoint.GetType().Name}'s Routing Paths collection cannot contain Endpoint Path ({routingPath.EndpointPath}) that is already presented by other endpoint.");
             }
         }
 
