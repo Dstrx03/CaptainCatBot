@@ -25,30 +25,30 @@ namespace Cat.Domain
 
         #region Registered
 
-        public static BotApiComponentState CreateRegistered(string description = null) => 
+        public static BotApiComponentState CreateRegistered(string description = null) =>
             new BotApiComponentState(Value.Registered, description);
 
-        public static bool IsRegistered(IBotApiComponent botApiComponent) => 
+        public static bool IsRegistered(IBotApiComponent botApiComponent) =>
             IsInState(botApiComponent, Value.Registered);
 
         #endregion
 
         #region Unregistered
 
-        public static BotApiComponentState CreateUnregistered(string description = null) => 
+        public static BotApiComponentState CreateUnregistered(string description = null) =>
             new BotApiComponentState(Value.Unregistered, description);
 
-        public static bool IsUnregistered(IBotApiComponent botApiComponent) => 
+        public static bool IsUnregistered(IBotApiComponent botApiComponent) =>
             IsInState(botApiComponent, Value.Unregistered);
 
         #endregion
 
         #region Error
 
-        public static BotApiComponentState CreateError(string description = null) => 
+        public static BotApiComponentState CreateError(string description = null) =>
             new BotApiComponentState(Value.Error, description);
 
-        public static bool IsError(IBotApiComponent botApiComponent) => 
+        public static bool IsError(IBotApiComponent botApiComponent) =>
             IsInState(botApiComponent, Value.Error);
 
         #endregion
@@ -58,22 +58,14 @@ namespace Cat.Domain
         public static BotApiComponentState CreateUnknown(string description = null) =>
             new BotApiComponentState(Value.Unknown, description);
 
-        public static bool IsUnknown(IBotApiComponent botApiComponent) => 
+        public static bool IsUnknown(IBotApiComponent botApiComponent) =>
             IsInState(botApiComponent, Value.Unknown);
 
         #endregion
 
-        private static bool IsInState(IBotApiComponent botApiComponent, Value state) => 
+        private static bool IsInState(IBotApiComponent botApiComponent, Value state) =>
             botApiComponent.ComponentState.State == state;
 
         #endregion
-    }
-
-    public static class BotApiComponentStateExtensions // todo: names, place & design for extension methods
-    {
-        public static string FooBar(this BotApiComponentState source) // todo: formatting components
-        {
-            return string.IsNullOrEmpty(source.Description) ? source.State.ToString() : $"{source.State} - {source.Description}";
-        }
     }
 }

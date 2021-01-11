@@ -2,7 +2,6 @@
 using Cat.Domain;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Cat.Infrastructure
@@ -217,40 +216,20 @@ namespace Cat.Infrastructure
             if (IsIncorrectWebhookInfoState)
                 errorDetails = "The Webhook Info data is incorrect or outdated.";
             else if (PersistentButUrlIsNotArranged)
-                // todo: null/empty formatting implemented in unified logs formatting component
-                errorDetails = $"The mode is persistent while Webhook Info URL ({(WebhookInfo != null ? WebhookInfo.Url.Bar() : "*null*")}) do not match the actual webhook URL ({_webhookUrl.Bar()}).";
+                errorDetails = $"The mode is persistent while Webhook Info URL ({WebhookInfo.BarBar(_ => _.Url)}) do not match the actual webhook URL ({_webhookUrl.Bar()}).";
             else if (NotPersistentButUrlIsArranged)
-                errorDetails = $"The mode is non-persistent while Webhook Info URL ({(WebhookInfo != null ? WebhookInfo.Url.Bar() : "*null*")}) do match the actual webhook URL ({_webhookUrl.Bar()}).";
+                errorDetails = $"The mode is non-persistent while Webhook Info URL ({WebhookInfo.BarBar(_ => _.Url)}) do match the actual webhook URL ({_webhookUrl.Bar()}).";
 
             return $"Fake Bot API Webhook {operationName} failed, internal state is incorrect: {errorDetails}";
         }
 
         private string InternalStateDetailsMessage() => // todo: name?, content
-            FooBar("Fake Bot API Webhook internal state details", new (string, object)[] {
+            TodoMsgFmtr.DetailsMessage("Fake Bot API Webhook internal state details", new (string, object)[] {
                 ("Persistent mode", _persistentMode),
                 ("Webhook Info is unknown", _unknownWebhookInfo),
                 ("Webhook Info is null", WebhookInfo == null),
                 ("Webhook URL", _webhookUrl.Bar()),
-                ("Webhook Info URL", WebhookInfo != null ? WebhookInfo.Url.Bar() : "*null*"),
-                ("...", "*empty*") // todo: null/empty formatting implemented in unified logs formatting component
+                ("Webhook Info URL", WebhookInfo.BarBar(_ => _.Url))
             });
-
-
-
-
-        public static string FooBar(string detailsTitle, (string title, object value)[] details) // todo: name, params, design, move to special logs formatting component
-        {
-            var stringBuilder = new StringBuilder($"{detailsTitle}.{Environment.NewLine}");
-            for (var i = 0; i < details.Length; i++)
-            {
-                var (title, value) = details[i];
-                stringBuilder.Append($"{null,3}{title}: {value}{(i == details.Length - 1 ? string.Empty : Environment.NewLine)}");
-            }
-            return stringBuilder.ToString();
-        }
-
-
-
-
     }
 }

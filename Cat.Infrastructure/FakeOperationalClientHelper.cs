@@ -1,4 +1,5 @@
 ﻿using Cat.Application;
+using Cat.Domain;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Concurrent;
@@ -19,7 +20,7 @@ namespace Cat.Infrastructure
         #region Const fields
 
         private const string SecretFakeToken = "0b858ebff3c55c563c4664aa8c3538763c24779b57e2742793e7f3c516156bbc"; // <= SLMX4ga5.t84Q
-        private const string FakeConflictingWebhookUrl = "*FakeConflictingWebhookUrl*"; 
+        private const string FakeConflictingWebhookUrl = "*FakeConflictingWebhookUrl*";
         private const string UpdateMessages = @"
                                     Hwæt! Wé Gárdena in géardagum þéodcyninga þrym gefrúnon·$msg_sep$
                                     hú ðá æþelingas ellen fremedon.$msg_sep$

@@ -1,9 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Cat.Application;
+﻿using Cat.Application;
+using Cat.Domain;
 using Microsoft.Extensions.Logging;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Cat.Infrastructure
 {
@@ -45,7 +45,7 @@ namespace Cat.Infrastructure
         public Task SendFakeMessageAsync(string message)
         {
             CheckClientValidity();
-            var details = FakeBotApiWebhook.FooBar("Fake message details", new (string title, object value)[] // todo: content
+            var details = TodoMsgFmtr.DetailsMessage("Fake message details", new (string title, object value)[] // todo: content
             {
                 ("Message", message)
             });
@@ -112,23 +112,6 @@ namespace Cat.Infrastructure
             public string Token { get; set; } = null;
             public bool EmulateRecurrentExceptions { get; set; } = false;
             public int RecurrentExceptionDifficultyClass { get; set; } = 17;
-        }
-    }
-
-    public static class Foo // todo: name & correct place for string extension methods
-    {
-        public static string Bar(this string source) // todo: formatting components
-        {
-            if (source == null) return "*null*";
-            if (string.IsNullOrEmpty(source) || string.IsNullOrWhiteSpace(source)) return "*empty*";
-            return source;
-        }
-
-        public static string BarEnumerable<T>(this IEnumerable<T> source)
-        {
-            if (source == null) return "*null*";
-            if (!source.Any()) return "*empty*";
-            return null;
         }
     }
 }

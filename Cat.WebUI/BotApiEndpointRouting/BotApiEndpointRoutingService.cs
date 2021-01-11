@@ -92,7 +92,7 @@ namespace Cat.WebUI.BotApiEndpointRouting
         private void CheckRoutingPathValuesFormat(BotApiEndpointRoutingPath routingPath, BotApiEndpointBase botApiEndpoint)
         {
             if (!RoutingPathValuesAreNotNull(routingPath))
-                throw new InvalidBotApiEndpointRoutingPathException($"{botApiEndpoint.GetType().Name}'s Routing Path cannot have values that is null ({routingPath.Details()}).");
+                throw new InvalidBotApiEndpointRoutingPathException($"{botApiEndpoint.GetType().Name}'s Routing Path cannot have values that is null ({routingPath/*todo: routingPath details*/}).");
 
             if (!_routingPathFormatUtils.ControllerPathIsInCorrectFormat(routingPath.ControllerPath))
                 throw new InvalidBotApiEndpointRoutingPathFormatException($"{botApiEndpoint.GetType().Name}'s Controller Path is not in a correct format ({routingPath.ControllerPath}).");
@@ -100,7 +100,7 @@ namespace Cat.WebUI.BotApiEndpointRouting
                 throw new InvalidBotApiEndpointRoutingPathFormatException($"{botApiEndpoint.GetType().Name}'s Endpoint Path is not in a correct format ({routingPath.EndpointPath}).");
 
             if (!RoutingPathValuesAreNormalized(routingPath))
-                throw new InvalidBotApiEndpointRoutingPathFormatException($"{botApiEndpoint.GetType().Name}'s Routing Path have values that is not normalized ({routingPath.Details()}).");
+                throw new InvalidBotApiEndpointRoutingPathFormatException($"{botApiEndpoint.GetType().Name}'s Routing Path have values that is not normalized ({routingPath/*todo: routingPath details*/}).");
         }
 
         private void CheckEndpointPathsIsDistinct(BotApiEndpointRoutingPath routingPath, HashSet<string> processedEndpointPathsSet, BotApiEndpointBase botApiEndpoint)
