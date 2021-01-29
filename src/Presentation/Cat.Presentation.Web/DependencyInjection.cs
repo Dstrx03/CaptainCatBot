@@ -5,10 +5,8 @@ namespace Microsoft.Extensions.DependencyInjection
 {
     public static class DependencyInjection
     {
-        public static IServiceCollection AddPresentation(this IServiceCollection services)
+        public static IServiceCollection AddPresentationWeb(this IServiceCollection services)
         {
-            services.AddPresentationBotApiEndpointRouting();
-
             services.AddBotApiEndpoint<FakeBotApiEndpoint, FakeBotApiEndpoint.Factory>();
 
             return services;

@@ -26,8 +26,9 @@ namespace Cat.Presentation.Web
         {
             services.AddDomainBotUpdates();
             services.AddApplication();
-            services.AddInfrastructure();
-            services.AddPresentation();
+            services.AddInfrastructureFake();
+            services.AddPresentationWeb();
+            services.AddPresentationBotApiEndpointRouting();
 
             services.AddHostedServicesQueued(WebHostEnvironment);
 
