@@ -62,7 +62,7 @@ namespace Cat.Presentation.BotApiEndpointRouting.Services
         }
 
         private void TryAddToPathsDictionary<TValue>(ConcurrentDictionary<string, TValue> concurrentDictionary,
-            IEnumerable<(string key, TValue value)> keysValues, BotApiComponentBase botApiEndpoint)
+            IEnumerable<(string key, TValue value)> keysValues, BotApiEndpointBase botApiEndpoint)
         {
             var processedKeysSet = new HashSet<string>();
             foreach (var (key, value) in keysValues)
@@ -71,7 +71,7 @@ namespace Cat.Presentation.BotApiEndpointRouting.Services
         }
 
         private void TryRemoveFromPathsDictionary<TValue>(ConcurrentDictionary<string, TValue> concurrentDictionary,
-            IEnumerable<string> keys, BotApiComponentBase botApiEndpoint)
+            IEnumerable<string> keys, BotApiEndpointBase botApiEndpoint)
         {
             foreach (var key in keys)
                 if (!concurrentDictionary.TryRemove(key, out _))

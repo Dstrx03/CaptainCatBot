@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace Cat.Domain.BotApiComponents.Client
 {
-    public abstract class BotApiClientBase<TOperationalClient> : BotApiComponentBase, IBotApiClient<TOperationalClient>
+    public abstract class BotApiClientBase<TOperationalClient> : BotApiStatefulComponentBase, IBotApiClient<TOperationalClient>
     {
         public abstract Task RegisterClientAsync();
         public abstract Task UnregisterClientAsync();

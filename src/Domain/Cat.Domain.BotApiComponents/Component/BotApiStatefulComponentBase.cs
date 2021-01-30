@@ -1,10 +1,12 @@
 ﻿namespace Cat.Domain.BotApiComponents.Component
 {
-    public abstract class BotApiComponentBase : IBotApiComponent
+    public abstract class BotApiStatefulComponentBase : IBotApiStatefulComponent
     {
         private BotApiComponentState _componentState;
 
         protected virtual BotApiComponentState DefaultComponentState { get; } = BotApiComponentState.CreateUnregistered();
+
+        public abstract BotApiComponentDescriptor ComponentDescriptor { get; }
 
         public BotApiComponentState ComponentState
         {

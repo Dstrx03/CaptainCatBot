@@ -1,8 +1,9 @@
-﻿using System.Threading.Tasks;
+﻿using Cat.Domain.BotApiComponents.Component;
+using System.Threading.Tasks;
 
 namespace Cat.Domain.BotApiComponents.ComponentsManager
 {
-    public interface IBotApiComponentsManager
+    public interface IBotApiComponentsManager : IBotApiComponent
     {
         Task RegisterComponentsAsync();
         Task UnregisterComponentsAsync();

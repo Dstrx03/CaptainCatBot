@@ -2,7 +2,7 @@
 
 namespace Cat.Domain.BotApiComponents.Poller
 {
-    public interface IBotApiPoller : IBotApiComponent
+    public interface IBotApiPoller : IBotApiStatefulComponent
     {
         void RegisterPoller();
         void UnregisterPoller();

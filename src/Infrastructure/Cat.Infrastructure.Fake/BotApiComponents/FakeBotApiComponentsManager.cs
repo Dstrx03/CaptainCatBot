@@ -1,4 +1,5 @@
 ﻿using Cat.Domain;
+using Cat.Domain.BotApiComponents.Component;
 using Cat.Domain.BotApiComponents.ComponentsManager;
 using Cat.Domain.BotApiComponents.Endpoint;
 using Microsoft.Extensions.Logging;
@@ -34,13 +35,17 @@ namespace Cat.Infrastructure.Fake.BotApiComponents
             RegisterAtApplicationStart = true;
         }
 
+        public BotApiComponentDescriptor ComponentDescriptor =>
+            BotApiComponentDescriptor.Fake;
+
         public bool RegisterAtApplicationStart { get; }
         public bool RegisterAtApplicationStartAfterAppHost => true;
 
         public async Task RegisterComponentsAsync()
         {
             await _botApiClient.RegisterClientAsync();
-            var botApiEndpoint = _botApiEndpoints.First();
+            var botApiEndpoint = _botApiEndpoints
+                .Single(_ => _.ComponentDescriptor == BotApiComponentDescriptor.Fake);
             botApiEndpoint.RegisterEndpoint();
             await _botApiWebhook.RegisterWebhookAsync();
             _botApiPoller.RegisterPoller();
@@ -52,7 +57,8 @@ namespace Cat.Infrastructure.Fake.BotApiComponents
         {
             _botApiPoller.UnregisterPoller();
             await _botApiWebhook.UnregisterWebhookAsync();
-            var botApiEndpoint = _botApiEndpoints.First();
+            var botApiEndpoint = _botApiEndpoints
+                .Single(_ => _.ComponentDescriptor == BotApiComponentDescriptor.Fake);
             botApiEndpoint.UnregisterEndpoint();
             await _botApiClient.UnregisterClientAsync();
 

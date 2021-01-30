@@ -1,4 +1,5 @@
 ﻿using Cat.Domain;
+using Cat.Domain.BotApiComponents.Component;
 using Cat.Domain.BotApiComponents.Sender;
 using Cat.Infrastructure.Fake.BotApiComponents.OperationalClient;
 using Microsoft.Extensions.Logging;
@@ -17,6 +18,9 @@ namespace Cat.Infrastructure.Fake.BotApiComponents
             _logger = logger;
             _botApiClient = botApiClient;
         }
+
+        public BotApiComponentDescriptor ComponentDescriptor =>
+            BotApiComponentDescriptor.Fake;
 
         public Task SendMessageAsync(string message) => HandlingConsumeOperationalClientAsync(_ => _.SendFakeMessageAsync(message), "SendMessageAsync");
 

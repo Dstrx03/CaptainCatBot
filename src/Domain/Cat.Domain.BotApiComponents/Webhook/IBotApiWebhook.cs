@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 namespace Cat.Domain.BotApiComponents.Webhook
 {
-    public interface IBotApiWebhook<TWebhookInfo> : IBotApiComponent
+    public interface IBotApiWebhook<TWebhookInfo> : IBotApiStatefulComponent
     {
         Task RegisterWebhookAsync();
         Task UnregisterWebhookAsync();

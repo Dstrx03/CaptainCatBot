@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Cat.Infrastructure.Fake.BotApiComponents
 {
-    public class FakeBotApiWebhook : BotApiComponentBase, IBotApiRevisableWebhook<FakeWebhookInfo>
+    public class FakeBotApiWebhook : BotApiStatefulComponentBase, IBotApiRevisableWebhook<FakeWebhookInfo>
     {
         private readonly ILogger<FakeBotApiWebhook> _logger;
         private readonly FakeBotApiClient _botApiClient;
@@ -29,6 +29,9 @@ namespace Cat.Infrastructure.Fake.BotApiComponents
             _persistentMode = false;
             _unknownWebhookInfo = false;
         }
+
+        public override BotApiComponentDescriptor ComponentDescriptor =>
+            BotApiComponentDescriptor.Fake;
 
         private bool WebhookInfoIsUnknown => _unknownWebhookInfo && WebhookInfo == null;
         private bool WebhookUrlIsArranged => string.Equals(WebhookInfo?.Url, _webhookUrl, StringComparison.InvariantCultureIgnoreCase);

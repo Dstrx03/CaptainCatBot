@@ -11,7 +11,7 @@ using System.Linq;
 
 namespace Cat.Presentation.BotApiEndpointRouting.BotApiComponents
 {
-    public abstract class BotApiEndpointBase : BotApiComponentBase, IBotApiEndpoint
+    public abstract class BotApiEndpointBase : BotApiStatefulComponentBase, IBotApiEndpoint
     {
         private readonly IServiceProvider _serviceProvider;
         private readonly BotApiEndpointRoutingService _routingService;

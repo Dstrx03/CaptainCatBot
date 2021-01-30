@@ -35,6 +35,9 @@ namespace Cat.Infrastructure.Fake.BotApiComponents
             _fakeOperationalClientHelper = new FakeOperationalClientHelper(fakeOperationalClientHelperSettings, operationalClientLogger);
         }
 
+        public override BotApiComponentDescriptor ComponentDescriptor =>
+            BotApiComponentDescriptor.Fake;
+
         public override async Task RegisterClientAsync()
         {
             try

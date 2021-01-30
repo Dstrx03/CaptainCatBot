@@ -27,7 +27,7 @@
         public static BotApiComponentState CreateRegistered(string description = null) =>
             new BotApiComponentState(Value.Registered, description);
 
-        public static bool IsRegistered(IBotApiComponent botApiComponent) =>
+        public static bool IsRegistered(IBotApiStatefulComponent botApiComponent) =>
             IsInState(botApiComponent, Value.Registered);
 
         #endregion
@@ -37,7 +37,7 @@
         public static BotApiComponentState CreateUnregistered(string description = null) =>
             new BotApiComponentState(Value.Unregistered, description);
 
-        public static bool IsUnregistered(IBotApiComponent botApiComponent) =>
+        public static bool IsUnregistered(IBotApiStatefulComponent botApiComponent) =>
             IsInState(botApiComponent, Value.Unregistered);
 
         #endregion
@@ -47,7 +47,7 @@
         public static BotApiComponentState CreateError(string description = null) =>
             new BotApiComponentState(Value.Error, description);
 
-        public static bool IsError(IBotApiComponent botApiComponent) =>
+        public static bool IsError(IBotApiStatefulComponent botApiComponent) =>
             IsInState(botApiComponent, Value.Error);
 
         #endregion
@@ -57,12 +57,12 @@
         public static BotApiComponentState CreateUnknown(string description = null) =>
             new BotApiComponentState(Value.Unknown, description);
 
-        public static bool IsUnknown(IBotApiComponent botApiComponent) =>
+        public static bool IsUnknown(IBotApiStatefulComponent botApiComponent) =>
             IsInState(botApiComponent, Value.Unknown);
 
         #endregion
 
-        private static bool IsInState(IBotApiComponent botApiComponent, Value state) =>
+        private static bool IsInState(IBotApiStatefulComponent botApiComponent, Value state) =>
             botApiComponent.ComponentState.State == state;
 
         #endregion

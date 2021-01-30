@@ -30,6 +30,9 @@ namespace Cat.Infrastructure.Fake.BotApiComponents
             _updatesPollingTimer = new Timer(HandleUpdatesPollingCallback, null, Timeout.Infinite, Timeout.Infinite);
         }
 
+        public override BotApiComponentDescriptor ComponentDescriptor =>
+            BotApiComponentDescriptor.Fake;
+
         public override void RegisterPoller()
         {
             if (_botApiClient.CanConsumeOperationalClient)

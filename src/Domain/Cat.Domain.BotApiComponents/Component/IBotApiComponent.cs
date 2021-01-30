@@ -2,6 +2,6 @@
 {
     public interface IBotApiComponent
     {
-        BotApiComponentState ComponentState { get; }
+        BotApiComponentDescriptor ComponentDescriptor { get; }
     }
 }

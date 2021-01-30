@@ -1,4 +1,5 @@
-﻿using Cat.Presentation.BotApiEndpointRouting.BotApiComponents;
+﻿using Cat.Domain.BotApiComponents.Component;
+using Cat.Presentation.BotApiEndpointRouting.BotApiComponents;
 using Cat.Presentation.BotApiEndpointRouting.Services;
 using Cat.Presentation.Web.Controllers.BotApiEndpointRouting;
 using Microsoft.Extensions.DependencyInjection;
@@ -21,6 +22,9 @@ namespace Cat.Presentation.Web.BotApiComponents
                 (FakeBotApiEndpointController.UpdatePathTemplate, nameof(FakeBotApiEndpointController), "/FakeBotApiEndpoint"),
             });
         }
+
+        public override BotApiComponentDescriptor ComponentDescriptor =>
+            BotApiComponentDescriptor.Fake;
 
         public override void RegisterEndpoint()
         {
