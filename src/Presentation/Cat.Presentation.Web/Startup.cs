@@ -1,4 +1,4 @@
-using Cat.Infrastructure.Services;
+using Cat.Infrastructure.BotApiComponents;
 using Cat.Presentation.BotApiEndpointRouting.Middlewares;
 using Cat.Presentation.BotApiEndpointRouting.Services;
 using Microsoft.AspNetCore.Builder;
@@ -24,11 +24,10 @@ namespace Cat.Presentation.Web
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDomainBotUpdates();
-            services.AddApplication();
-            services.AddInfrastructureFake();
-            services.AddPresentationWeb();
-            services.AddPresentationBotApiEndpointRouting();
+            services.AddDomainLayer();
+            services.AddApplicationLayer();
+            services.AddInfrastructureLayer();
+            services.AddPresentationLayer();
 
             services.AddHostedServicesQueued(WebHostEnvironment);
 
@@ -86,13 +85,46 @@ namespace Cat.Presentation.Web
 
     internal static class StartupExtensions
     {
+        internal static IServiceCollection AddDomainLayer(this IServiceCollection services)
+        {
+            services.AddDomainBotUpdates();
+
+            return services;
+        }
+
+        internal static IServiceCollection AddApplicationLayer(this IServiceCollection services)
+        {
+            services.AddApplication();
+
+            return services;
+        }
+
+        internal static IServiceCollection AddInfrastructureLayer(this IServiceCollection services)
+        {
+            services.AddInfrastructure();
+            services.AddInfrastructureFake();
+
+            return services;
+        }
+
+        internal static IServiceCollection AddPresentationLayer(this IServiceCollection services)
+        {
+            services.AddPresentationWeb();
+            services.AddPresentationBotApiEndpointRouting();
+
+            return services;
+        }
+
         internal static IServiceCollection AddHostedServicesQueued(this IServiceCollection services, IWebHostEnvironment webHostEnvironment)
         {
             services.AddBotApiEndpointRoutingInitializer(configuration =>
             {
                 configuration.CheckControllersCovered = webHostEnvironment.IsDevelopment();
             });
-            services.AddHostedService<BotApiComponentsLifetimeManager>();
+            services.AddBotApiComponentsLifetimeManager(configuration =>
+            {
+                configuration.CheckComponentsSetup = webHostEnvironment.IsDevelopment();
+            });
 
             return services;
         }

@@ -4,6 +4,6 @@
     {
         None = 0,
         Fake = 1001,
-        Telegram = 1002,
+        //Telegram = 1002,
     }
 }

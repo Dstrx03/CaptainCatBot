@@ -8,7 +8,7 @@ using System.Text.RegularExpressions;
 
 namespace Cat.Presentation.BotApiEndpointRouting.Services
 {
-    public class BotApiEndpointRoutingPathFormatUtils
+    public class BotApiEndpointRoutingPathFormatUtils // todo: get rid of singleton lifetime?
     {
         public const string ControllerNamingConventionToken = "Controller";
         public const string ControllerTemplateToken = "[controller]";

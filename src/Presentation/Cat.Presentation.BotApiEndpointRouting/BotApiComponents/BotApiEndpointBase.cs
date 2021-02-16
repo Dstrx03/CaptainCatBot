@@ -79,13 +79,12 @@ namespace Cat.Presentation.BotApiEndpointRouting.BotApiComponents
 
     public static class BotApiEndpointBaseExtensions
     {
-        public static IServiceCollection AddBotApiEndpoint<TBotApiEndpoint, TBotApiEndpointFactory>(this IServiceCollection services)
-            where TBotApiEndpoint : BotApiEndpointBase
-            where TBotApiEndpointFactory : BotApiEndpointBase.FactoryBase<TBotApiEndpoint>, new()
+        public static IServiceCollection AddBotApiEndpoint<TBotApiEndpointImplementation, TBotApiEndpointFactory>(this IServiceCollection services)
+            where TBotApiEndpointImplementation : BotApiEndpointBase
+            where TBotApiEndpointFactory : BotApiEndpointBase.FactoryBase<TBotApiEndpointImplementation>, new()
         {
-            services.AddSingleton(new TBotApiEndpointFactory().Create);
-            services.AddSingleton<IBotApiEndpoint, TBotApiEndpoint>(_ => _.GetRequiredService<TBotApiEndpoint>());
-            services.AddSingleton<BotApiEndpointBase, TBotApiEndpoint>(_ => _.GetRequiredService<TBotApiEndpoint>());
+            services.AddBotApiComponent(new TBotApiEndpointFactory().Create);
+            services.AddSingleton<BotApiEndpointBase, TBotApiEndpointImplementation>(_ => _.GetRequiredService<TBotApiEndpointImplementation>());
 
             return services;
         }

@@ -20,7 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Cat.Infrastructure.Fake\Cat.Infrastructure.Fake.csproj" />
+    <ProjectReference Include="..\..\Domain\Cat.Domain.BotApiComponents\Cat.Domain.BotApiComponents.csproj" />
   </ItemGroup>
 
   <ItemGroup>

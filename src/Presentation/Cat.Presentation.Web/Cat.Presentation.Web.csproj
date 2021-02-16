@@ -25,7 +25,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Application\Cat.Application\Cat.Application.csproj" />
-    <ProjectReference Include="..\..\Domain\Cat.Domain.BotUpdates\Cat.Domain.BotUpdates.csproj" />
+    <ProjectReference Include="..\..\Infrastructure\Cat.Infrastructure.Fake\Cat.Infrastructure.Fake.csproj" />
     <ProjectReference Include="..\..\Infrastructure\Cat.Infrastructure\Cat.Infrastructure.csproj" />
     <ProjectReference Include="..\Cat.Presentation.BotApiEndpointRouting\Cat.Presentation.BotApiEndpointRouting.csproj" />
   </ItemGroup>

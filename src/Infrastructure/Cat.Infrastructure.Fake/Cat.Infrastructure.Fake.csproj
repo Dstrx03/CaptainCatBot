@@ -6,7 +6,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Application\Cat.Application\Cat.Application.csproj" />
-    <ProjectReference Include="..\..\Domain\Cat.Domain.BotUpdates\Cat.Domain.BotUpdates.csproj" />
+    <ProjectReference Include="..\..\Domain\Cat.Domain.BotApiComponents\Cat.Domain.BotApiComponents.csproj" />
   </ItemGroup>
 
   <ItemGroup>

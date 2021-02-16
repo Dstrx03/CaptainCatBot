@@ -1,10 +1,9 @@
 ﻿using Cat.Domain;
 using Cat.Domain.BotApiComponents.Component;
+using Cat.Domain.BotApiComponents.ComponentsLocator;
 using Cat.Domain.BotApiComponents.ComponentsManager;
 using Cat.Domain.BotApiComponents.Endpoint;
 using Microsoft.Extensions.Logging;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Cat.Infrastructure.Fake.BotApiComponents
@@ -13,56 +12,47 @@ namespace Cat.Infrastructure.Fake.BotApiComponents
     {
         private readonly ILogger<FakeBotApiComponentsManager> _logger;
 
-        private readonly FakeBotApiClient _botApiClient;
-        private readonly IEnumerable<IBotApiEndpoint> _botApiEndpoints;
-        private readonly FakeBotApiWebhook _botApiWebhook;
-        private readonly FakeBotApiPoller _botApiPoller;
-
-        public FakeBotApiComponentsManager(
-            ILogger<FakeBotApiComponentsManager> logger,
-            FakeBotApiClient botApiClient,
-            IEnumerable<IBotApiEndpoint> botApiEndpoints,
-            FakeBotApiWebhook botApiWebhook,
-            FakeBotApiPoller botApiPoller)
+        public FakeBotApiComponentsManager(ILogger<FakeBotApiComponentsManager> logger)
         {
             _logger = logger;
-
-            _botApiClient = botApiClient;
-            _botApiEndpoints = botApiEndpoints;
-            _botApiWebhook = botApiWebhook;
-            _botApiPoller = botApiPoller;
-
-            RegisterAtApplicationStart = true;
         }
 
         public BotApiComponentDescriptor ComponentDescriptor =>
             BotApiComponentDescriptor.Fake;
 
-        public bool RegisterAtApplicationStart { get; }
+        public bool RegisterAtApplicationStart => true;
         public bool RegisterAtApplicationStartAfterAppHost => true;
 
-        public async Task RegisterComponentsAsync()
+        public async Task RegisterComponentsAsync(IBotApiComponentsLocator botApiComponentsLocator)
         {
-            await _botApiClient.RegisterClientAsync();
-            var botApiEndpoint = _botApiEndpoints
-                .Single(_ => _.ComponentDescriptor == BotApiComponentDescriptor.Fake);
-            botApiEndpoint.RegisterEndpoint();
-            await _botApiWebhook.RegisterWebhookAsync();
-            _botApiPoller.RegisterPoller();
+            // todo: implement components management via Strategy pattern
 
-            _logger.LogDebug(GetComponentsDetailsString("FakeBotApiComponentsManager Register completed", _botApiClient, botApiEndpoint, _botApiWebhook, _botApiPoller));
+            var botApiClient = botApiComponentsLocator.GetComponentByDescriptor<FakeBotApiClient>(ComponentDescriptor);
+            var botApiEndpoint = botApiComponentsLocator.GetComponentByDescriptor<IBotApiEndpoint>(ComponentDescriptor);
+            var botApiWebhook = botApiComponentsLocator.GetComponentByDescriptor<FakeBotApiWebhook>(ComponentDescriptor);
+            var botApiPoller = botApiComponentsLocator.GetComponentByDescriptor<FakeBotApiPoller>(ComponentDescriptor);
+
+            await botApiClient.RegisterClientAsync();
+            botApiEndpoint.RegisterEndpoint();
+            await botApiWebhook.RegisterWebhookAsync();
+            botApiPoller.RegisterPoller();
+
+            _logger.LogDebug(GetComponentsDetailsString("FakeBotApiComponentsManager RegisterComponentsAsync completed", botApiClient, botApiEndpoint, botApiWebhook, botApiPoller));
         }
 
-        public async Task UnregisterComponentsAsync()
+        public async Task UnregisterComponentsAsync(IBotApiComponentsLocator botApiComponentsLocator)
         {
-            _botApiPoller.UnregisterPoller();
-            await _botApiWebhook.UnregisterWebhookAsync();
-            var botApiEndpoint = _botApiEndpoints
-                .Single(_ => _.ComponentDescriptor == BotApiComponentDescriptor.Fake);
-            botApiEndpoint.UnregisterEndpoint();
-            await _botApiClient.UnregisterClientAsync();
+            var botApiClient = botApiComponentsLocator.GetComponentByDescriptor<FakeBotApiClient>(ComponentDescriptor);
+            var botApiEndpoint = botApiComponentsLocator.GetComponentByDescriptor<IBotApiEndpoint>(ComponentDescriptor);
+            var botApiWebhook = botApiComponentsLocator.GetComponentByDescriptor<FakeBotApiWebhook>(ComponentDescriptor);
+            var botApiPoller = botApiComponentsLocator.GetComponentByDescriptor<FakeBotApiPoller>(ComponentDescriptor);
 
-            _logger.LogDebug(GetComponentsDetailsString("FakeBotApiComponentsManager Unregister completed", _botApiClient, botApiEndpoint, _botApiWebhook, _botApiPoller));
+            botApiPoller.UnregisterPoller();
+            await botApiWebhook.UnregisterWebhookAsync();
+            botApiEndpoint.UnregisterEndpoint();
+            await botApiClient.UnregisterClientAsync();
+
+            _logger.LogDebug(GetComponentsDetailsString("FakeBotApiComponentsManager UnregisterComponentsAsync completed", botApiClient, botApiEndpoint, botApiWebhook, botApiPoller));
         }
 
         private string GetComponentsDetailsString(string title, FakeBotApiClient botApiClient, IBotApiEndpoint botApiEndpoint, FakeBotApiWebhook botApiWebhook, FakeBotApiPoller botApiPoller) =>
