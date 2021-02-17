@@ -19,7 +19,7 @@ namespace Cat.Presentation.Web.BotApiComponents
             SetRoutingPaths(new[]
             {
                 // todo: remove hardcoded EnpointPath value, it should be taken from specialized component with URL/path/route composition/management responsibility
-                (FakeBotApiEndpointController.UpdatePathTemplate, nameof(FakeBotApiEndpointController), "/FakeBotApiEndpoint"),
+                (FakeBotApiEndpointController.UpdatePathTemplate, nameof(FakeBotApiEndpointController), "/FakeBotApiEndpoint", true),
             });
         }
 

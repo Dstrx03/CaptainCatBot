@@ -1,4 +1,5 @@
-﻿using Cat.Domain.BotApiComponents.Component;
+﻿using Cat.Domain;
+using Cat.Domain.BotApiComponents.Component;
 using Cat.Presentation.BotApiEndpointRouting.BotApiComponents;
 using Cat.Presentation.BotApiEndpointRouting.Exceptions;
 using Cat.Presentation.BotApiEndpointRouting.ValueObjects;
@@ -86,11 +87,14 @@ namespace Cat.Presentation.BotApiEndpointRouting.Services
                 throw new InvalidBotApiEndpointException($"{botApiEndpoint.GetType().Name}'s Routing Paths collection cannot be null or empty.");
 
             var processedEndpointPathsSet = new HashSet<string>();
+            var webhookUrlEndpointPathsSet = new HashSet<string>();
             var processedControllerPathsSet = new HashSet<string>();
+
             foreach (var routingPath in botApiEndpoint.RoutingPaths)
             {
                 CheckRoutingPathValuesFormat(routingPath, botApiEndpoint);
                 CheckEndpointPathsIsDistinct(routingPath, processedEndpointPathsSet, botApiEndpoint);
+                CheckRoutingPathsHaveSingleWebhookUrlPath(routingPath, webhookUrlEndpointPathsSet, botApiEndpoint);
                 CheckControllerPathIsConsumable(routingPath, processedControllerPathsSet, botApiEndpoint);
             }
         }
@@ -114,6 +118,15 @@ namespace Cat.Presentation.BotApiEndpointRouting.Services
             var endpointPathsIsDistinct = processedEndpointPathsSet.Add(routingPath.EndpointPathNormalized);
             if (!endpointPathsIsDistinct)
                 throw new InvalidBotApiEndpointRoutingPathException($"{botApiEndpoint.GetType().Name}'s Routing Paths collection cannot contain repeating Endpoint Paths ({routingPath.EndpointPath}).");
+        }
+
+        private void CheckRoutingPathsHaveSingleWebhookUrlPath(BotApiEndpointRoutingPath routingPath, HashSet<string> webhookUrlEndpointPathsSet, BotApiEndpointBase botApiEndpoint)
+        {
+            if (routingPath.IsWebhookUrlPath)
+                webhookUrlEndpointPathsSet.Add(routingPath.EndpointPath);
+
+            if (webhookUrlEndpointPathsSet.Count > 1)
+                throw new InvalidBotApiEndpointRoutingPathException($"{botApiEndpoint.GetType().Name} cannot have multiple Routing Paths marked as Webhook URL Path ({webhookUrlEndpointPathsSet.BarEnumerableToStrFmt()}).");
         }
 
         private void CheckControllerPathIsConsumable(BotApiEndpointRoutingPath routingPath, HashSet<string> processedControllerPathsSet, BotApiEndpointBase botApiEndpoint)

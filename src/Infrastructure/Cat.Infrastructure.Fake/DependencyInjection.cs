@@ -16,7 +16,7 @@ namespace Microsoft.Extensions.DependencyInjection
 
             services.AddBotApiComponent<FakeBotApiComponentsManager>();
             services.AddBotApiComponent<FakeBotApiClient>();
-            services.AddBotApiComponent<FakeBotApiSender>();
+            services.AddBotApiComponent<FakeBotApiSender>(); // todo: sender should use transient lifetime?
             services.AddBotApiComponent<FakeBotApiWebhook>();
             services.AddBotApiComponent<FakeBotApiPoller>();
 

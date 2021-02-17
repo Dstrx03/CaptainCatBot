@@ -15,7 +15,7 @@ namespace Cat.Presentation.BotApiEndpointRouting.Services
             _routingPathFormatUtils = routingPathFormatUtils;
         }
 
-        public BotApiEndpointRoutingPath[] Create(IEnumerable<(string controllerPathTemplate, string controllerName, string endpointPath)> pathItemsCollection, BotApiEndpointBase botApiEndpoint)
+        public BotApiEndpointRoutingPath[] Create(IEnumerable<(string controllerPathTemplate, string controllerName, string endpointPath, bool isWebhookUrlPath)> pathItemsCollection, BotApiEndpointBase botApiEndpoint)
         {
             if (botApiEndpoint == null)
                 throw new ArgumentNullException(nameof(botApiEndpoint));
@@ -34,25 +34,27 @@ namespace Cat.Presentation.BotApiEndpointRouting.Services
             return routingPathsArray;
         }
 
-        private BotApiEndpointRoutingPath CreateRoutingPath((string controllerPathTemplate, string controllerName, string endpointPath) pathItems, BotApiEndpointBase botApiEndpoint)
+        private BotApiEndpointRoutingPath CreateRoutingPath((string controllerPathTemplate, string controllerName, string endpointPath, bool isWebhookUrlPath) pathItems, BotApiEndpointBase botApiEndpoint)
         {
             CheckPathItems(pathItems, botApiEndpoint);
 
             var controllerPath = _routingPathFormatUtils.ParseControllerPathTemplate(pathItems.controllerPathTemplate, pathItems.controllerName);
             var endpointPath = pathItems.endpointPath;
+            var isWebhookUrlPath = pathItems.isWebhookUrlPath;
 
             return new BotApiEndpointRoutingPath
             {
                 ControllerPath = controllerPath,
                 ControllerPathNormalized = _routingPathFormatUtils.NormalizePath(controllerPath),
                 EndpointPath = endpointPath,
-                EndpointPathNormalized = _routingPathFormatUtils.NormalizePath(endpointPath)
+                EndpointPathNormalized = _routingPathFormatUtils.NormalizePath(endpointPath),
+                IsWebhookUrlPath = isWebhookUrlPath
             };
         }
 
-        private void CheckPathItems((string controllerPathTemplate, string controllerName, string endpointPath) pathItems, BotApiEndpointBase botApiEndpoint)
+        private void CheckPathItems((string controllerPathTemplate, string controllerName, string endpointPath, bool isWebhookUrlPath) pathItems, BotApiEndpointBase botApiEndpoint)
         {
-            var (controllerPathTemplate, controllerName, endpointPath) = pathItems;
+            var (controllerPathTemplate, controllerName, endpointPath, isWebhookUrlPath) = pathItems;
 
             if (!PathItemIsNotNullEmptyOrWhitespace(controllerPathTemplate))
                 throw new ArgumentException($"{botApiEndpoint.GetType().Name}'s Path Item ({nameof(controllerPathTemplate)}) cannot be null, empty or whitespace.");

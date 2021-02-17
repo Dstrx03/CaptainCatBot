@@ -34,7 +34,7 @@ namespace Cat.Presentation.BotApiEndpointRouting.BotApiComponents
 
         public IEnumerable<BotApiEndpointRoutingPath> RoutingPaths { get; private set; }
 
-        protected void SetRoutingPaths(IEnumerable<(string controllerPathTemplate, string controllerName, string endpointPath)> pathItemsCollection)
+        protected void SetRoutingPaths(IEnumerable<(string controllerPathTemplate, string controllerName, string endpointPath, bool isWebhookUrlPath)> pathItemsCollection)
         {
             var originalRoutingPaths = RoutingPaths;
             try
@@ -48,7 +48,7 @@ namespace Cat.Presentation.BotApiEndpointRouting.BotApiComponents
             }
         }
 
-        private void ApplyRoutingPaths(IEnumerable<(string controllerPathTemplate, string controllerName, string endpointPath)> pathItemsCollection)
+        private void ApplyRoutingPaths(IEnumerable<(string controllerPathTemplate, string controllerName, string endpointPath, bool isWebhookUrlPath)> pathItemsCollection)
         {
             using var scope = _serviceProvider.CreateScope();
             var routingPathFactory = scope.ServiceProvider.GetRequiredService<BotApiEndpointRoutingPathFactory>();
