@@ -11,7 +11,7 @@ namespace Cat.Infrastructure.Fake.BotApiComponents
     public class FakeBotApiClient : BotApiClientBase<FakeOperationalClient>, IDisposable
     {
         private readonly ILogger<FakeBotApiClient> _logger;
-        private readonly FakeOperationalClientHelper _fakeOperationalClientHelper;
+        private readonly FakeOperationalClientEmulatedState _operationalClientEmulatedState;
 
         // todo: ============== move to separate fake component/IOptions<>? ==============
         private string _token = "SLMX4ga5.t84Q";
@@ -25,14 +25,19 @@ namespace Cat.Infrastructure.Fake.BotApiComponents
         public FakeBotApiClient(ILogger<FakeBotApiClient> logger, ILogger<FakeOperationalClient> operationalClientLogger)
         {
             _logger = logger;
+            _operationalClientEmulatedState = CreateOperationalClientEmulatedState(operationalClientLogger);
+        }
 
-            var fakeOperationalClientHelperSettings = new FakeOperationalClientHelper.Settings
+        private FakeOperationalClientEmulatedState CreateOperationalClientEmulatedState(ILogger<FakeOperationalClient> operationalClientLogger)
+        {
+            var settings = new FakeOperationalClientEmulatedState.Settings
             {
                 WebhookUpdatesTimerInterval = _webhookUpdatesTimerInterval,
                 EmulateConflictingWebhookUrl = _emulateConflictingWebhookUrl,
                 ConflictingWebhookUrlDifficultyClass = _conflictingWebhookUrlDifficultyClass
             };
-            _fakeOperationalClientHelper = new FakeOperationalClientHelper(fakeOperationalClientHelperSettings, operationalClientLogger);
+            var token = new FakeOperationalClientToken(_token);
+            return new FakeOperationalClientEmulatedState(settings, token, operationalClientLogger);
         }
 
         public override BotApiComponentDescriptor ComponentDescriptor =>
@@ -48,7 +53,7 @@ namespace Cat.Infrastructure.Fake.BotApiComponents
                     EmulateRecurrentExceptions = _emulateRecurrentExceptions,
                     RecurrentExceptionDifficultyClass = _recurrentExceptionDifficultyClass
                 };
-                OperationalClient = new FakeOperationalClient(operationalClientSettings, _fakeOperationalClientHelper);
+                OperationalClient = new FakeOperationalClient(operationalClientSettings, _operationalClientEmulatedState);
                 if (!await OperationalClient.ValidateClientAsync())
                 {
                     HandleClientInitializationFailed($"Fake Bot API Client registration failed, the token ({OperationalClient.Token.Bar()}) is invalid.");
@@ -83,7 +88,7 @@ namespace Cat.Infrastructure.Fake.BotApiComponents
 
         public void Dispose()
         {
-            _fakeOperationalClientHelper?.Dispose();
+            _operationalClientEmulatedState?.Dispose();
         }
     }
 }

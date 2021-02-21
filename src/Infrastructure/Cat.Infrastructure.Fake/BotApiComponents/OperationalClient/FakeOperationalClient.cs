@@ -11,12 +11,12 @@ namespace Cat.Infrastructure.Fake.BotApiComponents.OperationalClient
     public class FakeOperationalClient
     {
         private readonly Settings _settings;
-        private readonly FakeOperationalClientHelper _helper;
+        private readonly FakeOperationalClientEmulatedState _emulatedState;
 
-        public FakeOperationalClient(Settings settings, FakeOperationalClientHelper helper)
+        public FakeOperationalClient(Settings settings, FakeOperationalClientEmulatedState emulatedState)
         {
             _settings = settings ?? new Settings();
-            _helper = helper;
+            _emulatedState = emulatedState;
         }
 
         public string Token
@@ -40,7 +40,7 @@ namespace Cat.Infrastructure.Fake.BotApiComponents.OperationalClient
         public Task<bool> ValidateClientAsync()
         {
             EmulateFakeRecurrentException();
-            return Task.FromResult(_helper.IsTokenValid(Token));
+            return Task.FromResult(_emulatedState.Token.IsTokenValid(Token));
         }
 
         public Task SendFakeMessageAsync(string message)
@@ -50,39 +50,39 @@ namespace Cat.Infrastructure.Fake.BotApiComponents.OperationalClient
             {
                 ("Message", message)
             });
-            _helper.OperationalClientLogger.LogInformation($"Fake Operational Client sending fake message...{Environment.NewLine}{details}");
+            _emulatedState.Logger.LogInformation($"Fake Operational Client sending fake message...{Environment.NewLine}{details}");
             return Task.CompletedTask;
         }
 
         public Task SetWebhookAsync(string webhookUrl)
         {
             CheckClientValidity();
-            return _helper.SetWebhookAsync(webhookUrl);
+            return _emulatedState.SetWebhookAsync(webhookUrl);
         }
 
         public Task<FakeWebhookInfo> GetWebhookInfoAsync()
         {
             CheckClientValidity();
-            return Task.FromResult(_helper.GetWebhookInfo());
+            return Task.FromResult(_emulatedState.GetWebhookInfo());
         }
 
         public Task DeleteWebhookAsync()
         {
             CheckClientValidity();
-            _helper.DeleteWebhook();
+            _emulatedState.DeleteWebhook();
             return Task.CompletedTask;
         }
 
         public Task<IEnumerable<FakeBotUpdate>> GetUpdatesAsync()
         {
             CheckClientValidity();
-            return Task.FromResult(_helper.GenerateRandomUpdates());
+            return Task.FromResult(_emulatedState.GenerateRandomUpdates());
         }
 
         public Task ConfirmWebhookUrlValidationTokenAsync(string validationToken, string webhookUrl)
         {
             CheckClientValidity();
-            _helper.ConfirmWebhookUrlValidationToken(validationToken, webhookUrl);
+            _emulatedState.ConfirmWebhookUrlValidationToken(validationToken, webhookUrl);
             return Task.CompletedTask;
         }
 
@@ -96,13 +96,13 @@ namespace Cat.Infrastructure.Fake.BotApiComponents.OperationalClient
 
         private void EmulateFakeRecurrentException()
         {
-            if (EmulateRecurrentExceptions && _helper.RandomBoolean(RecurrentExceptionDifficultyClass))
+            if (EmulateRecurrentExceptions && _emulatedState.RandomBoolean(RecurrentExceptionDifficultyClass))
                 throw new FakeOperationalClientEmulatedException();
         }
 
         private void CheckFakeTokenValidity()
         {
-            if (!_helper.IsTokenValid(Token))
+            if (!_emulatedState.Token.IsTokenValid(Token))
                 throw new InvalidOperationException($"Operation cannot be executed due to the provided token ({Token.Bar()}) is invalid.");
         }
 

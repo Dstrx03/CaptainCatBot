@@ -8,7 +8,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
-using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 using System.Threading;
@@ -16,11 +15,10 @@ using System.Threading.Tasks;
 
 namespace Cat.Infrastructure.Fake.BotApiComponents.OperationalClient
 {
-    public class FakeOperationalClientHelper : IDisposable
+    public class FakeOperationalClientEmulatedState : IDisposable
     {
         #region Const fields
 
-        private const string SecretFakeToken = "0b858ebff3c55c563c4664aa8c3538763c24779b57e2742793e7f3c516156bbc"; // <= SLMX4ga5.t84Q
         private const string FakeConflictingWebhookUrl = "*FakeConflictingWebhookUrl*";
         private const string UpdateMessages = @"
                                     Hwæt! Wé Gárdena in géardagum þéodcyninga þrym gefrúnon·$msg_sep$
@@ -76,12 +74,14 @@ namespace Cat.Infrastructure.Fake.BotApiComponents.OperationalClient
         private DateTime _lastConflictingWebhookUrlTimeoutReset;
         private int _conflictingWebhookUrlTimeoutSeconds;
 
-        public ILogger<FakeOperationalClient> OperationalClientLogger { get; }
+        public ILogger<FakeOperationalClient> Logger { get; }
+        public IFakeOperationalClientToken Token { get; }
 
-        public FakeOperationalClientHelper(Settings settings, ILogger<FakeOperationalClient> logger)
+        public FakeOperationalClientEmulatedState(Settings settings, IFakeOperationalClientToken token, ILogger<FakeOperationalClient> logger)
         {
             _settings = settings ?? new Settings();
-            OperationalClientLogger = logger;
+            Logger = logger;
+            Token = token;
             _webhookUpdatesTimer = new Timer(HandlePostWebhookUpdatesCallback, null, Timeout.Infinite, Timeout.Infinite);
             _webhookUpdatesTimerIsRunning = false;
             RandomUpdatesResetTimeout();
@@ -115,23 +115,6 @@ namespace Cat.Infrastructure.Fake.BotApiComponents.OperationalClient
         }
 
         #region Helper common methods
-
-        public bool IsTokenValid(string token)
-        {
-            if (string.IsNullOrEmpty(token)) return false;
-            string hashedFakeToken = null;
-            using (var sha256Hash = SHA256.Create())
-            {
-                var bytes = sha256Hash.ComputeHash(Encoding.UTF8.GetBytes(token.Trim()));
-                var builder = new StringBuilder();
-                for (var i = 0; i < bytes.Length; i++)
-                {
-                    builder.Append(bytes[i].ToString("x2"));
-                }
-                hashedFakeToken = builder.ToString();
-            }
-            return SecretFakeToken == hashedFakeToken;
-        }
 
         public bool RandomBoolean(int difficultyClass)
         {
@@ -185,7 +168,7 @@ namespace Cat.Infrastructure.Fake.BotApiComponents.OperationalClient
             }
             catch (Exception e)
             {
-                OperationalClientLogger.LogError($"Fake Operational Client post Webhook Updates operation failed, an exception has occurred.{Environment.NewLine}{e}");
+                Logger.LogError($"Fake Operational Client post Webhook Updates operation failed, an exception has occurred.{Environment.NewLine}{e}");
             }
         }
 
