@@ -20,40 +20,11 @@ namespace Cat.Infrastructure.Fake.BotApiComponents.OperationalClient
         #region Const fields
 
         private const string FakeConflictingWebhookUrl = "*FakeConflictingWebhookUrl*";
-        private const string UpdateMessages = @"
-                                    Hwæt! Wé Gárdena in géardagum þéodcyninga þrym gefrúnon·$msg_sep$
-                                    hú ðá æþelingas ellen fremedon.$msg_sep$
-                                    Oft Scyld Scéfing sceaþena þréatum monegum maégþum meodosetla oftéah·$msg_sep$
-                                    egsode Eorle syððan aérest wearð féasceaft funden hé þæs frófre gebád·$msg_sep$
-                                    wéox under wolcnum·$msg_sep$
-                                    weorðmyndum þáh oð þæt him aéghwylc þára ymbsittendra ofer hronráde hýran scolde, gomban gyldan·$msg_sep$
-                                    þæt wæs gód cyning.$msg_sep$
-                                    Ðaém eafera wæs æfter cenned geong in geardum þone god sende folce tó frófre·$msg_sep$
-                                    fyrenðearfe ongeat·$msg_sep$
-                                    þæt híe aér drugon aldorléase lange hwíle·$msg_sep$
-                                    him þæs líffréä wuldres wealdend woroldáre forgeaf: Béowulf wæs bréme --blaéd wíde sprang-- Scyldes eafera Scedelandum in.$msg_sep$
-                                    Swá sceal geong guma góde gewyrcean fromum feohgiftum on fæder bearme þæt hine on ylde eft gewunigen wilgesíþas þonne wíg cume·$msg_sep$
-                                    léode gelaésten: lofdaédum sceal in maégþa gehwaére man geþéön.$msg_sep$
-                                    Him ðá Scyld gewát tó gescæphwíle felahrór féran on fréan waére·$msg_sep$
-                                    hí hyne þá ætbaéron tó brimes faroðe swaése gesíþas swá hé selfa bæd þenden wordum wéold wine Scyldinga léof landfruma lange áhte·$msg_sep$
-                                    þaér æt hýðe stód hringedstefna ísig ond útfús æþelinges fær·$msg_sep$
-                                    álédon þá léofne þéoden béaga bryttan on bearm scipes maérne be mæste·$msg_sep$
-                                    þaér wæs mádma fela of feorwegum frætwa gelaéded·$msg_sep$
-                                    ne hýrde ic cýmlícor céol gegyrwan hildewaépnum ond heaðowaédum billum ond byrnum·$msg_sep$
-                                    him on bearme læg mádma mænigo þá him mid scoldon on flódes aéht feor gewítan·$msg_sep$
-                                    nalæs hí hine laéssan lácum téodan þéodgestréonum þonne þá dydon þe hine æt frumsceafte forð onsendon aénne ofer ýðe umborwesende·$msg_sep$
-                                    þá gýt híe him ásetton segen gyldenne héah ofer héafod·$msg_sep$
-                                    léton holm beran·$msg_sep$
-                                    géafon on gársecg·$msg_sep$
-                                    him wæs geómor sefa murnende mód·$msg_sep$
-                                    men ne cunnon secgan tó sóðe seleraédenne hæleð under heofenum hwá þaém hlæste onféng.                           
-                                ";
 
         #endregion
 
         private static readonly HttpClient HttpClient = new HttpClient(); // todo: try (consider) to use IHttpClientFactory for HttpClients instantiation!
 
-        private readonly Random _random = new Random(Guid.NewGuid().GetHashCode());
         private readonly JsonSerializerOptions _serializerOptions = new JsonSerializerOptions
         {
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
@@ -68,22 +39,26 @@ namespace Cat.Infrastructure.Fake.BotApiComponents.OperationalClient
 
         private string _webhookUrl;
         private DateTime _lastUpdateTimeoutReset;
-        private int _updateTimeoutSeconds;
+        private TimeSpan _updateTimeout;
         private bool _webhookUpdatesTimerIsRunning;
 
         private DateTime _lastConflictingWebhookUrlTimeoutReset;
-        private int _conflictingWebhookUrlTimeoutSeconds;
+        private TimeSpan _conflictingWebhookUrlTimeout;
 
         public ILogger<FakeOperationalClient> Logger { get; }
         public IFakeOperationalClientToken Token { get; }
+        public IFakeOperationalClientRandomUtils RandomUtils { get; }
 
         public FakeOperationalClientEmulatedState(Settings settings, IFakeOperationalClientToken token, ILogger<FakeOperationalClient> logger)
         {
             _settings = settings ?? new Settings();
             Logger = logger;
             Token = token;
+            RandomUtils = new FakeOperationalClientRandomUtils();
+
             _webhookUpdatesTimer = new Timer(HandlePostWebhookUpdatesCallback, null, Timeout.Infinite, Timeout.Infinite);
             _webhookUpdatesTimerIsRunning = false;
+
             RandomUpdatesResetTimeout();
             ConflictingWebhookUrlResetTimeout();
         }
@@ -113,19 +88,6 @@ namespace Cat.Infrastructure.Fake.BotApiComponents.OperationalClient
             get => _settings.ConflictingWebhookUrlDifficultyClass;
             set => _settings.ConflictingWebhookUrlDifficultyClass = value;
         }
-
-        #region Helper common methods
-
-        public bool RandomBoolean(int difficultyClass)
-        {
-            if (difficultyClass > 20) difficultyClass = 20;
-            if (difficultyClass < 1) difficultyClass = 1;
-            var roll = _random.Next(1, 21);
-            if (roll == 1) return false;
-            return roll >= difficultyClass;
-        }
-
-        #endregion
 
         #region Webhook
 
@@ -179,21 +141,29 @@ namespace Cat.Infrastructure.Fake.BotApiComponents.OperationalClient
             _webhookUpdatesTimerIsRunning = !stopWebhookUpdatesTimer;
         }
 
+        private bool IsTimeoutUnexpired(DateTime lastTimeoutReset, TimeSpan timeout) =>
+            (DateTime.Now - lastTimeoutReset) < timeout;
+
         private bool EmulateFakeConflictingWebhookUrl()
         {
-            if (!EmulateConflictingWebhookUrl ||
-                (DateTime.Now - _lastConflictingWebhookUrlTimeoutReset).TotalSeconds < _conflictingWebhookUrlTimeoutSeconds ||
-                !RandomBoolean(ConflictingWebhookUrlDifficultyClass))
+            if (!EmulateConflictingWebhookUrl || IsTimeoutUnexpired(_lastConflictingWebhookUrlTimeoutReset, _conflictingWebhookUrlTimeout))
                 return false;
+            if (!RandomUtils.GetBoolean(ConflictingWebhookUrlDifficultyClass))
+            {
+                ConflictingWebhookUrlResetTimeout();
+                return false;
+            }
+
             ApplyWebhookUpdatesTimerInterval(stopWebhookUpdatesTimer: true);
             _webhookUrl = FakeConflictingWebhookUrl;
+
             return true;
         }
 
         private void ConflictingWebhookUrlResetTimeout()
         {
             _lastConflictingWebhookUrlTimeoutReset = DateTime.Now;
-            _conflictingWebhookUrlTimeoutSeconds = RandomUpdateTimeoutSeconds();
+            _conflictingWebhookUrlTimeout = RandomUtils.GetTimeout();
         }
 
         #endregion
@@ -202,78 +172,19 @@ namespace Cat.Infrastructure.Fake.BotApiComponents.OperationalClient
 
         public IEnumerable<FakeBotUpdate> GenerateRandomUpdates()
         {
-            if ((DateTime.Now - _lastUpdateTimeoutReset).TotalSeconds < _updateTimeoutSeconds)
+            if (IsTimeoutUnexpired(_lastUpdateTimeoutReset, _updateTimeout))
                 return Enumerable.Empty<FakeBotUpdate>();
-            var updatesCount = RandomUpdatesCount();
-            if (updatesCount == 0)
-                return Enumerable.Empty<FakeBotUpdate>();
-            var updates = new List<FakeBotUpdate>();
-            for (var i = 0; i < updatesCount; i++)
-            {
-                updates.Add(new FakeBotUpdate { Message = RandomUpdateMessage() });
-            }
+
+            var updates = RandomUtils.GetUpdates();
             RandomUpdatesResetTimeout();
+
             return updates;
         }
 
         private void RandomUpdatesResetTimeout()
         {
             _lastUpdateTimeoutReset = DateTime.Now;
-            _updateTimeoutSeconds = RandomUpdateTimeoutSeconds();
-        }
-
-        private string RandomUpdateMessage()
-        {
-            var messages = UpdateMessages.Split("$msg_sep$", StringSplitOptions.RemoveEmptyEntries).Select(_ => _.Trim()).ToArray();
-            return messages[_random.Next(0, messages.Length)];
-        }
-
-        private int RandomUpdatesCount()
-        {
-            var updatesCount = 0;
-
-            var roll = _random.Next(1, 21);
-            if (roll >= 14 && roll <= 17) updatesCount = 1;
-            else if (roll == 17) updatesCount = 2;
-            else if (roll == 19) updatesCount = 3;
-            else if (roll == 20) updatesCount = _random.Next(3, 11);
-
-            return updatesCount;
-        }
-
-        private int RandomUpdateTimeoutSeconds()
-        {
-            var minTimeoutSeconds = 0;
-            var maxTimeoutSeconds = 0;
-
-            var roll = _random.Next(1, 21);
-            if (roll == 1)
-            {
-                minTimeoutSeconds = (int)TimeSpan.FromMinutes(45).TotalSeconds;
-                maxTimeoutSeconds = (int)TimeSpan.FromHours(3).TotalSeconds;
-            }
-            if (roll >= 2 && roll <= 8)
-            {
-                minTimeoutSeconds = (int)TimeSpan.FromMinutes(5).TotalSeconds;
-                maxTimeoutSeconds = (int)TimeSpan.FromMinutes(30).TotalSeconds;
-            }
-            if (roll >= 9 && roll <= 15)
-            {
-                minTimeoutSeconds = 45;
-                maxTimeoutSeconds = (int)TimeSpan.FromMinutes(2).TotalSeconds;
-            }
-            if (roll >= 16 && roll <= 18)
-            {
-                minTimeoutSeconds = 10;
-                maxTimeoutSeconds = 15;
-            }
-            if (roll == 19)
-            {
-                minTimeoutSeconds = 0;
-                maxTimeoutSeconds = 5;
-            }
-
-            return _random.Next(minTimeoutSeconds, maxTimeoutSeconds + 1);
+            _updateTimeout = RandomUtils.GetTimeout();
         }
 
         #endregion
