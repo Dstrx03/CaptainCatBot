@@ -7,9 +7,9 @@ namespace Cat.Infrastructure.Fake.BotApiComponents.OperationalClient
 {
     public interface IFakeOperationalClientRandomUtils
     {
-        IEnumerable<FakeBotUpdate> GetUpdates();
-        TimeSpan GetTimeout();
-        bool GetBoolean(int difficultyClass);
+        IEnumerable<FakeBotUpdate> NextUpdates();
+        TimeSpan NextTimeout();
+        bool NextBoolean(int difficultyClass);
     }
 
     public class FakeOperationalClientRandomUtils : IFakeOperationalClientRandomUtils
@@ -50,22 +50,22 @@ namespace Cat.Infrastructure.Fake.BotApiComponents.OperationalClient
             _random = new Random(Guid.NewGuid().GetHashCode());
         }
 
-        public IEnumerable<FakeBotUpdate> GetUpdates()
+        public IEnumerable<FakeBotUpdate> NextUpdates()
         {
-            var updatesCount = GetUpdatesCount();
+            var updatesCount = NextUpdatesCount();
             if (updatesCount == 0)
                 return Enumerable.Empty<FakeBotUpdate>();
 
             var updates = new List<FakeBotUpdate>();
             for (var i = 0; i < updatesCount; i++)
             {
-                updates.Add(new FakeBotUpdate { Message = GetUpdateMessage() });
+                updates.Add(new FakeBotUpdate { Message = NextUpdateMessage() });
             }
 
             return updates;
         }
 
-        private int GetUpdatesCount()
+        private int NextUpdatesCount()
         {
             var updatesCount = 0;
 
@@ -78,13 +78,13 @@ namespace Cat.Infrastructure.Fake.BotApiComponents.OperationalClient
             return updatesCount;
         }
 
-        private string GetUpdateMessage()
+        private string NextUpdateMessage()
         {
             var messages = FakeUpdateMessages.Split("$msg_sep$", StringSplitOptions.RemoveEmptyEntries).Select(_ => _.Trim()).ToArray();
             return messages[_random.Next(0, messages.Length)];
         }
 
-        public TimeSpan GetTimeout()
+        public TimeSpan NextTimeout()
         {
             var minSeconds = 0;
             var maxSeconds = 0;
@@ -120,7 +120,7 @@ namespace Cat.Infrastructure.Fake.BotApiComponents.OperationalClient
             return TimeSpan.FromSeconds(timeoutSeconds);
         }
 
-        public bool GetBoolean(int difficultyClass)
+        public bool NextBoolean(int difficultyClass)
         {
             if (difficultyClass > 20) difficultyClass = 20;
             if (difficultyClass < 1) difficultyClass = 1;

@@ -96,7 +96,7 @@ namespace Cat.Infrastructure.Fake.BotApiComponents.OperationalClient
 
         private void EmulateFakeRecurrentException()
         {
-            if (EmulateRecurrentExceptions && _emulatedState.RandomUtils.GetBoolean(RecurrentExceptionDifficultyClass))
+            if (EmulateRecurrentExceptions && _emulatedState.RandomUtils.NextBoolean(RecurrentExceptionDifficultyClass))
                 throw new FakeOperationalClientEmulatedException();
         }
 

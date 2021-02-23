@@ -138,7 +138,7 @@ namespace Cat.Infrastructure.Fake.BotApiComponents.OperationalClient
         {
             if (!EmulateConflictingWebhookUrl || IsTimeoutUnexpired(_lastConflictingWebhookUrlTimeoutReset, _conflictingWebhookUrlTimeout))
                 return false;
-            if (!RandomUtils.GetBoolean(ConflictingWebhookUrlDifficultyClass))
+            if (!RandomUtils.NextBoolean(ConflictingWebhookUrlDifficultyClass))
             {
                 ConflictingWebhookUrlResetTimeout();
                 return false;
@@ -153,7 +153,7 @@ namespace Cat.Infrastructure.Fake.BotApiComponents.OperationalClient
         private void ConflictingWebhookUrlResetTimeout()
         {
             _lastConflictingWebhookUrlTimeoutReset = DateTime.Now;
-            _conflictingWebhookUrlTimeout = RandomUtils.GetTimeout();
+            _conflictingWebhookUrlTimeout = RandomUtils.NextTimeout();
         }
 
         #endregion
@@ -165,7 +165,7 @@ namespace Cat.Infrastructure.Fake.BotApiComponents.OperationalClient
             if (IsTimeoutUnexpired(_lastUpdateTimeoutReset, _updateTimeout))
                 return Enumerable.Empty<FakeBotUpdate>();
 
-            var updates = RandomUtils.GetUpdates();
+            var updates = RandomUtils.NextUpdates();
             RandomUpdatesResetTimeout();
 
             return updates;
@@ -174,7 +174,7 @@ namespace Cat.Infrastructure.Fake.BotApiComponents.OperationalClient
         private void RandomUpdatesResetTimeout()
         {
             _lastUpdateTimeoutReset = DateTime.Now;
-            _updateTimeout = RandomUtils.GetTimeout();
+            _updateTimeout = RandomUtils.NextTimeout();
         }
 
         #endregion
