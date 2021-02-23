@@ -1,6 +1,7 @@
 ﻿using Cat.Application.BotUpdates.Commands.FakeBotUpdate;
 using Cat.Domain;
 using Cat.Infrastructure.Fake.BotApiComponents.Models;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Concurrent;
@@ -8,8 +9,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
-using System.Text;
-using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -17,22 +16,11 @@ namespace Cat.Infrastructure.Fake.BotApiComponents.OperationalClient
 {
     public class FakeOperationalClientEmulatedState : IDisposable
     {
-        #region Const fields
-
+        private readonly IServiceProvider _serviceProvider;
         private const string FakeConflictingWebhookUrl = "*FakeConflictingWebhookUrl*";
 
-        #endregion
-
-        private static readonly HttpClient HttpClient = new HttpClient(); // todo: try (consider) to use IHttpClientFactory for HttpClients instantiation!
-
-        private readonly JsonSerializerOptions _serializerOptions = new JsonSerializerOptions
-        {
-            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-            WriteIndented = true
-        };
-
         private readonly ConcurrentDictionary<string, string> _webhookUrlValidationTokensDictionary = new ConcurrentDictionary<string, string>();
-        private readonly TimeSpan _webhookUrlValidationTimeout = TimeSpan.FromMinutes(1);
+        private readonly TimeSpan _webhookUrlValidationTimeout = TimeSpan.FromSeconds(10);
 
         private readonly Settings _settings;
         private readonly Timer _webhookUpdatesTimer;
@@ -49,14 +37,15 @@ namespace Cat.Infrastructure.Fake.BotApiComponents.OperationalClient
         public IFakeOperationalClientToken Token { get; }
         public IFakeOperationalClientRandomUtils RandomUtils { get; }
 
-        public FakeOperationalClientEmulatedState(Settings settings, IFakeOperationalClientToken token, ILogger<FakeOperationalClient> logger)
+        public FakeOperationalClientEmulatedState(Settings settings, IFakeOperationalClientToken token, IServiceProvider serviceProvider, ILogger<FakeOperationalClient> logger)
         {
+            _serviceProvider = serviceProvider;
             _settings = settings ?? new Settings();
             Logger = logger;
             Token = token;
             RandomUtils = new FakeOperationalClientRandomUtils();
 
-            _webhookUpdatesTimer = new Timer(HandlePostWebhookUpdatesCallback, null, Timeout.Infinite, Timeout.Infinite);
+            _webhookUpdatesTimer = new Timer(HandleSendWebhookUpdatesCallback, null, Timeout.Infinite, Timeout.Infinite);
             _webhookUpdatesTimerIsRunning = false;
 
             RandomUpdatesResetTimeout();
@@ -118,14 +107,15 @@ namespace Cat.Infrastructure.Fake.BotApiComponents.OperationalClient
 
         #region Webhook Updates
 
-        private async void HandlePostWebhookUpdatesCallback(object state)
+        private async void HandleSendWebhookUpdatesCallback(object state)
         {
             if (EmulateFakeConflictingWebhookUrl()) return;
             try
             {
+                var webhookUpdatesSender = _serviceProvider.GetRequiredService<IFakeOperationalClientWebhookUpdatesSender>();
                 foreach (var update in GenerateRandomUpdates())
                 {
-                    await HttpClient.PostAsync(_webhookUrl, CreateUpdateStringContent(update));
+                    await webhookUpdatesSender.SendUpdateAsync(_webhookUrl, update);
                 }
             }
             catch (Exception e)
@@ -243,17 +233,15 @@ namespace Cat.Infrastructure.Fake.BotApiComponents.OperationalClient
             return validationToken;
         }
 
-        private async Task<HttpResponseMessage> RequestWebhookUrlValidationTokenConfirmationAsync(string webhookUrl, string validationToken)
+        private Task<HttpResponseMessage> RequestWebhookUrlValidationTokenConfirmationAsync(string webhookUrl, string validationToken)
         {
             var confirmationRequestUpdate = new FakeBotUpdate { ValidationToken = validationToken };
-            using var cts = new CancellationTokenSource((int)_webhookUrlValidationTimeout.TotalMilliseconds);
-            return await HttpClient.PostAsync(webhookUrl, CreateUpdateStringContent(confirmationRequestUpdate), cts.Token);
+            var webhookUpdatesSender = _serviceProvider.GetRequiredService<IFakeOperationalClientWebhookUpdatesSender>();
+            webhookUpdatesSender.Timeout = _webhookUrlValidationTimeout;
+            return webhookUpdatesSender.SendUpdateAsync(webhookUrl, confirmationRequestUpdate);
         }
 
         #endregion
-
-        private StringContent CreateUpdateStringContent(FakeBotUpdate update) =>
-            new StringContent(JsonSerializer.Serialize(update, _serializerOptions), Encoding.UTF8, "application/json");
 
         public void Dispose()
         {

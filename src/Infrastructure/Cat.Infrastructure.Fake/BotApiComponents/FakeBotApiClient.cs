@@ -22,13 +22,13 @@ namespace Cat.Infrastructure.Fake.BotApiComponents
         private int _conflictingWebhookUrlDifficultyClass = 15;
         // todo: ==============================================================
 
-        public FakeBotApiClient(ILogger<FakeBotApiClient> logger, ILogger<FakeOperationalClient> operationalClientLogger)
+        public FakeBotApiClient(ILogger<FakeBotApiClient> logger, ILogger<FakeOperationalClient> operationalClientLogger, IServiceProvider serviceProvider)
         {
             _logger = logger;
-            _operationalClientEmulatedState = CreateOperationalClientEmulatedState(operationalClientLogger);
+            _operationalClientEmulatedState = CreateOperationalClientEmulatedState(operationalClientLogger, serviceProvider);
         }
 
-        private FakeOperationalClientEmulatedState CreateOperationalClientEmulatedState(ILogger<FakeOperationalClient> operationalClientLogger)
+        private FakeOperationalClientEmulatedState CreateOperationalClientEmulatedState(ILogger<FakeOperationalClient> operationalClientLogger, IServiceProvider serviceProvider)
         {
             var settings = new FakeOperationalClientEmulatedState.Settings
             {
@@ -37,7 +37,7 @@ namespace Cat.Infrastructure.Fake.BotApiComponents
                 ConflictingWebhookUrlDifficultyClass = _conflictingWebhookUrlDifficultyClass
             };
             var token = new FakeOperationalClientToken(_token);
-            return new FakeOperationalClientEmulatedState(settings, token, operationalClientLogger);
+            return new FakeOperationalClientEmulatedState(settings, token, serviceProvider, operationalClientLogger);
         }
 
         public override BotApiComponentDescriptor ComponentDescriptor =>
