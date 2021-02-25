@@ -82,7 +82,7 @@ namespace Cat.Infrastructure.Fake.BotApiComponents.OperationalClient
         public Task ConfirmWebhookUrlValidationTokenAsync(string validationToken, string webhookUrl)
         {
             CheckClientValidity();
-            _emulatedState.ConfirmWebhookUrlValidationToken(validationToken, webhookUrl);
+            _emulatedState.WebhookUrlValidator.ConfirmWebhookUrlValidationToken(validationToken, webhookUrl);
             return Task.CompletedTask;
         }
 
