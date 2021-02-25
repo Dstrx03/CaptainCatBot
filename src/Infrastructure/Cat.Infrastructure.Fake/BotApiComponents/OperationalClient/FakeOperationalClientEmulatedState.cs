@@ -26,12 +26,10 @@ namespace Cat.Infrastructure.Fake.BotApiComponents.OperationalClient
         private readonly Timer _webhookUpdatesTimer;
 
         private string _webhookUrl;
-        private DateTime _lastUpdateTimeoutReset;
-        private TimeSpan _updateTimeout;
         private bool _webhookUpdatesTimerIsRunning;
 
-        private DateTime _lastConflictingWebhookUrlTimeoutReset;
-        private TimeSpan _conflictingWebhookUrlTimeout;
+        private readonly IFakeOperationalClientTimeout _randomUpdatesTimeout; 
+        private readonly IFakeOperationalClientTimeout _conflictingWebhookUrlTimeout;
 
         public ILogger<FakeOperationalClient> Logger { get; }
         public IFakeOperationalClientToken Token { get; }
@@ -48,8 +46,11 @@ namespace Cat.Infrastructure.Fake.BotApiComponents.OperationalClient
             _webhookUpdatesTimer = new Timer(HandleSendWebhookUpdatesCallback, null, Timeout.Infinite, Timeout.Infinite);
             _webhookUpdatesTimerIsRunning = false;
 
-            RandomUpdatesResetTimeout();
-            ConflictingWebhookUrlResetTimeout();
+            _randomUpdatesTimeout = new FakeOperationalClientTimeout(RandomUtils);
+            _conflictingWebhookUrlTimeout = new FakeOperationalClientTimeout(RandomUtils);
+
+            _randomUpdatesTimeout.Reset();
+            _conflictingWebhookUrlTimeout.Reset();
         }
 
         public TimeSpan WebhookUpdatesTimerInterval
@@ -68,7 +69,7 @@ namespace Cat.Infrastructure.Fake.BotApiComponents.OperationalClient
             set
             {
                 _settings.EmulateConflictingWebhookUrl = value;
-                if (value) ConflictingWebhookUrlResetTimeout();
+                if (value) _conflictingWebhookUrlTimeout.Reset();
             }
         }
 
@@ -85,7 +86,7 @@ namespace Cat.Infrastructure.Fake.BotApiComponents.OperationalClient
             await ValidateWebhookUrlAsync(webhookUrl);
             _webhookUrl = webhookUrl;
             ApplyWebhookUpdatesTimerInterval();
-            ConflictingWebhookUrlResetTimeout();
+            _conflictingWebhookUrlTimeout.Reset();
         }
 
         public FakeWebhookInfo GetWebhookInfo()
@@ -131,16 +132,13 @@ namespace Cat.Infrastructure.Fake.BotApiComponents.OperationalClient
             _webhookUpdatesTimerIsRunning = !stopWebhookUpdatesTimer;
         }
 
-        private bool IsTimeoutUnexpired(DateTime lastTimeoutReset, TimeSpan timeout) =>
-            (DateTime.Now - lastTimeoutReset) < timeout;
-
         private bool EmulateFakeConflictingWebhookUrl()
         {
-            if (!EmulateConflictingWebhookUrl || IsTimeoutUnexpired(_lastConflictingWebhookUrlTimeoutReset, _conflictingWebhookUrlTimeout))
+            if (!EmulateConflictingWebhookUrl || _conflictingWebhookUrlTimeout.IsNotElapsed)
                 return false;
             if (!RandomUtils.NextBoolean(ConflictingWebhookUrlDifficultyClass))
             {
-                ConflictingWebhookUrlResetTimeout();
+                _conflictingWebhookUrlTimeout.Reset();
                 return false;
             }
 
@@ -150,31 +148,19 @@ namespace Cat.Infrastructure.Fake.BotApiComponents.OperationalClient
             return true;
         }
 
-        private void ConflictingWebhookUrlResetTimeout()
-        {
-            _lastConflictingWebhookUrlTimeoutReset = DateTime.Now;
-            _conflictingWebhookUrlTimeout = RandomUtils.NextTimeout();
-        }
-
         #endregion
 
         #region Random Updates
 
         public IEnumerable<FakeBotUpdate> GenerateRandomUpdates()
         {
-            if (IsTimeoutUnexpired(_lastUpdateTimeoutReset, _updateTimeout))
+            if (_randomUpdatesTimeout.IsNotElapsed)
                 return Enumerable.Empty<FakeBotUpdate>();
 
             var updates = RandomUtils.NextUpdates();
-            RandomUpdatesResetTimeout();
+            _randomUpdatesTimeout.Reset();
 
             return updates;
-        }
-
-        private void RandomUpdatesResetTimeout()
-        {
-            _lastUpdateTimeoutReset = DateTime.Now;
-            _updateTimeout = RandomUtils.NextTimeout();
         }
 
         #endregion
