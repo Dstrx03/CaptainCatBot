@@ -2,6 +2,8 @@
 using Cat.Domain.BotApiComponents.Client;
 using Cat.Domain.BotApiComponents.Component;
 using Cat.Infrastructure.Fake.BotApiComponents.OperationalClient;
+using Cat.Infrastructure.Fake.BotApiComponents.OperationalClient.Interfaces;
+using Cat.Infrastructure.Fake.BotApiComponents.OperationalClient.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System;

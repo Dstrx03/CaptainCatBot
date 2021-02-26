@@ -1,17 +1,11 @@
 ﻿using Cat.Application.BotUpdates.Commands.FakeBotUpdate;
+using Cat.Infrastructure.Fake.BotApiComponents.OperationalClient.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Cat.Infrastructure.Fake.BotApiComponents.OperationalClient
+namespace Cat.Infrastructure.Fake.BotApiComponents.OperationalClient.Services
 {
-    public interface IFakeOperationalClientRandomUtils
-    {
-        IEnumerable<FakeBotUpdate> NextUpdates();
-        TimeSpan NextTimeout();
-        bool NextBoolean(int difficultyClass);
-    }
-
     public class FakeOperationalClientRandomUtils : IFakeOperationalClientRandomUtils
     {
         private const string FakeUpdateMessages = @"

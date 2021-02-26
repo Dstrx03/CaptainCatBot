@@ -1,5 +1,6 @@
 ﻿using Cat.Application.BotUpdates.Commands.FakeBotUpdate;
 using Cat.Domain;
+using Cat.Infrastructure.Fake.BotApiComponents.OperationalClient.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Concurrent;
@@ -7,15 +8,8 @@ using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 
-namespace Cat.Infrastructure.Fake.BotApiComponents.OperationalClient
+namespace Cat.Infrastructure.Fake.BotApiComponents.OperationalClient.Services
 {
-    public interface IFakeOperationalClientWebhookUrlValidator
-    {
-        Task ValidateWebhookUrlAsync(string webhookUrl);
-        void ConfirmWebhookUrlValidationToken(string validationToken, string webhookUrl);
-
-    }
-
     public class FakeOperationalClientWebhookUrlValidator : IFakeOperationalClientWebhookUrlValidator
     {
         private readonly IServiceProvider _serviceProvider;

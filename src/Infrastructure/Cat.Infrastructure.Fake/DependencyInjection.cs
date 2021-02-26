@@ -3,7 +3,8 @@ using Cat.Domain.BotApiComponents.Component;
 using Cat.Domain.BotUpdates.Context;
 using Cat.Domain.BotUpdates.PreProcessor;
 using Cat.Infrastructure.Fake.BotApiComponents;
-using Cat.Infrastructure.Fake.BotApiComponents.OperationalClient;
+using Cat.Infrastructure.Fake.BotApiComponents.OperationalClient.Interfaces;
+using Cat.Infrastructure.Fake.BotApiComponents.OperationalClient.Services;
 using Cat.Infrastructure.Fake.BotUpdates;
 
 namespace Microsoft.Extensions.DependencyInjection

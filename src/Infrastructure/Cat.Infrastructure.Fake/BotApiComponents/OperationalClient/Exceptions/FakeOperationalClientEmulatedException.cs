@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Cat.Infrastructure.Fake.BotApiComponents.OperationalClient
+namespace Cat.Infrastructure.Fake.BotApiComponents.OperationalClient.Exceptions
 {
     public class FakeOperationalClientEmulatedException : Exception
     {

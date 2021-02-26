@@ -1,18 +1,8 @@
-﻿using System;
+﻿using Cat.Infrastructure.Fake.BotApiComponents.OperationalClient.Interfaces;
+using System;
 
-namespace Cat.Infrastructure.Fake.BotApiComponents.OperationalClient
+namespace Cat.Infrastructure.Fake.BotApiComponents.OperationalClient.Services
 {
-    public interface IFakeOperationalClientTimeout
-    {
-        TimeSpan Timeout { get; }
-        DateTime LastReset { get; }
-        TimeSpan CurrentDuration { get; }
-        bool IsNotElapsed { get; }
-
-        void Reset(TimeSpan timeout);
-        void Reset();
-    }
-
     public class FakeOperationalClientTimeout : IFakeOperationalClientTimeout
     {
         private readonly IFakeOperationalClientRandomUtils _randomUtils;

@@ -1,18 +1,13 @@
 ﻿using Cat.Application.BotUpdates.Commands.FakeBotUpdate;
+using Cat.Infrastructure.Fake.BotApiComponents.OperationalClient.Interfaces;
 using System;
 using System.Net.Http;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 
-namespace Cat.Infrastructure.Fake.BotApiComponents.OperationalClient
+namespace Cat.Infrastructure.Fake.BotApiComponents.OperationalClient.Services
 {
-    public interface IFakeOperationalClientWebhookUpdatesSender
-    {
-        TimeSpan Timeout { get; set; }
-        Task<HttpResponseMessage> SendUpdateAsync(string webhookUrl, FakeBotUpdate update);
-    }
-
     public class FakeOperationalClientWebhookUpdatesSender : IFakeOperationalClientWebhookUpdatesSender
     {
         private readonly HttpClient _httpClient;

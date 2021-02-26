@@ -1,5 +1,6 @@
 ﻿using Cat.Application.BotUpdates.Commands.FakeBotUpdate;
 using Cat.Infrastructure.Fake.BotApiComponents.Models;
+using Cat.Infrastructure.Fake.BotApiComponents.OperationalClient.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System;
@@ -8,25 +9,8 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Cat.Infrastructure.Fake.BotApiComponents.OperationalClient
+namespace Cat.Infrastructure.Fake.BotApiComponents.OperationalClient.Services
 {
-    public interface IFakeOperationalClientEmulatedState
-    {
-        ILogger<FakeOperationalClient> Logger { get; }
-        IFakeOperationalClientToken Token { get; }
-        IFakeOperationalClientRandomUtils RandomUtils { get; }
-        IFakeOperationalClientWebhookUrlValidator WebhookUrlValidator { get; }
-
-        TimeSpan WebhookUpdatesTimerInterval { get; set; }
-        bool EmulateConflictingWebhookUrl { get; set; }
-        int ConflictingWebhookUrlDifficultyClass { get; set; }
-
-        Task SetWebhookAsync(string webhookUrl);
-        FakeWebhookInfo GetWebhookInfo();
-        void DeleteWebhook();
-        IEnumerable<FakeBotUpdate> GenerateRandomUpdates();
-    }
-
     public class FakeOperationalClientEmulatedState : IFakeOperationalClientEmulatedState, IDisposable
     {
         private const string FakeConflictingWebhookUrl = "*FakeConflictingWebhookUrl*";

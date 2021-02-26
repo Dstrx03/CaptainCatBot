@@ -1,6 +1,8 @@
 ﻿using Cat.Application.BotUpdates.Commands.FakeBotUpdate;
 using Cat.Domain;
 using Cat.Infrastructure.Fake.BotApiComponents.Models;
+using Cat.Infrastructure.Fake.BotApiComponents.OperationalClient.Exceptions;
+using Cat.Infrastructure.Fake.BotApiComponents.OperationalClient.Interfaces;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;

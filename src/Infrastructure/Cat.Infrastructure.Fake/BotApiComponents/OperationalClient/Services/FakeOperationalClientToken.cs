@@ -1,13 +1,9 @@
-﻿using System.Security.Cryptography;
+﻿using Cat.Infrastructure.Fake.BotApiComponents.OperationalClient.Interfaces;
+using System.Security.Cryptography;
 using System.Text;
 
-namespace Cat.Infrastructure.Fake.BotApiComponents.OperationalClient
+namespace Cat.Infrastructure.Fake.BotApiComponents.OperationalClient.Services
 {
-    public interface IFakeOperationalClientToken
-    {
-        bool IsTokenValid(string token);
-    }
-
     public class FakeOperationalClientToken : IFakeOperationalClientToken
     {
         private readonly string _fakeTokenHash;
