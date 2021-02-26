@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Cat.Infrastructure.Fake.BotApiComponents.OperationalClient
 {
-    public interface IFakeOperationalClientEmulatedState : IDisposable
+    public interface IFakeOperationalClientEmulatedState
     {
         ILogger<FakeOperationalClient> Logger { get; }
         IFakeOperationalClientToken Token { get; }
@@ -27,7 +27,7 @@ namespace Cat.Infrastructure.Fake.BotApiComponents.OperationalClient
         IEnumerable<FakeBotUpdate> GenerateRandomUpdates();
     }
 
-    public class FakeOperationalClientEmulatedState : IFakeOperationalClientEmulatedState
+    public class FakeOperationalClientEmulatedState : IFakeOperationalClientEmulatedState, IDisposable
     {
         private const string FakeConflictingWebhookUrl = "*FakeConflictingWebhookUrl*";
 

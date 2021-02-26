@@ -13,10 +13,10 @@ namespace Cat.Infrastructure.Fake.BotApiComponents.OperationalClient
         private readonly Settings _settings;
         private readonly IFakeOperationalClientEmulatedState _emulatedState;
 
-        public FakeOperationalClient(Settings settings, IFakeOperationalClientEmulatedState emulatedState)
+        public FakeOperationalClient(IFakeOperationalClientEmulatedState emulatedState, Settings settings = null)
         {
-            _settings = settings ?? new Settings();
             _emulatedState = emulatedState;
+            _settings = settings == null ? new Settings() : new Settings(settings);
         }
 
         public string Token
@@ -39,13 +39,13 @@ namespace Cat.Infrastructure.Fake.BotApiComponents.OperationalClient
 
         public Task<bool> ValidateClientAsync()
         {
-            EmulateFakeRecurrentException();
+            EmulateRecurrentExceptionByRemoteService();
             return Task.FromResult(_emulatedState.Token.IsTokenValid(Token));
         }
 
         public Task SendFakeMessageAsync(string message)
         {
-            CheckClientValidity();
+            EmulateRequestToRemoteService();
             var details = TodoMsgFmtr.DetailsMessage("Fake message details", new (string title, object value)[] // todo: content
             {
                 ("Message", message)
@@ -56,60 +56,67 @@ namespace Cat.Infrastructure.Fake.BotApiComponents.OperationalClient
 
         public Task SetWebhookAsync(string webhookUrl)
         {
-            CheckClientValidity();
+            EmulateRequestToRemoteService();
             return _emulatedState.SetWebhookAsync(webhookUrl);
         }
 
         public Task<FakeWebhookInfo> GetWebhookInfoAsync()
         {
-            CheckClientValidity();
+            EmulateRequestToRemoteService();
             return Task.FromResult(_emulatedState.GetWebhookInfo());
         }
 
         public Task DeleteWebhookAsync()
         {
-            CheckClientValidity();
+            EmulateRequestToRemoteService();
             _emulatedState.DeleteWebhook();
             return Task.CompletedTask;
         }
 
         public Task<IEnumerable<FakeBotUpdate>> GetUpdatesAsync()
         {
-            CheckClientValidity();
+            EmulateRequestToRemoteService();
             return Task.FromResult(_emulatedState.GenerateRandomUpdates());
         }
 
         public Task ConfirmWebhookUrlValidationTokenAsync(string validationToken, string webhookUrl)
         {
-            CheckClientValidity();
+            EmulateRequestToRemoteService();
             _emulatedState.WebhookUrlValidator.ConfirmWebhookUrlValidationToken(validationToken, webhookUrl);
             return Task.CompletedTask;
         }
 
-        #region CheckClientValidity
-
-        private void CheckClientValidity()
+        private void EmulateRequestToRemoteService()
         {
-            EmulateFakeRecurrentException();
-            CheckFakeTokenValidity();
+            EmulateRecurrentExceptionByRemoteService();
+            EmulateRemoteTokenValidationByRemoteService();
         }
 
-        private void EmulateFakeRecurrentException()
+        private void EmulateRecurrentExceptionByRemoteService()
         {
             if (EmulateRecurrentExceptions && _emulatedState.RandomUtils.NextBoolean(RecurrentExceptionDifficultyClass))
                 throw new FakeOperationalClientEmulatedException();
         }
 
-        private void CheckFakeTokenValidity()
+        private void EmulateRemoteTokenValidationByRemoteService()
         {
             if (!_emulatedState.Token.IsTokenValid(Token))
                 throw new InvalidOperationException($"Operation cannot be executed due to the provided token ({Token.Bar()}) is invalid.");
         }
 
-        #endregion
-
         public class Settings
         {
+            public Settings()
+            {
+            }
+
+            public Settings(Settings settings)
+            {
+                Token = settings.Token;
+                EmulateRecurrentExceptions = settings.EmulateRecurrentExceptions;
+                RecurrentExceptionDifficultyClass = settings.RecurrentExceptionDifficultyClass;
+            }
+
             public string Token { get; set; } = null;
             public bool EmulateRecurrentExceptions { get; set; } = false;
             public int RecurrentExceptionDifficultyClass { get; set; } = 17;

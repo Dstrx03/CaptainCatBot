@@ -29,21 +29,6 @@ namespace Cat.Infrastructure.Fake.BotApiComponents
             _operationalClientEmulatedState = CreateOperationalClientEmulatedState(serviceProvider);
         }
 
-        private IFakeOperationalClientEmulatedState CreateOperationalClientEmulatedState(IServiceProvider serviceProvider)
-        {
-            var logger = serviceProvider.GetRequiredService<ILogger<FakeOperationalClient>>();
-            var token = new FakeOperationalClientToken(_token);
-            var randomUtils = new FakeOperationalClientRandomUtils();
-            var webhookUrlValidator = new FakeOperationalClientWebhookUrlValidator(serviceProvider);
-            var settings = new FakeOperationalClientEmulatedState.Settings
-            {
-                WebhookUpdatesTimerInterval = _webhookUpdatesTimerInterval,
-                EmulateConflictingWebhookUrl = _emulateConflictingWebhookUrl,
-                ConflictingWebhookUrlDifficultyClass = _conflictingWebhookUrlDifficultyClass
-            };
-            return new FakeOperationalClientEmulatedState(serviceProvider, logger, token, randomUtils, webhookUrlValidator, settings);
-        }
-
         public override BotApiComponentDescriptor ComponentDescriptor =>
             BotApiComponentDescriptor.Fake;
 
@@ -57,7 +42,7 @@ namespace Cat.Infrastructure.Fake.BotApiComponents
                     EmulateRecurrentExceptions = _emulateRecurrentExceptions,
                     RecurrentExceptionDifficultyClass = _recurrentExceptionDifficultyClass
                 };
-                OperationalClient = new FakeOperationalClient(operationalClientSettings, _operationalClientEmulatedState);
+                OperationalClient = new FakeOperationalClient(_operationalClientEmulatedState, operationalClientSettings);
                 if (!await OperationalClient.ValidateClientAsync())
                 {
                     HandleClientInitializationFailed($"Fake Bot API Client registration failed, the token ({OperationalClient.Token.Bar()}) is invalid.");
@@ -90,9 +75,24 @@ namespace Cat.Infrastructure.Fake.BotApiComponents
             return Task.CompletedTask;
         }
 
+        private IFakeOperationalClientEmulatedState CreateOperationalClientEmulatedState(IServiceProvider serviceProvider)
+        {
+            var logger = serviceProvider.GetRequiredService<ILogger<FakeOperationalClient>>();
+            var token = new FakeOperationalClientToken(_token);
+            var randomUtils = new FakeOperationalClientRandomUtils();
+            var webhookUrlValidator = new FakeOperationalClientWebhookUrlValidator(serviceProvider);
+            var settings = new FakeOperationalClientEmulatedState.Settings
+            {
+                WebhookUpdatesTimerInterval = _webhookUpdatesTimerInterval,
+                EmulateConflictingWebhookUrl = _emulateConflictingWebhookUrl,
+                ConflictingWebhookUrlDifficultyClass = _conflictingWebhookUrlDifficultyClass
+            };
+            return new FakeOperationalClientEmulatedState(serviceProvider, logger, token, randomUtils, webhookUrlValidator, settings);
+        }
+
         public void Dispose()
         {
-            _operationalClientEmulatedState?.Dispose();
+            (_operationalClientEmulatedState as FakeOperationalClientEmulatedState)?.Dispose();
         }
     }
 }

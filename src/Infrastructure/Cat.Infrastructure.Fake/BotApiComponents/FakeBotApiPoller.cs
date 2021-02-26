@@ -88,7 +88,9 @@ namespace Cat.Infrastructure.Fake.BotApiComponents
             _logger.LogError(errorMessage);
         }
 
-        public void Dispose() // todo: research (in output messages tab)
+        // todo: research (in output messages tab)
+        // todo: the Dispose method will be called twice due to Bot API Components configuration by DI container, research and fix potential issue
+        public void Dispose()
         {
             _updatesPollingTimer?.Dispose();
         }
