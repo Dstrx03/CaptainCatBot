@@ -33,13 +33,15 @@ namespace Cat.Infrastructure.Fake.BotApiComponents
         {
             var logger = serviceProvider.GetRequiredService<ILogger<FakeOperationalClient>>();
             var token = new FakeOperationalClientToken(_token);
+            var randomUtils = new FakeOperationalClientRandomUtils();
+            var webhookUrlValidator = new FakeOperationalClientWebhookUrlValidator(serviceProvider);
             var settings = new FakeOperationalClientEmulatedState.Settings
             {
                 WebhookUpdatesTimerInterval = _webhookUpdatesTimerInterval,
                 EmulateConflictingWebhookUrl = _emulateConflictingWebhookUrl,
                 ConflictingWebhookUrlDifficultyClass = _conflictingWebhookUrlDifficultyClass
             };
-            return new FakeOperationalClientEmulatedState(serviceProvider, logger, token, settings);
+            return new FakeOperationalClientEmulatedState(serviceProvider, logger, token, randomUtils, webhookUrlValidator, settings);
         }
 
         public override BotApiComponentDescriptor ComponentDescriptor =>

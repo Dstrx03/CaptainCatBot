@@ -49,13 +49,15 @@ namespace Cat.Infrastructure.Fake.BotApiComponents.OperationalClient
             IServiceProvider serviceProvider,
             ILogger<FakeOperationalClient> logger,
             IFakeOperationalClientToken token,
+            IFakeOperationalClientRandomUtils randomUtils,
+            IFakeOperationalClientWebhookUrlValidator webhookUrlValidator,
             Settings settings = null)
         {
             _serviceProvider = serviceProvider;
             Logger = logger;
             Token = token;
-            RandomUtils = new FakeOperationalClientRandomUtils();
-            WebhookUrlValidator = new FakeOperationalClientWebhookUrlValidator(serviceProvider);
+            RandomUtils = randomUtils;
+            WebhookUrlValidator = webhookUrlValidator;
             _settings = settings == null ? new Settings() : new Settings(settings);
             _webhookUpdatesTimer = new Timer(HandleSendWebhookUpdatesCallback, null, Timeout.Infinite, Timeout.Infinite);
             _randomUpdatesTimeout = new FakeOperationalClientTimeout(RandomUtils);
