@@ -10,40 +10,58 @@ using System.Threading.Tasks;
 
 namespace Cat.Infrastructure.Fake.BotApiComponents.OperationalClient
 {
-    public class FakeOperationalClientEmulatedState : IDisposable
+    public interface IFakeOperationalClientEmulatedState : IDisposable
     {
-        private readonly IServiceProvider _serviceProvider;
+        ILogger<FakeOperationalClient> Logger { get; }
+        IFakeOperationalClientToken Token { get; }
+        IFakeOperationalClientRandomUtils RandomUtils { get; }
+        IFakeOperationalClientWebhookUrlValidator WebhookUrlValidator { get; }
+
+        TimeSpan WebhookUpdatesTimerInterval { get; set; }
+        bool EmulateConflictingWebhookUrl { get; set; }
+        int ConflictingWebhookUrlDifficultyClass { get; set; }
+
+        Task SetWebhookAsync(string webhookUrl);
+        FakeWebhookInfo GetWebhookInfo();
+        void DeleteWebhook();
+        IEnumerable<FakeBotUpdate> GenerateRandomUpdates();
+    }
+
+    public class FakeOperationalClientEmulatedState : IFakeOperationalClientEmulatedState
+    {
         private const string FakeConflictingWebhookUrl = "*FakeConflictingWebhookUrl*";
 
+        private readonly IServiceProvider _serviceProvider;
         private readonly Settings _settings;
         private readonly Timer _webhookUpdatesTimer;
+        private readonly IFakeOperationalClientTimeout _randomUpdatesTimeout;
+        private readonly IFakeOperationalClientTimeout _conflictingWebhookUrlTimeout;
 
         private string _webhookUrl;
         private bool _webhookUpdatesTimerIsRunning;
-
-        private readonly IFakeOperationalClientTimeout _randomUpdatesTimeout;
-        private readonly IFakeOperationalClientTimeout _conflictingWebhookUrlTimeout;
 
         public ILogger<FakeOperationalClient> Logger { get; }
         public IFakeOperationalClientToken Token { get; }
         public IFakeOperationalClientRandomUtils RandomUtils { get; }
         public IFakeOperationalClientWebhookUrlValidator WebhookUrlValidator { get; }
 
-        public FakeOperationalClientEmulatedState(Settings settings, IFakeOperationalClientToken token, IServiceProvider serviceProvider, ILogger<FakeOperationalClient> logger)
+        public FakeOperationalClientEmulatedState(
+            IServiceProvider serviceProvider,
+            ILogger<FakeOperationalClient> logger,
+            IFakeOperationalClientToken token,
+            Settings settings = null)
         {
             _serviceProvider = serviceProvider;
-            _settings = settings ?? new Settings();
             Logger = logger;
             Token = token;
             RandomUtils = new FakeOperationalClientRandomUtils();
             WebhookUrlValidator = new FakeOperationalClientWebhookUrlValidator(serviceProvider);
-
+            _settings = settings == null ? new Settings() : new Settings(settings);
             _webhookUpdatesTimer = new Timer(HandleSendWebhookUpdatesCallback, null, Timeout.Infinite, Timeout.Infinite);
-            _webhookUpdatesTimerIsRunning = false;
-
             _randomUpdatesTimeout = new FakeOperationalClientTimeout(RandomUtils);
             _conflictingWebhookUrlTimeout = new FakeOperationalClientTimeout(RandomUtils);
 
+            _webhookUpdatesTimerIsRunning = false;
             _randomUpdatesTimeout.Reset();
             _conflictingWebhookUrlTimeout.Reset();
         }
@@ -74,7 +92,12 @@ namespace Cat.Infrastructure.Fake.BotApiComponents.OperationalClient
             set => _settings.ConflictingWebhookUrlDifficultyClass = value;
         }
 
-        #region Webhook
+        private void ApplyWebhookUpdatesTimerInterval(bool stopWebhookUpdatesTimer = false)
+        {
+            if (!stopWebhookUpdatesTimer) _webhookUpdatesTimer.Change(TimeSpan.Zero, WebhookUpdatesTimerInterval);
+            else _webhookUpdatesTimer.Change(Timeout.Infinite, Timeout.Infinite);
+            _webhookUpdatesTimerIsRunning = !stopWebhookUpdatesTimer;
+        }
 
         public async Task SetWebhookAsync(string webhookUrl)
         {
@@ -99,9 +122,16 @@ namespace Cat.Infrastructure.Fake.BotApiComponents.OperationalClient
             _webhookUrl = null;
         }
 
-        #endregion
+        public IEnumerable<FakeBotUpdate> GenerateRandomUpdates()
+        {
+            if (_randomUpdatesTimeout.IsNotElapsed)
+                return Enumerable.Empty<FakeBotUpdate>();
 
-        #region Webhook Updates
+            var updates = RandomUtils.NextUpdates();
+            _randomUpdatesTimeout.Reset();
+
+            return updates;
+        }
 
         private async void HandleSendWebhookUpdatesCallback(object state)
         {
@@ -120,13 +150,6 @@ namespace Cat.Infrastructure.Fake.BotApiComponents.OperationalClient
             }
         }
 
-        private void ApplyWebhookUpdatesTimerInterval(bool stopWebhookUpdatesTimer = false)
-        {
-            if (!stopWebhookUpdatesTimer) _webhookUpdatesTimer.Change(TimeSpan.Zero, WebhookUpdatesTimerInterval);
-            else _webhookUpdatesTimer.Change(Timeout.Infinite, Timeout.Infinite);
-            _webhookUpdatesTimerIsRunning = !stopWebhookUpdatesTimer;
-        }
-
         private bool EmulateFakeConflictingWebhookUrl()
         {
             if (!EmulateConflictingWebhookUrl || _conflictingWebhookUrlTimeout.IsNotElapsed)
@@ -143,23 +166,6 @@ namespace Cat.Infrastructure.Fake.BotApiComponents.OperationalClient
             return true;
         }
 
-        #endregion
-
-        #region Random Updates
-
-        public IEnumerable<FakeBotUpdate> GenerateRandomUpdates()
-        {
-            if (_randomUpdatesTimeout.IsNotElapsed)
-                return Enumerable.Empty<FakeBotUpdate>();
-
-            var updates = RandomUtils.NextUpdates();
-            _randomUpdatesTimeout.Reset();
-
-            return updates;
-        }
-
-        #endregion
-
         public void Dispose()
         {
             _webhookUpdatesTimer?.Dispose();
@@ -167,6 +173,17 @@ namespace Cat.Infrastructure.Fake.BotApiComponents.OperationalClient
 
         public class Settings
         {
+            public Settings()
+            {
+            }
+
+            public Settings(Settings settings)
+            {
+                WebhookUpdatesTimerInterval = settings.WebhookUpdatesTimerInterval;
+                EmulateConflictingWebhookUrl = settings.EmulateConflictingWebhookUrl;
+                ConflictingWebhookUrlDifficultyClass = settings.ConflictingWebhookUrlDifficultyClass;
+            }
+
             public TimeSpan WebhookUpdatesTimerInterval { get; set; } = TimeSpan.FromSeconds(1);
             public bool EmulateConflictingWebhookUrl { get; set; } = false;
             public int ConflictingWebhookUrlDifficultyClass { get; set; } = 15;

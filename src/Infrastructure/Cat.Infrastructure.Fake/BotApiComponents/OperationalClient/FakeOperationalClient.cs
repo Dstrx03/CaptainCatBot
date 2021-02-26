@@ -11,9 +11,9 @@ namespace Cat.Infrastructure.Fake.BotApiComponents.OperationalClient
     public class FakeOperationalClient
     {
         private readonly Settings _settings;
-        private readonly FakeOperationalClientEmulatedState _emulatedState;
+        private readonly IFakeOperationalClientEmulatedState _emulatedState;
 
-        public FakeOperationalClient(Settings settings, FakeOperationalClientEmulatedState emulatedState)
+        public FakeOperationalClient(Settings settings, IFakeOperationalClientEmulatedState emulatedState)
         {
             _settings = settings ?? new Settings();
             _emulatedState = emulatedState;

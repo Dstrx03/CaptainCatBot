@@ -2,6 +2,7 @@
 using Cat.Domain.BotApiComponents.Client;
 using Cat.Domain.BotApiComponents.Component;
 using Cat.Infrastructure.Fake.BotApiComponents.OperationalClient;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Threading.Tasks;
@@ -11,7 +12,7 @@ namespace Cat.Infrastructure.Fake.BotApiComponents
     public class FakeBotApiClient : BotApiClientBase<FakeOperationalClient>, IDisposable
     {
         private readonly ILogger<FakeBotApiClient> _logger;
-        private readonly FakeOperationalClientEmulatedState _operationalClientEmulatedState;
+        private readonly IFakeOperationalClientEmulatedState _operationalClientEmulatedState;
 
         // todo: ============== move to separate fake component/IOptions<>? ==============
         private string _token = "SLMX4ga5.t84Q";
@@ -22,22 +23,23 @@ namespace Cat.Infrastructure.Fake.BotApiComponents
         private int _conflictingWebhookUrlDifficultyClass = 15;
         // todo: ==============================================================
 
-        public FakeBotApiClient(ILogger<FakeBotApiClient> logger, ILogger<FakeOperationalClient> operationalClientLogger, IServiceProvider serviceProvider)
+        public FakeBotApiClient(ILogger<FakeBotApiClient> logger, IServiceProvider serviceProvider)
         {
             _logger = logger;
-            _operationalClientEmulatedState = CreateOperationalClientEmulatedState(operationalClientLogger, serviceProvider);
+            _operationalClientEmulatedState = CreateOperationalClientEmulatedState(serviceProvider);
         }
 
-        private FakeOperationalClientEmulatedState CreateOperationalClientEmulatedState(ILogger<FakeOperationalClient> operationalClientLogger, IServiceProvider serviceProvider)
+        private IFakeOperationalClientEmulatedState CreateOperationalClientEmulatedState(IServiceProvider serviceProvider)
         {
+            var logger = serviceProvider.GetRequiredService<ILogger<FakeOperationalClient>>();
+            var token = new FakeOperationalClientToken(_token);
             var settings = new FakeOperationalClientEmulatedState.Settings
             {
                 WebhookUpdatesTimerInterval = _webhookUpdatesTimerInterval,
                 EmulateConflictingWebhookUrl = _emulateConflictingWebhookUrl,
                 ConflictingWebhookUrlDifficultyClass = _conflictingWebhookUrlDifficultyClass
             };
-            var token = new FakeOperationalClientToken(_token);
-            return new FakeOperationalClientEmulatedState(settings, token, serviceProvider, operationalClientLogger);
+            return new FakeOperationalClientEmulatedState(serviceProvider, logger, token, settings);
         }
 
         public override BotApiComponentDescriptor ComponentDescriptor =>
